@@ -1,0 +1,20 @@
+{
+  "project": "PolicyHelix",
+  "failures": [
+    "IdP outage",
+    "bad/stale bundle",
+    "rollback attempt",
+    "decision service outage",
+    "header spoof",
+    "revocation race",
+    "clock skew",
+    "cache poisoning",
+    "control plane offline"
+  ],
+  "required_result": [
+    "invariants preserved",
+    "observable failure",
+    "bounded retries",
+    "recovery/reconciliation succeeds"
+  ]
+}

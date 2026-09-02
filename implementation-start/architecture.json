@@ -1,0 +1,30 @@
+{
+  "project": "PolicyHelix",
+  "version": "v1-reference",
+  "risk": "CRITICAL",
+  "runtime": [
+    "Laravel 13 control plane",
+    "Go AuthN gateway",
+    "Go decision service embedding OPA",
+    "Envoy enforcement proxy",
+    "PostgreSQL 18",
+    "Valkey",
+    "OIDC providers",
+    "OpenTelemetry"
+  ],
+  "final_decisions": [
+    "Architecture has four explicit boundaries: Laravel Control Plane, Go Authentication Gateway, Go/OPA Decision Plane, Envoy Enforcement Plane.",
+    "Management PostgreSQL is never on the hot authorization request path. Data-plane nodes consume versioned signed bundles and last-known-good state.",
+    "Envoy ext_authz contract strips all user-controlled trusted identity headers before injecting verified identity/decision headers.",
+    "OPA bundle signature verification is mandatory in production. Bundle revision is monotonic; stale/rollback bundles are rejected according to freshness policy.",
+    "Failure mode is resource-class based: sensitive/admin/default private routes fail closed; explicitly public routes bypass auth by configuration rather than fail-open accident.",
+    "OIDC authentication issues short-lived server-side/revocable sessions. Revocation feed + TTL bounds maximum stale authorization window.",
+    "SPIFFE/SPIRE is the production workload-identity adapter for high-assurance distributed deployment; local development uses ephemeral local service certificates.",
+    "AuthorizationDecision v1 includes subject/resource/action/context, policy revision, result, reasons, obligations and decision timestamp; decisions are auditable without storing tokens."
+  ],
+  "data_ownership": {
+    "PostgreSQL": "apps/idps/policies/bundle metadata/audit",
+    "Data plane local": "signed bundle + bounded caches only",
+    "Valkey": "revocation/session coordination, not policy authority"
+  }
+}

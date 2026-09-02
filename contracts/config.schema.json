@@ -1,0 +1,77 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:parsa-security:policyhelix:config:v1",
+  "title": "PolicyHelix Configuration v1",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "APP_ENV": {
+      "type": "string",
+      "enum": [
+        "local",
+        "test",
+        "staging",
+        "production"
+      ]
+    },
+    "SERVICE_NAME": {
+      "type": "string",
+      "const": "policyhelix"
+    },
+    "DATABASE_DSN_REF": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Secret/reference URI; never embed production credentials in config."
+    },
+    "VALKEY_DSN_REF": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Secret/reference URI; never embed production credentials in config."
+    },
+    "OTEL_EXPORTER_OTLP_ENDPOINT": {
+      "type": "string",
+      "format": "uri"
+    },
+    "LOG_LEVEL": {
+      "type": "string",
+      "enum": [
+        "debug",
+        "info",
+        "warning",
+        "error"
+      ]
+    },
+    "OIDC_ISSUER": {
+      "type": "string",
+      "minLength": 1
+    },
+    "OIDC_CLIENT_ID": {
+      "type": "string",
+      "minLength": 1
+    },
+    "OIDC_CLIENT_SECRET_REF": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Secret/reference URI. Do not commit secret material."
+    },
+    "OPA_BUNDLE_SIGNING_KEY_REF": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Secret/reference URI. Do not commit secret material."
+    },
+    "ENVOY_EXT_AUTHZ_TIMEOUT_MS": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "FAIL_CLOSED": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "APP_ENV",
+    "SERVICE_NAME",
+    "DATABASE_DSN_REF",
+    "VALKEY_DSN_REF",
+    "OTEL_EXPORTER_OTLP_ENDPOINT"
+  ]
+}
