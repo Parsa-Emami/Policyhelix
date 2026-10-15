@@ -1,0 +1,7 @@
+{
+  "slug": "policyhelix",
+  "name": "PolicyHelix",
+  "title": "Make every decision inspectable.",
+  "description": "A private web workspace for authorization policies, simulation results and controlled rollout.",
+  "accent": "#e1b4eb"
+}

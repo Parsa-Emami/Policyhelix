@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:parsa:policyhelix:input:0",
+  "title": "authorization-decision planning draft",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "subject": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "resource": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "action": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 4096
+    },
+    "policy_digest": {
+      "type": "string",
+      "pattern": "^[a-f0-9]{64}$"
+    },
+    "allow": {
+      "type": "boolean"
+    },
+    "reasons": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "type": "object"
+      }
+    },
+    "obligations": {
+      "type": "array",
+      "maxItems": 100000,
+      "items": {
+        "type": "object"
+      }
+    }
+  },
+  "required": [
+    "subject",
+    "resource",
+    "action",
+    "policy_digest",
+    "allow",
+    "reasons",
+    "obligations"
+  ]
+}

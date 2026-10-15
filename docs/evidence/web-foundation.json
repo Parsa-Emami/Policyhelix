@@ -1,0 +1,87 @@
+{
+  "project": "PolicyHelix",
+  "date": "2026-10-15",
+  "scope": "web foundation; domain engines not certified",
+  "passed": true,
+  "source_identity": "sha256:12743c08f7ca53dc119724dc7df7f4a64102094d16df0d0394e2ad2c4f86dbe9",
+  "identity_reproduction": "python3 scripts/source_identity.py --check",
+  "web_tasks_verified": [
+    "W01",
+    "W02",
+    "W03",
+    "W04",
+    "W05"
+  ],
+  "base_commit": "e7c238f05992c4ba41a46bb011b38877286017bc",
+  "environment": {
+    "node": "24.19.0",
+    "npm": "11.9.0",
+    "python": "3.12.14",
+    "playwright": "1.64.1",
+    "chromium": "153.0.8010.0",
+    "browser_install_note": "Playwright CDN download failed in this environment; tests ran with the explicit WEB_TEST_CHROMIUM override using a Chromium binary from @sparticuz/chromium 153.0.0. CI retains the managed-browser install path."
+  },
+  "commands": [
+    {
+      "command": "npm ci --ignore-scripts --offline --no-audit --no-fund",
+      "exit_code": 0,
+      "output": "\nadded 26 packages in 2s\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n"
+    },
+    {
+      "command": "npm run check",
+      "exit_code": 0,
+      "output": "\n> @parsa-emami/policyhelix-web@0.0.1 check\n> npm run validate:plan && npm run build && npm test\n\n\n> @parsa-emami/policyhelix-web@0.0.1 validate:plan\n> python3 scripts/plan.py validate\n\nPLAN VALIDATION PASSED — 40 intents, coverage and progress checked; no application runtime tests performed\n\n> @parsa-emami/policyhelix-web@0.0.1 build\n> npm run prepare:web && npm run typecheck && vite build --config apps/web/vite.config.ts\n\n\n> @parsa-emami/policyhelix-web@0.0.1 prepare:web\n> node scripts/generate-web-data.mjs\n\n\n> @parsa-emami/policyhelix-web@0.0.1 typecheck\n> tsc -p tsconfig.json\n\nvite v8.3.4 building client environment for production...\ntransforming...\n✓ 18 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/web/index.html                   0.79 kB │ gzip:  0.47 kB\ndist/web/assets/index-C1o0yeg5.css    4.36 kB │ gzip:  1.62 kB\ndist/web/assets/index-BqdG0lNM.js   240.04 kB │ gzip: 75.57 kB\n\n✓ built in 768ms\n\n> @parsa-emami/policyhelix-web@0.0.1 test\n> node --test tests/web/*.test.mjs\n\n✔ public configuration fails closed on engine flags, external endpoints, unknown keys and project mismatch (3.436095ms)\n✔ preview rejects hostile structure, excessive UTF-8 size and excessive complexity (3.035707ms)\n✔ HTTP isolation, cache rules, health semantics, methods, traversal and symlink containment (125.846468ms)\n✔ generated project and runtime identity agree with exactly forty original product tasks (2.69639ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 298.216838\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED\nChecked 66 JSON files and repository contract invariants.\n"
+    },
+    {
+      "command": "npm run package:web",
+      "exit_code": 0,
+      "output": "\n> @parsa-emami/policyhelix-web@0.0.1 package:web\n> node scripts/package-web.mjs\n\nPackaged web-only release; source dirty=true; engineReady=false\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n"
+    },
+    {
+      "command": "WEB_TEST_CHROMIUM=/workspace/scratch/60d0d4d1343a/browser-runtime/chromium npm run test:browser",
+      "exit_code": 0,
+      "output": "\n> @parsa-emami/policyhelix-web@0.0.1 test:browser\n> playwright test\n\n\nRunning 2 tests using 1 worker\n\n  ✓  1 tests/browser/workspace.spec.ts:2:1 › workspace, local preview, navigation and roadmap filters work (395ms)\n  ✓  2 tests/browser/workspace.spec.ts:24:1 › configuration failure blocks workspace startup (139ms)\n\n  2 passed (1.7s)\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n[WebServer] (node:857) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)\n[WebServer] npm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n[WebServer] (node:870) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n[WebServer] (Use `node --trace-warnings ...` to show where the warning was created)\n(node:882) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.\n(Use `node --trace-warnings ...` to show where the warning was created)\n"
+    },
+    {
+      "command": "npm run check",
+      "exit_code": 0,
+      "output": "\n> @parsa-emami/policyhelix-web@0.0.1 check\n> npm run validate:plan && npm run build && npm test\n\n\n> @parsa-emami/policyhelix-web@0.0.1 validate:plan\n> python3 scripts/plan.py validate\n\nPLAN VALIDATION PASSED — 40 intents, coverage and progress checked; no application runtime tests performed\n\n> @parsa-emami/policyhelix-web@0.0.1 build\n> npm run prepare:web && npm run typecheck && vite build --config apps/web/vite.config.ts\n\n\n> @parsa-emami/policyhelix-web@0.0.1 prepare:web\n> node scripts/generate-web-data.mjs\n\n\n> @parsa-emami/policyhelix-web@0.0.1 typecheck\n> tsc -p tsconfig.json\n\nvite v8.3.4 building client environment for production...\ntransforming...\n✓ 18 modules transformed.\nrendering chunks...\ncomputing gzip size...\ndist/web/index.html                   0.79 kB │ gzip:  0.47 kB\ndist/web/assets/index-C1o0yeg5.css    4.36 kB │ gzip:  1.62 kB\ndist/web/assets/index-BxQSF2EV.js   240.03 kB │ gzip: 75.57 kB\n\n✓ built in 196ms\n\n> @parsa-emami/policyhelix-web@0.0.1 test\n> node --test tests/web/*.test.mjs\n\n✔ public configuration fails closed on engine flags, external endpoints, unknown keys and project mismatch (1.153523ms)\n✔ preview rejects hostile structure, excessive UTF-8 size and excessive complexity (1.626803ms)\n✔ HTTP isolation, cache rules, health semantics, methods, traversal and symlink containment (99.709642ms)\n✔ generated project and runtime identity agree with exactly forty original product tasks (2.339429ms)\nℹ tests 4\nℹ suites 0\nℹ pass 4\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 209.82413\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n"
+    },
+    {
+      "command": "npm run package:web",
+      "exit_code": 0,
+      "output": "\n> @parsa-emami/policyhelix-web@0.0.1 package:web\n> node scripts/package-web.mjs\n\nPackaged web-only release; source dirty=true; engineReady=false\nnpm warn Unknown env config \"http-proxy\". This will stop working in the next major version of npm.\n"
+    },
+    {
+      "command": "python3 scripts/plan.py validate",
+      "exit_code": 0,
+      "output": "PLAN VALIDATION PASSED — 40 intents, coverage and progress checked; no application runtime tests performed\n"
+    },
+    {
+      "command": "python3 scripts/source_identity.py --check",
+      "exit_code": 0,
+      "output": "Source identity verified\n"
+    }
+  ],
+  "results": {
+    "node_tests_passed": 4,
+    "browser_tests_passed": 2,
+    "production_build": true,
+    "web_package": true,
+    "original_contract_validation": true,
+    "domain_tests": "not run",
+    "host_deployment": "not performed",
+    "remote_ci": "pending commit",
+    "standalone_artifact_smoke": "Artifact checksums, standalone startup, web readiness, HTML and API rejection passed."
+  },
+  "limitations": [
+    "Domain C01-C40 milestones are not verified by these web tests.",
+    "Nginx/systemd are supplied templates; live TLS admission and host recovery are W08.",
+    "RiskWeft Laravel code is preserved; PHP/Composer and database integration were not executed."
+  ]
+}

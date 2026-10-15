@@ -1,0 +1,261 @@
+{
+  "asyncapi": "3.1.0",
+  "id": "urn:parsa-security:policyhelix:events:v1",
+  "info": {
+    "title": "PolicyHelix Events",
+    "version": "1.0.0",
+    "description": "Canonical application event contract. Delivery is at-least-once; consumers must be idempotent and deduplicate by event id."
+  },
+  "defaultContentType": "application/json",
+  "channels": {
+    "event_policy_revision_created_v1": {
+      "address": "policy.revision_created.v1",
+      "messages": {
+        "PolicyRevisionCreatedV1Message": {
+          "$ref": "#/components/messages/PolicyRevisionCreatedV1Message"
+        }
+      }
+    },
+    "event_bundle_published_v1": {
+      "address": "bundle.published.v1",
+      "messages": {
+        "BundlePublishedV1Message": {
+          "$ref": "#/components/messages/BundlePublishedV1Message"
+        }
+      }
+    },
+    "event_gateway_bundle_applied_v1": {
+      "address": "gateway.bundle_applied.v1",
+      "messages": {
+        "GatewayBundleAppliedV1Message": {
+          "$ref": "#/components/messages/GatewayBundleAppliedV1Message"
+        }
+      }
+    },
+    "event_authorization_decision_v1": {
+      "address": "authorization.decision.v1",
+      "messages": {
+        "AuthorizationDecisionV1Message": {
+          "$ref": "#/components/messages/AuthorizationDecisionV1Message"
+        }
+      }
+    },
+    "event_session_revoked_v1": {
+      "address": "session.revoked.v1",
+      "messages": {
+        "SessionRevokedV1Message": {
+          "$ref": "#/components/messages/SessionRevokedV1Message"
+        }
+      }
+    },
+    "event_stepup_required_v1": {
+      "address": "stepup.required.v1",
+      "messages": {
+        "StepupRequiredV1Message": {
+          "$ref": "#/components/messages/StepupRequiredV1Message"
+        }
+      }
+    },
+    "event_bundle_rollback_rejected_v1": {
+      "address": "bundle.rollback_rejected.v1",
+      "messages": {
+        "BundleRollbackRejectedV1Message": {
+          "$ref": "#/components/messages/BundleRollbackRejectedV1Message"
+        }
+      }
+    }
+  },
+  "operations": {
+    "send_policy_revision_created_v1": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/event_policy_revision_created_v1"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/event_policy_revision_created_v1/messages/PolicyRevisionCreatedV1Message"
+        }
+      ]
+    },
+    "send_bundle_published_v1": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/event_bundle_published_v1"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/event_bundle_published_v1/messages/BundlePublishedV1Message"
+        }
+      ]
+    },
+    "send_gateway_bundle_applied_v1": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/event_gateway_bundle_applied_v1"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/event_gateway_bundle_applied_v1/messages/GatewayBundleAppliedV1Message"
+        }
+      ]
+    },
+    "send_authorization_decision_v1": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/event_authorization_decision_v1"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/event_authorization_decision_v1/messages/AuthorizationDecisionV1Message"
+        }
+      ]
+    },
+    "send_session_revoked_v1": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/event_session_revoked_v1"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/event_session_revoked_v1/messages/SessionRevokedV1Message"
+        }
+      ]
+    },
+    "send_stepup_required_v1": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/event_stepup_required_v1"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/event_stepup_required_v1/messages/StepupRequiredV1Message"
+        }
+      ]
+    },
+    "send_bundle_rollback_rejected_v1": {
+      "action": "send",
+      "channel": {
+        "$ref": "#/channels/event_bundle_rollback_rejected_v1"
+      },
+      "messages": [
+        {
+          "$ref": "#/channels/event_bundle_rollback_rejected_v1/messages/BundleRollbackRejectedV1Message"
+        }
+      ]
+    }
+  },
+  "components": {
+    "messages": {
+      "PolicyRevisionCreatedV1Message": {
+        "name": "policy.revision_created.v1",
+        "title": "policy.revision_created.v1",
+        "payload": {
+          "$ref": "#/components/schemas/EventEnvelope"
+        }
+      },
+      "BundlePublishedV1Message": {
+        "name": "bundle.published.v1",
+        "title": "bundle.published.v1",
+        "payload": {
+          "$ref": "#/components/schemas/EventEnvelope"
+        }
+      },
+      "GatewayBundleAppliedV1Message": {
+        "name": "gateway.bundle_applied.v1",
+        "title": "gateway.bundle_applied.v1",
+        "payload": {
+          "$ref": "#/components/schemas/EventEnvelope"
+        }
+      },
+      "AuthorizationDecisionV1Message": {
+        "name": "authorization.decision.v1",
+        "title": "authorization.decision.v1",
+        "payload": {
+          "$ref": "#/components/schemas/EventEnvelope"
+        }
+      },
+      "SessionRevokedV1Message": {
+        "name": "session.revoked.v1",
+        "title": "session.revoked.v1",
+        "payload": {
+          "$ref": "#/components/schemas/EventEnvelope"
+        }
+      },
+      "StepupRequiredV1Message": {
+        "name": "stepup.required.v1",
+        "title": "stepup.required.v1",
+        "payload": {
+          "$ref": "#/components/schemas/EventEnvelope"
+        }
+      },
+      "BundleRollbackRejectedV1Message": {
+        "name": "bundle.rollback_rejected.v1",
+        "title": "bundle.rollback_rejected.v1",
+        "payload": {
+          "$ref": "#/components/schemas/EventEnvelope"
+        }
+      }
+    },
+    "schemas": {
+      "EventEnvelope": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "specversion",
+          "id",
+          "source",
+          "type",
+          "time",
+          "subject",
+          "data"
+        ],
+        "properties": {
+          "specversion": {
+            "type": "string",
+            "const": "1.0"
+          },
+          "id": {
+            "type": "string",
+            "minLength": 16
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "policy.revision_created.v1",
+              "bundle.published.v1",
+              "gateway.bundle_applied.v1",
+              "authorization.decision.v1",
+              "session.revoked.v1",
+              "stepup.required.v1",
+              "bundle.rollback_rejected.v1"
+            ]
+          },
+          "time": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "traceparent": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "datacontenttype": {
+            "type": "string",
+            "const": "application/json"
+          },
+          "data": {
+            "type": "object"
+          }
+        }
+      }
+    }
+  }
+}
