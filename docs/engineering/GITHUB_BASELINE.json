@@ -1,0 +1,13 @@
+{
+  "repository": "Parsa-Emami/Policyhelix",
+  "reviewed_commit": "e7c238f05992c4ba41a46bb011b38877286017bc",
+  "existing_file_count": 78,
+  "existing_runtime": "architecture scaffold only",
+  "protected_files_sha256": {
+    ".env.example": "d68736bd9cc7e426b7b839681d43495d386e83a78200851fd8432af8a1e68e2f"
+  },
+  "skipped_input_archival_config_paths": [
+    "legacy/v7/.env.example"
+  ],
+  "preservation": "All existing protected files remain at their original paths with identical bytes. Supplied archival env duplicates were omitted to avoid creating extra config files."
+}

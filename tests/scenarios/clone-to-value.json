@@ -1,0 +1,35 @@
+{
+  "project": "PolicyHelix",
+  "status": "planned acceptance contract; not executed domain proof",
+  "input": "repository-authored synthetic licensed fixtures",
+  "steps": [
+    "Simulator fixture",
+    "sign/verify bundle",
+    "protect owned upstream",
+    "test spoofed header/direct origin",
+    "revoke",
+    "simulate decision/IdP outage and expired policy."
+  ],
+  "expected_invariants": [
+    "Private resources fail closed",
+    "Only authenticated normalized identity enters policy",
+    "Bundle signature plus freshness and monotonic revision"
+  ],
+  "negative_uat": [
+    "fixture policy در simulator نتیجهٔ expected بدهد و دلیل deny مشخص باشد",
+    "origin مستقیم و header جعلی identity مسیر دسترسی نسازند",
+    "decision/IdP outage، revoke و bundle قدیمی باید رفتار fail-closed مستند داشته باشند"
+  ],
+  "clean_host_commands": [
+    "git clone https://github.com/Parsa-Emami/Policyhelix.git",
+    "cd Policyhelix",
+    "npm run setup",
+    "npm start"
+  ],
+  "requires_at_C30": [
+    "real engine and required local providers",
+    "the entire workflow",
+    "restart and restore",
+    "no paid/cloud account or sibling clone"
+  ]
+}

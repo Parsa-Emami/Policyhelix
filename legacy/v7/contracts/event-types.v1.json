@@ -1,0 +1,16 @@
+{
+  "project": "PolicyHelix",
+  "envelope": "CloudEvents-compatible 1.0 profile",
+  "delivery": "at-least-once",
+  "ordering": "not globally guaranteed; per-aggregate sequencing when documented",
+  "deduplication": "required by event id",
+  "types": [
+    "policy.revision_created.v1",
+    "bundle.published.v1",
+    "gateway.bundle_applied.v1",
+    "authorization.decision.v1",
+    "session.revoked.v1",
+    "stepup.required.v1",
+    "bundle.rollback_rejected.v1"
+  ]
+}

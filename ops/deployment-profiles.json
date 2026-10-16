@@ -1,0 +1,43 @@
+{
+  "version": "0",
+  "project": "PolicyHelix",
+  "status": "web_foundation",
+  "primary_mode": "private-web",
+  "domain_profile": {
+    "public_demo": "synthetic-only",
+    "admit_untrusted_runtime_jobs": false,
+    "enable_sensitive_data_upload_by_default": false,
+    "https_required": true
+  },
+  "private_profile": {
+    "single_owner": true,
+    "persistent_local_volume": true,
+    "use_external_database_service": false,
+    "providers": [
+      "Go gateway and simulator",
+      "OPA evaluation",
+      "Existing OIDC IdP",
+      "SQLite sessions/audit",
+      "Reverse proxy TLS ingress"
+    ]
+  },
+  "capacity_targets": {
+    "protected_apps": 1,
+    "users": 5,
+    "decision_deadline_ms": 200,
+    "session_ttl_minutes": 15,
+    "revocation_bound_seconds": 30
+  },
+  "measured": false,
+  "engine_mode": "embedded-private",
+  "web": {
+    "artifact": "dist/release",
+    "listen": "127.0.0.1",
+    "port": 4309,
+    "https_proxy": "ops/web/nginx.conf.template",
+    "service": "ops/web/service.systemd",
+    "engine_enabled": false,
+    "private_admission": "deny-all until operator sets trusted network ranges",
+    "offline": false
+  }
+}
