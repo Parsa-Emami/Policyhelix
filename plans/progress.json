@@ -87,10 +87,12 @@
     },
     {
       "id": "C10",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C10.json"
+      ],
+      "source_identity": "sha256:5330d32f5d71825c1deffe9862b88541b7800107f4ef7e2335eeae9c5da074ee",
+      "notes": "Deterministic signed policy bundle builder implemented in internal/bundles/build.go and cmd/policyhelix/main.go; F04 bundle records issuer, digest, revision and validity period verified."
     },
     {
       "id": "C11",

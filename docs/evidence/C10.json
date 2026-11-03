@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "commit_id": "C10",
+  "project": "PolicyHelix",
+  "date": "2026-11-03",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: build deterministic signed policy bundle",
+  "source_identity": "sha256:5330d32f5d71825c1deffe9862b88541b7800107f4ef7e2335eeae9c5da074ee",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "environment": {
+    "os": "linux",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.23.6 linux/amd64"
+    },
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "unmeasured planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.23.6 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C10/positive-deterministic-signed-bundle.json",
+      "sha256": "1ba067c01ffe550896bcda34490fedc2da8547220adc6c7cbd24e00547e97943",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C10 positive deterministic signed bundle"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C10/negative-modified-byte-tampered.json",
+      "sha256": "9f3ad2bc66da2281123090daad4bcf1258b4d5016ab051e6d95ca12c9c0508f8",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C10 single modified byte detection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C10/negative-untrusted-or-missing-signer.json",
+      "sha256": "1eea8008f76552ccec17cbea68fa86392085db3d554fbd33584d47d7c6aeb96a",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C10 untrusted or missing signer key"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C10/negative-stale-or-expired-revision.json",
+      "sha256": "af892028aaf199682d8d8f7ade13e7fc221b371fddc01223001d9137496105c7",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C10 stale or expired revision rejection and authority retention"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C10/negative-private-resource-fail-closed.json",
+      "sha256": "c0dc6b42ff50fe3bf034e0b82adfe1bd2ccac740bdeb73e2356b0b395c438218",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C10 unauthenticated private resource fail-closed rejection"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "PLAN VALIDATION PASSED — 40 intents, coverage and progress checked; no application runtime tests performed"
+    },
+    {
+      "command": "go test -v ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "ok github.com/parsa-emami/policyhelix/cmd/policyhelix; ok github.com/parsa-emami/policyhelix/internal/contracts; ok github.com/parsa-emami/policyhelix/internal/policy; ok github.com/parsa-emami/policyhelix/internal/storage; ok github.com/parsa-emami/policyhelix/tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "16 tests passed, 0 failed"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "VALIDATION PASSED"
+    }
+  ],
+  "results": [
+    "Deterministic signed policy bundle builder implemented in internal/bundles/build.go (BundleBuildSpec, BuildDeterministicBundle, VerifyBundleSignature, Keyring, BundleAuthorityManager, RunBundleFixture)",
+    "Cryptographic Ed25519 signing and verification with deterministic key derivation implemented",
+    "Bundle records issuer, digest, revision and validity period, and build is strictly deterministic across repeated invocations (Requirement F04)",
+    "Engine CLI extended in cmd/policyhelix/main.go with --build-bundle flag and loopback HTTP endpoint POST /v1/runtime/bundles/build",
+    "Required negative security invariants verified: 1-byte modified tamper detection, untrusted signer rejection, stale/replayed revision rejection retaining valid authority, and private resources fail-closed",
+    "Regression suite in tests/bundle_test.go covering acceptance criteria, negative invariants, fixture manifest integrity, CLI and HTTP endpoints",
+    "5 synthetic licensed test fixtures created under tests/fixtures/policyhelix/C10/ with manifest.json"
+  ],
+  "observed_limitations": [
+    "Deterministic signed bundle generation and authority verification implemented; complete verification pipeline enforcement follows in C11."
+  ],
+  "rollback_or_recovery_observation": "Revert the isolated C10 bundle commit via git revert without affecting bounded local policy evaluation, contracts validation, simulator, or storage adapters."
+}

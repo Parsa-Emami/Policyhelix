@@ -15,6 +15,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/parsa-emami/policyhelix/internal/bundles"
 	"github.com/parsa-emami/policyhelix/internal/contracts"
 	"github.com/parsa-emami/policyhelix/internal/policy"
 	"github.com/parsa-emami/policyhelix/internal/storage"
@@ -339,6 +340,49 @@ func setupRouter() *http.ServeMux {
 		_ = json.NewEncoder(w).Encode(report)
 	})
 
+	mux.HandleFunc("/v1/runtime/bundles/build", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", "POST")
+			http.Error(w, `{"error":"method_not_allowed"}`, http.StatusMethodNotAllowed)
+			return
+		}
+		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 1048576))
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"error":   bundles.ErrCodeInvalidBundleSpec,
+				"message": "Failed to read request body or exceeded 1MB",
+			})
+			return
+		}
+
+		var spec bundles.BundleBuildSpec
+		if err := json.Unmarshal(body, &spec); err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"error":   bundles.ErrCodeInvalidBundleSpec,
+				"message": fmt.Sprintf("Malformed build spec JSON: %v", err),
+			})
+			return
+		}
+
+		bundle, err := bundles.BuildDeterministicBundle(spec)
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"error":   bundles.ErrCodeInvalidBundleSpec,
+				"message": err.Error(),
+			})
+			return
+		}
+
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(bundle)
+	})
+
 	return mux
 }
 
@@ -391,6 +435,7 @@ func main() {
 	contractFlag := flag.String("evaluate-contract", "", "Path to v1 domain contract input JSON to evaluate")
 	simulateFlag := flag.String("simulate", "", "Path to offline decision simulation fixture JSON or directory")
 	simulateFixtureFlag := flag.String("simulate-fixture", "", "Alias for -simulate")
+	buildBundleFlag := flag.String("build-bundle", "", "Path to BundleBuildSpec JSON to build a deterministic signed bundle")
 	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	flag.Parse()
@@ -492,6 +537,26 @@ func main() {
 		if err != nil || rep.Status != "passed" {
 			os.Exit(1)
 		}
+		return
+	}
+
+	if *buildBundleFlag != "" {
+		raw, err := os.ReadFile(*buildBundleFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Build spec read error: %v\n", err)
+			os.Exit(1)
+		}
+		var spec bundles.BundleBuildSpec
+		if err := json.Unmarshal(raw, &spec); err != nil {
+			fmt.Fprintf(os.Stderr, "Build spec JSON error: %v\n", err)
+			os.Exit(1)
+		}
+		bundle, err := bundles.BuildDeterministicBundle(spec)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Bundle build error: %v\n", err)
+			os.Exit(1)
+		}
+		_ = json.NewEncoder(os.Stdout).Encode(bundle)
 		return
 	}
 

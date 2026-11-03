@@ -1,0 +1,40 @@
+{
+  "commit_id": "C10",
+  "fixtures": [
+    {
+      "fixture_id": "positive-deterministic-signed-bundle",
+      "path": "tests/fixtures/policyhelix/C10/positive-deterministic-signed-bundle.json",
+      "sha256": "1ba067c01ffe550896bcda34490fedc2da8547220adc6c7cbd24e00547e97943",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-modified-byte-tampered",
+      "path": "tests/fixtures/policyhelix/C10/negative-modified-byte-tampered.json",
+      "sha256": "9f3ad2bc66da2281123090daad4bcf1258b4d5016ab051e6d95ca12c9c0508f8",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-untrusted-or-missing-signer",
+      "path": "tests/fixtures/policyhelix/C10/negative-untrusted-or-missing-signer.json",
+      "sha256": "1eea8008f76552ccec17cbea68fa86392085db3d554fbd33584d47d7c6aeb96a",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-stale-or-expired-revision",
+      "path": "tests/fixtures/policyhelix/C10/negative-stale-or-expired-revision.json",
+      "sha256": "af892028aaf199682d8d8f7ade13e7fc221b371fddc01223001d9137496105c7",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-private-resource-fail-closed",
+      "path": "tests/fixtures/policyhelix/C10/negative-private-resource-fail-closed.json",
+      "sha256": "c0dc6b42ff50fe3bf034e0b82adfe1bd2ccac740bdeb73e2356b0b395c438218",
+      "type": "negative",
+      "license": "Apache-2.0"
+    }
+  ]
+}

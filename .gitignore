@@ -47,3 +47,5 @@ vendor/
 apps/control-plane/build/
 .local-data/
 .cache/
+.aistudio/
+.aisudio/

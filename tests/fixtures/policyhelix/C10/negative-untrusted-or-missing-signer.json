@@ -1,0 +1,63 @@
+{
+  "fixture_id": "negative-untrusted-or-missing-signer",
+  "commit_id": "C10",
+  "description": "Missing signature evidence or untrusted signer key must not produce trusted success.",
+  "trusted_keys": [
+    {
+      "signer_key_id": "ed25519-primary-2026",
+      "issuer": "https://issuer.policyhelix.local",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    }
+  ],
+  "build_spec": {
+    "schema_version": "1",
+    "bundle_id": "bundle-analytics-v1",
+    "package": "policyhelix.authz",
+    "issuer": "https://issuer.policyhelix.local",
+    "signer_key_id": "ed25519-rogue-key",
+    "seed_hex": "9999999999999999999999999999999999999999999999999999999999999999",
+    "revision": 1,
+    "issued_at": "2026-11-03T10:00:00Z",
+    "expires_at": "2026-11-04T10:00:00Z",
+    "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+    "routes": [
+      {
+        "pattern": "/api/v1/analytics/reports",
+        "action": "read",
+        "classification": "private",
+        "allow_unauthenticated": false,
+        "required_roles": ["operator", "admin"]
+      }
+    ],
+    "rules": [
+      {
+        "id": "rule-operator-analytics-read",
+        "effect": "allow",
+        "path_pattern": "/api/v1/analytics/reports",
+        "actions": ["read"],
+        "roles": ["operator", "admin"],
+        "resource_class": "private",
+        "reason_code": "policy_allow_role_operator"
+      }
+    ]
+  },
+  "input": {
+    "request_id": "req-c10-untrusted",
+    "path": "/api/v1/analytics/reports",
+    "action": "read",
+    "deadline_ms": 50,
+    "eval_time": "2026-11-03T12:00:00Z",
+    "subject": {
+      "id": "operator-1",
+      "issuer": "https://issuer.policyhelix.local",
+      "roles": ["operator"],
+      "authenticated": true
+    }
+  },
+  "expected": {
+    "build_success": true,
+    "ingest_success": false,
+    "error_code": "UNTRUSTED_OR_MISSING_SIGNER",
+    "allow": false
+  }
+}

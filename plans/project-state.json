@@ -1,7 +1,7 @@
 {
   "project": "PolicyHelix",
   "reviewed_commit": "d8d4f8b",
-  "readiness": "OFFLINE_DECISION_SIMULATOR_VERIFIED",
+  "readiness": "DETERMINISTIC_SIGNED_BUNDLE_VERIFIED",
   "core_ready": false,
   "implemented": [
     "responsive web shell",
@@ -13,10 +13,11 @@
     "engine clean-checkout verification and runtime CI",
     "model input output and resource classes",
     "evaluate bounded local policy bundles",
-    "offline expected decision fixture simulation"
+    "offline expected decision fixture simulation",
+    "deterministic signed policy bundle builder"
   ],
-  "engine": "offline decision simulator, bounded local policy bundle evaluator, domain route & resource classes, recoverable storage, typed contracts v1 & runtime CI",
-  "next_task": "C10",
+  "engine": "deterministic signed bundle builder, offline decision simulator, bounded local policy bundle evaluator, domain route & resource classes, recoverable storage, typed contracts v1 & runtime CI",
+  "next_task": "C11",
   "next_command": "npm run plan -- next",
   "full_product_endpoint": "C30 locally usable; C40 full published OSS v1"
 }
