@@ -1,0 +1,19 @@
+{
+  "fixture_id": "C03-NEG-03",
+  "commit_id": "C03",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture for C03 unauthenticated private access fail-closed",
+  "request": {
+    "subject": "anonymous",
+    "resource": "service:analytics:private",
+    "action": "read",
+    "authenticated": false
+  },
+  "expected_result": {
+    "allow": false,
+    "error": "unauthenticated_identity",
+    "reasons": [
+      "fail_closed_private_resource"
+    ]
+  }
+}

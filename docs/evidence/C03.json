@@ -1,0 +1,112 @@
+{
+  "schema_version": 1,
+  "commit_id": "C03",
+  "project": "PolicyHelix",
+  "date": "2026-11-03",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: implement unified local engine setup and launch",
+  "source_identity": "sha256:d8b2e1f40aa91240c5f206689d71fa970e7a5c898b631d8e64cbebfb0e1b369c",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "environment": {
+    "os": "linux",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.23.6 linux/amd64"
+    },
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "unmeasured planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.23.6 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C03/positive-engine-launch.json",
+      "sha256": "328a0074d64a580dd409e3bf891996407c66fc7c8594ada7a38715b696092720",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic fixture for C03 engine launch and smoke test"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C03/invalid-missing-provider.json",
+      "sha256": "ab6772e9aa105c1348b895a3a96cce4efdabdb1e3c18cc005e6cca83227e3743",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic fixture for C03 provider outage fail-closed"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C03/invalid-malformed-request.json",
+      "sha256": "fc06d21cd16c81337a312f163344f3f81d6592d72fda2132bce7909e6eae7b09",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic fixture for C03 malformed request rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C03/invalid-private-resource-fail-closed.json",
+      "sha256": "8d726dd9bdeef89eb60d6ce091de522a9460ab5796a5ccd0f9205b9e791233a1",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic fixture for C03 unauthenticated private access fail-closed"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "go test ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "ok github.com/parsa-emami/policyhelix/cmd/policyhelix"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "13 tests passed, 0 failed"
+    },
+    {
+      "command": "npm run test:browser",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "2 passed (2.4s)"
+    },
+    {
+      "command": "npm run test:clone",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "real git clone -> npm run setup -> web startup"
+    }
+  ],
+  "results": [
+    "Go engine runtime (cmd/policyhelix) implemented with healthz, readyz, status, and fixture evaluation endpoints",
+    "Self-contained Go engine smoke test suite (go test ./...) verified version, occupied port rejection, non-loopback bind rejection, and fail-closed private resource invariants",
+    "Unified single-terminal process supervisor (scripts/start-local.mjs) supervises loopback Go engine and web workspace with clean coordinated SIGINT/SIGTERM shutdown",
+    "npm run setup prepares both web client assets and Go engine binary (dist/engine/policyhelix)",
+    "React browser workspace wires /api/v1/runtime/status proxy and renders live engine supervision telemetry",
+    "Synthetic C03 fixtures (positive launch, missing provider, malformed request, unauthenticated private resource) verified with Apache-2.0 provenance"
+  ],
+  "observed_limitations": [
+    "Minimal health and local engine supervision implemented; core business authorization evaluation features await C04-C30."
+  ],
+  "rollback_or_recovery_observation": "Revert the isolated runtime setup commit cleanly via git revert when no incompatible data was accepted."
+}

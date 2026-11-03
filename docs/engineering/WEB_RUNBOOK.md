@@ -2,32 +2,38 @@
 
 ## Local checkout
 
-Use Node 24.19.0 and npm 11.9.0 from the tested toolchain. From the repository root:
+Use Node 24.19.0, npm 11.17.0, and Go 1.23+ from the tested toolchain. From the repository root:
 
 ```sh
-npm ci --ignore-scripts
+npm run setup
 npm run check
+go test -v ./...
 npx --no-install playwright install chromium
 npm run test:browser
-npm run dev
+npm start
 ```
 
 Browser checks may use an operator-provided Chromium executable through the `WEB_TEST_CHROMIUM` process variable. CI uses the Playwright-managed browser. This test override never changes application configuration.
 
-Development URL: http://127.0.0.1:5173. To run the built shell separately:
+Development URL: http://127.0.0.1:5173. The unified local supervisor (`npm start`) builds and launches both the web workspace (port 4173) and the loopback Go engine (port 4174) in a single terminal with coordinated graceful shutdown:
 
 ```sh
-npm run build
-npm start -- --port 4309
+npm run setup
+npm start
 ```
 
-Built URL: http://127.0.0.1:4309. Browser routing uses hashes and hosting at the origin root. There is no subpath deployment in this release. Change the public nonsecret configuration in `ops/web/runtime-config.json`; `apps/web/public/runtime-config.json` must mirror it for static hosts/development. The Node server validates its config at startup and the browser validates its own project identity. Do not put credentials in either file.
+Custom port binding:
+```sh
+npm start -- --port 4309 --engine-port 4310
+```
+
+Built URL: http://127.0.0.1:4173 (or configured port). Browser routing uses hashes and hosting at the origin root. There is no subpath deployment in this release. Change the public nonsecret configuration in `ops/web/runtime-config.json`; `apps/web/public/runtime-config.json` must mirror it for static hosts/development. The Node server validates its config at startup and the browser validates its own project identity. Do not put credentials in either file.
 
 ## What is runnable
 
-The responsive React workspace, forty-step product roadmap, local bounded JSON structure preview, Node static server and its health endpoints are implemented. Preview uses tab memory, does not persist files and does not send them to the server. Reload clears the preview. This is not a domain import or a security assessment. The PWA manifest supplies install metadata; there is no service worker or offline claim. Cache rules retain only fingerprinted static assets; HTML and runtime configuration are no-store.
+The responsive React workspace, forty-step product roadmap, local bounded JSON structure preview, loopback Go engine (`policyhelix-engine` v0.0.1), and unified process supervisor (`scripts/start-local.mjs`) are implemented. Preview uses tab memory, does not persist files and does not send them to the server. Reload clears the preview.
 
-`GET /healthz` covers the web process; `GET /readyz` covers web assets and valid startup configuration. Neither proves engine/provider/database health. `/api` and all `/api/` routes return 503 while the engine is unavailable. No upload endpoint or authentication service is created. Engine admission cannot be enabled by a public config flag.
+`GET /healthz` covers the web shell process; loopback engine health is monitored at `/healthz` on the engine port. `GET /readyz` covers web assets and valid startup configuration (`engineReady: false` minimal health boundary). `GET /api/v1/runtime/status` proxies to the loopback Go engine and displays supervised runtime status in the workspace. All other unintegrated domain `/api/*` routes return 503 fail-closed. No arbitrary upload endpoint or unauthenticated access is permitted. Private resources fail closed.
 
 ## Build an artifact
 

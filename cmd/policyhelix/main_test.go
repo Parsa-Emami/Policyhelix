@@ -1,0 +1,249 @@
+package main
+
+import (
+	"bytes"
+	"encoding/json"
+	"fmt"
+	"net"
+	"net/http"
+	"os/exec"
+	"path/filepath"
+	"strings"
+	"testing"
+	"time"
+)
+
+func TestEngineVersion(t *testing.T) {
+	cmd := exec.Command("go", "run", "./main.go", "--version")
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	if err := cmd.Run(); err != nil {
+		t.Fatalf("go run --version failed: %v, stderr: %s", err, stderr.String())
+	}
+
+	var resp VersionResponse
+	if err := json.Unmarshal(stdout.Bytes(), &resp); err != nil {
+		t.Fatalf("Failed to parse version JSON: %v, output: %s", err, stdout.String())
+	}
+
+	if resp.Project != "PolicyHelix" || resp.Engine != EngineName || resp.Version != EngineVersion {
+		t.Errorf("Unexpected version response: %+v", resp)
+	}
+	if !resp.Loopback {
+		t.Errorf("Expected loopback=true")
+	}
+	if resp.CoreReady != false {
+		t.Errorf("Expected coreReady=false in minimal health launch")
+	}
+}
+
+func TestEngineSmokeTestCLI(t *testing.T) {
+	cmd := exec.Command("go", "run", "./main.go", "--smoke-test")
+	var stdout, stderr bytes.Buffer
+	cmd.Stdout = &stdout
+	cmd.Stderr = &stderr
+	if err := cmd.Run(); err != nil {
+		t.Fatalf("go run --smoke-test failed: %v, stderr: %s", err, stderr.String())
+	}
+
+	var res EvaluationResult
+	if err := json.Unmarshal(stdout.Bytes(), &res); err != nil {
+		t.Fatalf("Failed to parse smoke-test JSON: %v, output: %s", err, stdout.String())
+	}
+	if res.Status != "ok" || res.Engine != EngineName {
+		t.Errorf("Unexpected smoke test response: %+v", res)
+	}
+	if res.PrivateResourcesFailClosed == nil || !*res.PrivateResourcesFailClosed {
+		t.Errorf("Expected PrivateResourcesFailClosed=true")
+	}
+}
+
+func TestEngineLoopbackEnforcement(t *testing.T) {
+	nonLoopback := []string{"0.0.0.0", "192.168.1.100", "example.com"}
+	for _, host := range nonLoopback {
+		err := runServer(host, 0, make(chan struct{}))
+		if err == nil {
+			t.Errorf("Expected error for non-loopback host '%s', got nil", host)
+		}
+		if !strings.Contains(err.Error(), "loopback") {
+			t.Errorf("Expected loopback error message for host '%s', got: %v", host, err)
+		}
+	}
+}
+
+func TestEngineOccupiedPort(t *testing.T) {
+	// Bind a real listener on loopback
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("Failed to bind test listener: %v", err)
+	}
+	defer listener.Close()
+
+	port := listener.Addr().(*net.TCPAddr).Port
+
+	// Attempt to start engine on the same port
+	err = runServer("127.0.0.1", port, make(chan struct{}))
+	if err == nil {
+		t.Fatalf("Expected error for occupied port %d, got nil", port)
+	}
+	if !strings.Contains(err.Error(), "bind") && !strings.Contains(err.Error(), "address already in use") {
+		t.Errorf("Expected bind/address in use error, got: %v", err)
+	}
+}
+
+func TestEngineHealthAndStatusEndpoints(t *testing.T) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("Failed to allocate port: %v", err)
+	}
+	port := listener.Addr().(*net.TCPAddr).Port
+	_ = listener.Close()
+
+	stopCh := make(chan struct{})
+	serverDone := make(chan error, 1)
+
+	go func() {
+		serverDone <- runServer("127.0.0.1", port, stopCh)
+	}()
+
+	client := &http.Client{Timeout: 2 * time.Second}
+	baseURL := fmt.Sprintf("http://127.0.0.1:%d", port)
+
+	// Poll until ready
+	var ready bool
+	for i := 0; i < 20; i++ {
+		resp, err := client.Get(baseURL + "/healthz")
+		if err == nil && resp.StatusCode == http.StatusOK {
+			ready = true
+			_ = resp.Body.Close()
+			break
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+	if !ready {
+		close(stopCh)
+		t.Fatalf("Engine server did not become healthy in time")
+	}
+
+	// Test GET /healthz
+	resp, err := client.Get(baseURL + "/healthz")
+	if err != nil || resp.StatusCode != http.StatusOK {
+		t.Fatalf("GET /healthz failed: %v, status: %v", err, resp.Status)
+	}
+	var health map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&health)
+	_ = resp.Body.Close()
+	if health["status"] != "ok" || health["engine"] != EngineName {
+		t.Errorf("Unexpected healthz: %+v", health)
+	}
+
+	// Test GET /readyz
+	resp, err = client.Get(baseURL + "/readyz")
+	if err != nil || resp.StatusCode != http.StatusOK {
+		t.Fatalf("GET /readyz failed: %v, status: %v", err, resp.Status)
+	}
+	var readyz map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&readyz)
+	_ = resp.Body.Close()
+	if readyz["status"] != "ready" || readyz["businessFeaturesCompleted"] != false {
+		t.Errorf("Unexpected readyz: %+v", readyz)
+	}
+
+	// Test GET /v1/runtime/status
+	resp, err = client.Get(baseURL + "/v1/runtime/status")
+	if err != nil || resp.StatusCode != http.StatusOK {
+		t.Fatalf("GET /v1/runtime/status failed: %v, status: %v", err, resp.Status)
+	}
+	var status StatusResponse
+	_ = json.NewDecoder(resp.Body).Decode(&status)
+	_ = resp.Body.Close()
+	if status.Engine != EngineName || status.CoreReady != false || !status.Loopback {
+		t.Errorf("Unexpected status: %+v", status)
+	}
+
+	// Test POST /v1/runtime/evaluate-fixture with malformed payload
+	resp, err = client.Post(baseURL+"/v1/runtime/evaluate-fixture", "application/json", strings.NewReader(`{invalid json`))
+	if err != nil || resp.StatusCode != http.StatusBadRequest {
+		t.Errorf("Expected 400 for malformed json, got: %v, status: %v", err, resp.Status)
+	}
+	_ = resp.Body.Close()
+
+	// Clean shutdown via stopCh
+	close(stopCh)
+	select {
+	case err := <-serverDone:
+		if err != nil {
+			t.Errorf("Unexpected server shutdown error: %v", err)
+		}
+	case <-time.After(3 * time.Second):
+		t.Errorf("Server did not shut down within timeout")
+	}
+}
+
+func TestEngineC03Fixtures(t *testing.T) {
+	fixtureDir := filepath.Join("..", "..", "tests", "fixtures", "policyhelix", "C03")
+
+	// 1. Positive engine launch fixture
+	posPath := filepath.Join(fixtureDir, "positive-engine-launch.json")
+	res, err := evaluateFixtureFile(posPath)
+	if err != nil {
+		t.Fatalf("Failed evaluating positive fixture: %v", err)
+	}
+	if res.Status != "ok" || res.Engine != EngineName {
+		t.Errorf("Unexpected positive fixture outcome: %+v", res)
+	}
+
+	// 2. Missing provider fixture
+	missingPath := filepath.Join(fixtureDir, "invalid-missing-provider.json")
+	res, err = evaluateFixtureFile(missingPath)
+	if err != nil {
+		t.Fatalf("Failed evaluating missing provider fixture: %v", err)
+	}
+	if res.Allow == nil || *res.Allow != false || res.Error != "provider_unavailable" {
+		t.Errorf("Expected allow=false and error=provider_unavailable, got: %+v", res)
+	}
+
+	// 3. Malformed request fixture
+	malformedPath := filepath.Join(fixtureDir, "invalid-malformed-request.json")
+	res, err = evaluateFixtureFile(malformedPath)
+	if err != nil {
+		t.Fatalf("Failed evaluating malformed fixture: %v", err)
+	}
+	if res.Allow == nil || *res.Allow != false || res.Error != "malformed_fixture" {
+		t.Errorf("Expected allow=false and error=malformed_fixture, got: %+v", res)
+	}
+
+	// 4. Private resource fail-closed fixture
+	privPath := filepath.Join(fixtureDir, "invalid-private-resource-fail-closed.json")
+	res, err = evaluateFixtureFile(privPath)
+	if err != nil {
+		t.Fatalf("Failed evaluating private resource fixture: %v", err)
+	}
+	if res.Allow == nil || *res.Allow != false || res.Error != "unauthenticated_identity" {
+		t.Errorf("Expected allow=false and error=unauthenticated_identity, got: %+v", res)
+	}
+}
+
+func TestEngineRepeatAfterRestart(t *testing.T) {
+	privPath := filepath.Join("..", "..", "tests", "fixtures", "policyhelix", "C03", "invalid-private-resource-fail-closed.json")
+
+	// First run
+	res1, err := evaluateFixtureFile(privPath)
+	if err != nil {
+		t.Fatalf("Run 1 failed: %v", err)
+	}
+
+	// Simulate restart
+	time.Sleep(50 * time.Millisecond)
+
+	// Second run after restart
+	res2, err := evaluateFixtureFile(privPath)
+	if err != nil {
+		t.Fatalf("Run 2 failed: %v", err)
+	}
+
+	if *res1.Allow != *res2.Allow || res1.Error != res2.Error {
+		t.Errorf("Invariant changed across restart: run1=%+v, run2=%+v", res1, res2)
+	}
+}

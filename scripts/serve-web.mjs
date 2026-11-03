@@ -6,7 +6,7 @@ import { validateRuntimeConfig } from '../apps/web/src/lib/runtime-config.mjs';
 
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.webmanifest': 'application/manifest+json' };
 const csp = "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'";
-export function createWebServer({ root, config, projectId }) {
+export function createWebServer({ root, config, projectId, engineUrl }) {
   const valid = validateRuntimeConfig(config, projectId);
   const publicRoot = resolve(root);
   const within = path => { const diff = relative(publicRoot, path); return diff !== '..' && !diff.startsWith('../') && !isAbsolute(diff); };
@@ -33,6 +33,18 @@ export function createWebServer({ root, config, projectId }) {
     if (path === '/readyz') {
       try { await stat(resolve(publicRoot, 'index.html')); send(200, '{"status":"ready","scope":"web-shell","engineReady":false}'); }
       catch { send(503, '{"status":"not_ready","scope":"web-shell"}'); }
+      return;
+    }
+    if (path === '/api/v1/runtime/status' && engineUrl) {
+      try {
+        const upstream = await fetch(`${engineUrl}/v1/runtime/status`, { signal: AbortSignal.timeout(3000) });
+        if (upstream.ok) {
+          const body = await upstream.text();
+          send(200, body);
+          return;
+        }
+      } catch {}
+      send(503, '{"error":"engine_unavailable"}');
       return;
     }
     if (path === '/api' || path.startsWith('/api/')) { send(503, '{"error":"engine_not_integrated"}'); return; }

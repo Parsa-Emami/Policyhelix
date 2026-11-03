@@ -1,0 +1,20 @@
+{
+  "fixture_id": "C03-NEG-01",
+  "commit_id": "C03",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture for C03 provider outage fail-closed",
+  "request": {
+    "subject": "operator",
+    "resource": "service:analytics",
+    "action": "read",
+    "provider_required": "local_opa",
+    "provider_state": "unavailable"
+  },
+  "expected_result": {
+    "allow": false,
+    "error": "provider_unavailable",
+    "reasons": [
+      "fail_closed_provider_unavailable"
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "fixture_id": "C03-POS-01",
+  "commit_id": "C03",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture for C03 engine launch and smoke test",
+  "request": {
+    "command": "smoke-test",
+    "target": "loopback"
+  },
+  "expected_result": {
+    "status": "ok",
+    "engine": "policyhelix-engine",
+    "version": "0.0.1",
+    "businessFeaturesCompleted": false,
+    "private_resources_fail_closed": true
+  }
+}

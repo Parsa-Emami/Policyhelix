@@ -6,6 +6,8 @@ test('workspace, local preview, navigation and roadmap filters work', async ({ p
   page.on('request', request => { if (request.method() !== 'GET') uploads.push(request.url()); });
   await page.goto('/');
   await expect(page.getByRole('heading', { level: 1 })).toBeVisible();
+  await expect(page.locator('.badge')).toContainText('Engine Supervised');
+  await expect(page.locator('.notice')).toContainText('supervised on loopback');
   await page.getByLabel('Choose JSON file').setInputFiles({ name: 'example.json', mimeType: 'application/json', buffer: Buffer.from('{"review":"synthetic"}') });
   await expect(page.getByRole('status')).toContainText('example.json');
   await expect(page.getByRole('status')).toContainText('1 top-level fields');

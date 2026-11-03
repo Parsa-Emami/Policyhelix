@@ -1,15 +1,16 @@
 {
   "project": "PolicyHelix",
   "reviewed_commit": "c781bd7f03baf38124300d8428ab630b73d19bda",
-  "readiness": "WEB_FOUNDATION",
+  "readiness": "RUNTIME_SUPERVISED",
   "core_ready": false,
   "implemented": [
     "responsive web shell",
     "roadmap browser",
-    "local bounded JSON structure preview"
+    "local bounded JSON structure preview",
+    "unified local Go engine setup and process supervisor"
   ],
-  "engine": "not implemented",
-  "next_task": "C01",
+  "engine": "supervised loopback runtime (minimal health)",
+  "next_task": "C04",
   "next_command": "npm run plan -- next",
   "full_product_endpoint": "C30 locally usable; C40 full published OSS v1"
 }

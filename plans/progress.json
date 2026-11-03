@@ -24,10 +24,12 @@
     },
     {
       "id": "C03",
-      "status": "in_progress",
-      "evidence": [],
-      "source_identity": null,
-      "notes": "Web foundation implemented in W01-W05. Remaining domain/runtime acceptance and earlier prerequisite evidence still pending."
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C03.json"
+      ],
+      "source_identity": "sha256:d8b2e1f40aa91240c5f206689d71fa970e7a5c898b631d8e64cbebfb0e1b369c",
+      "notes": "Unified local Go engine setup, loopback supervisor, clean shutdown, and smoke tests verified."
     },
     {
       "id": "C04",

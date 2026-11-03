@@ -2,24 +2,24 @@
   "project": "PolicyHelix",
   "date": "2026-11-03",
   "base_commit": "220b2db632d4389e6eb123c52e4ea8be7d5bb004",
-  "scope": "Task C02: lock reproducible open-source resources, toolchain lock, third-party inventory and self-contained resource validator",
+  "scope": "Task C03: implement unified local engine setup and launch, Go runtime, single-terminal supervisor, and smoke tests",
   "core_tasks_verified": [
     "C01",
-    "C02"
+    "C02",
+    "C03"
   ],
   "commands": [
     "npm run validate:plan",
-    "node scripts/verify-resources.mjs",
-    "npm ci --ignore-scripts",
-    "npm run check",
-    "node scripts/verify-reference.mjs",
-    "python3 -m unittest discover -s tests/engineering -p 'test_*.py' -v"
+    "go test -v ./...",
+    "npm test",
+    "npm run test:browser",
+    "npm run test:clone"
   ],
-  "validation_results": "docs/evidence/C02.json",
-  "final_source_identity": "sha256:32e687fbc18d63402669889328ee2482a3c4132b5b1395ebc53759ecd91d5c31",
+  "validation_results": "docs/evidence/C03.json",
+  "final_source_identity": "sha256:d8b2e1f40aa91240c5f206689d71fa970e7a5c898b631d8e64cbebfb0e1b369c",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C03",
+  "next_task": "C04",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C02 verified. Reproducible open-source compilers, runtimes, providers and self-contained resource validator locked. Ready for C03 (implement unified local engine setup and launch)."
+  "continuation": "Task C03 verified. Go engine runtime, smoke tests, C03 synthetic fixtures, single-terminal supervisor, and browser workspace wiring implemented. Ready for C04 (define typed versioned domain inputs and results)."
 }

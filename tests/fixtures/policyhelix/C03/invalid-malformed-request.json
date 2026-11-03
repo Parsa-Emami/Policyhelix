@@ -1,0 +1,16 @@
+{
+  "fixture_id": "C03-NEG-02",
+  "commit_id": "C03",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture for C03 malformed request rejection",
+  "request": {
+    "corrupted": true
+  },
+  "expected_result": {
+    "allow": false,
+    "error": "malformed_fixture",
+    "reasons": [
+      "missing_required_fields"
+    ]
+  }
+}
