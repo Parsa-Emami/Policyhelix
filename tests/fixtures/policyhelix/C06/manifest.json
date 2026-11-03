@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "commit_id": "C06",
+  "project": "PolicyHelix",
+  "provenance": "repository-authored synthetic licensed fixtures",
+  "license": "Apache-2.0",
+  "fixtures": [
+    {
+      "fixture_id": "C06-POS-01",
+      "path": "tests/fixtures/policyhelix/C06/positive-operator-allow.json",
+      "sha256": "f886078824547ae90c20d39d6883b04cb5ca7fa85e8feb2cfe874bb1cf952140",
+      "type": "positive",
+      "stage": "clean-checkout-evaluation-verification",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C06-NEG-01",
+      "path": "tests/fixtures/policyhelix/C06/negative-tampered-signer.json",
+      "sha256": "1420383ca971a4cf421a9e3d6d6ee9eba8f84d455950e3ef3067150c43612c06",
+      "type": "negative",
+      "stage": "tampered-signer-fails-closed",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C06-NEG-02",
+      "path": "tests/fixtures/policyhelix/C06/negative-stale-replayed-revision.json",
+      "sha256": "c6b42f7f1b919b35a546b13638b25fcd95742acac45c888a2c6fa034dae36abe",
+      "type": "negative",
+      "stage": "stale-revision-replayed-epoch-rejected",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C06-NEG-03",
+      "path": "tests/fixtures/policyhelix/C06/negative-unauthenticated-private.json",
+      "sha256": "389ff60c8f65e6dd445d3c247846476b5a9e227aed18bf020b26c3e476655b37",
+      "type": "negative",
+      "stage": "unauthenticated-private-resource-fails-closed",
+      "license": "Apache-2.0"
+    }
+  ]
+}

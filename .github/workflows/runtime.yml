@@ -1,0 +1,71 @@
+name: runtime
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: runtime-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-engine-clean-checkout:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Clean Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Go Toolchain
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34
+        with:
+          go-version: "1.23.6"
+          cache: true
+
+      - name: Setup Node Toolchain
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install Node Dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Validate Planning Metadata
+        run: npm run validate:plan
+
+      - name: Validate Repository Contracts
+        run: python3 scripts/validate_repo.py
+
+      - name: Build Engine Binary
+        run: npm run build:engine
+
+      - name: Verify Engine CLI & Version
+        run: |
+          ./dist/engine/policyhelix --version
+          ./dist/engine/policyhelix --help
+
+      - name: Run Engine Tests & Assert Domain Collection
+        run: |
+          output=$(go test -v -race ./...)
+          echo "$output"
+          # Assert domain test collection: verify internal/contracts, internal/storage, and cmd/policyhelix pass
+          echo "$output" | grep -q "ok  	github.com/parsa-emami/policyhelix/cmd/policyhelix" || { echo "ERROR: cmd/policyhelix tests missing"; exit 1; }
+          echo "$output" | grep -q "ok  	github.com/parsa-emami/policyhelix/internal/contracts" || { echo "ERROR: internal/contracts tests missing"; exit 1; }
+          echo "$output" | grep -q "ok  	github.com/parsa-emami/policyhelix/internal/storage" || { echo "ERROR: internal/storage tests missing"; exit 1; }
+          echo "$output" | grep -q "ok  	github.com/parsa-emami/policyhelix/tests" || { echo "ERROR: tests integration suite missing"; exit 1; }
+
+      - name: Web Test Suite Regression
+        run: npm test
+
+      - name: Source Identity Check
+        run: |
+          python3 scripts/source_identity.py

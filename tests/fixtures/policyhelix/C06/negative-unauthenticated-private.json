@@ -1,0 +1,36 @@
+{
+  "schema_version": "1",
+  "request_id": "c06-neg-unauth-001",
+  "subject": {
+    "id": "anonymous_visitor",
+    "issuer": "https://idp.local.test/realms/policyhelix",
+    "email": "anon@local.test",
+    "roles": [],
+    "authenticated": false,
+    "session_epoch": 1730000000
+  },
+  "resource": {
+    "id": "service:analytics/data/confidential-records",
+    "type": "dataset",
+    "classification": "private"
+  },
+  "action": "read",
+  "context": {
+    "protocol": "loopback",
+    "source_ip": "127.0.0.1",
+    "client_id": "policyhelix-local-web",
+    "timestamp": "2026-11-03T10:00:00Z",
+    "untrusted_headers_stripped": true
+  },
+  "policy_bundle": {
+    "digest": "sha256:4a5c88e5d2639201f99c235b2e912f2cbe6783965b1287f3b89b1424e12e12e8",
+    "revision": 1,
+    "signed_at": "2026-11-03T10:00:00Z",
+    "signature_verified": true,
+    "provider_state": "ready"
+  },
+  "limits": {
+    "max_payload_bytes": 65536,
+    "deadline_ms": 200
+  }
+}

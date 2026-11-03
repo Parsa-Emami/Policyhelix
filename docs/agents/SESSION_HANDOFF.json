@@ -1,28 +1,29 @@
 {
   "project": "PolicyHelix",
   "date": "2026-11-03",
-  "base_commit": "d8662c1c0fbb315307fa6b56f86c6735b7b028c5",
-  "scope": "Task C05: prove recoverable local authoritative writes using ADR-0003 storage port, single-writer lock, atomic manifest publication, idempotency guard, and crash/disk-full recovery",
+  "base_commit": "a203c4df9f48ddd9b46d97cc159372196ebee7f5",
+  "scope": "Task C06: verify the actual engine from a clean checkout via runtime CI workflow, ENGINE_TESTS documentation, and positive/negative security invariant suites",
   "core_tasks_verified": [
     "C01",
     "C02",
     "C03",
     "C04",
-    "C05"
+    "C05",
+    "C06"
   ],
   "commands": [
     "npm run validate:plan",
-    "go test -v ./...",
+    "go test -v -race ./...",
     "npm test",
     "npm run test:browser",
     "npm run test:clone",
     "python3 scripts/validate_repo.py"
   ],
-  "validation_results": "docs/evidence/C05.json",
-  "final_source_identity": "sha256:9f22b444ca393e187c01371a79d2fb5dc75c06384bd18c437b6bc7c3ff1e71ab",
+  "validation_results": "docs/evidence/C06.json",
+  "final_source_identity": "sha256:6c740f44ff12631a2aae55489afb5cf1b8ea891ea43943b9c8b738095544d247",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C06",
+  "next_task": "C07",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C05 verified. ADR-0003 single-writer storage adapter (internal/storage/adapter.go), STORAGE_PROOF.md, C05 fixtures, and recovery/tamper/security tests (tests/storage_test.go) verified. Ready for C06 (verify the actual engine from a clean checkout in CI)."
+  "continuation": "Task C06 verified. Clean checkout runtime CI workflow (.github/workflows/runtime.yml), engine test documentation (docs/engineering/ENGINE_TESTS.md), C06 fixtures, and runtime CI tests (tests/runtime_ci_test.go) verified. Ready for C07."
 }
