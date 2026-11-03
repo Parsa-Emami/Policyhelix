@@ -1,6 +1,6 @@
 {
-  "summary": "Implementation Plan for Task C05: Prove recoverable local authoritative writes using an ADR-0003 compliant single-writer storage adapter in Go, with atomic manifest publication, stable operation IDs, idempotency replay, interrupted staging recovery, and comprehensive regression test suites.",
-  "updatedAt": "2026-11-03T09:52:51.130732776Z",
+  "summary": "Implementation plan for Task C08 (feat(opa): evaluate bounded local policy bundles), detailing bounded policy bundle evaluation, deadline enforcement, cryptographic/freshness/monotonic revision checks, fail-closed semantics, C08 fixtures, and verification criteria.",
+  "updatedAt": "2026-11-03T13:31:06.437373885Z",
   "requestFeedback": true,
   "userFacing": true
 }

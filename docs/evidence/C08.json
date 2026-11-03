@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "commit_id": "C08",
+  "project": "PolicyHelix",
+  "date": "2026-11-03",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: evaluate bounded local policy bundles",
+  "source_identity": "sha256:6d5454776438b8e9f72eb34258b6225fe2c0a3b168f342b53991a4eed9064a53",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "environment": {
+    "os": "linux",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.23.6 linux/amd64"
+    },
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "unmeasured planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.23.6 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C08/positive-bounded-bundle-allow.json",
+      "sha256": "d0c8822760236edda2d05bd90ef73f12f5154b8d4c03819b4dd1d471fca6821a",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C08 positive bounded policy bundle evaluation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C08/negative-invalid-policy-deny.json",
+      "sha256": "dc82d4569e735b63993e1be83acfe7abc2206853253990c0c555167142d3b273",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C08 invalid policy syntax deny/error"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C08/negative-deadline-exceeded-deny.json",
+      "sha256": "b9ab6027fb3552b1f5b8d5b52021f52f4f7f76aded7477b3bd2e3e233a25baf4",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C08 deadline exceeded deny/error"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C08/negative-tampered-or-untrusted-signer.json",
+      "sha256": "2c6afdb845bddb20a3c7e250fc48c3acd65ec792f90fcee571b566ee1277a061",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C08 single-byte modification and untrusted signer rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C08/negative-stale-replayed-revision.json",
+      "sha256": "cc7f12cd18ba72bf7add142f2a4d3ac633bd6e7d9ed61fb0a40eac37c7828577",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C08 stale/replayed revision rejection and authority preservation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C08/negative-private-resource-fail-closed.json",
+      "sha256": "c3ef8ddecef4e363dc6733299714540b4bba1cb493bdb92ff914be6584559333",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C08 private resource fail-closed evaluation"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "go test -v ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "ok github.com/parsa-emami/policyhelix/cmd/policyhelix; ok github.com/parsa-emami/policyhelix/internal/contracts; ok github.com/parsa-emami/policyhelix/internal/policy; ok github.com/parsa-emami/policyhelix/internal/storage; ok github.com/parsa-emami/policyhelix/tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "16 tests passed, 0 failed"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "VALIDATION PASSED"
+    }
+  ],
+  "results": [
+    "Bounded local policy bundle evaluator implemented in internal/policy/opa.go (LocalPolicyBundle, BundleEvaluator, BundleEvalInput, BundleDecision)",
+    "Enforced Requirement F02: Invalid policy syntax/rules and exceeded evaluation deadlines strictly produce allow=false and typed errors (INVALID_POLICY_BUNDLE, DECISION_DEADLINE_EXCEEDED) with zero silent fallback permits",
+    "Enforced canonical SHA-256 content digest verification, trusted issuer/signer validation, and monotonic revision preservation so tampered bytes or stale/replayed revisions cannot replace the last valid accepted authority",
+    "Comprehensive test suite in tests/opa_test.go and internal/policy/opa_test.go verifying all positive and negative C08 acceptance scenarios",
+    "Synthetic C08 fixtures created under tests/fixtures/policyhelix/C08/ with manifest.json and verified SHA-256 digests"
+  ],
+  "observed_limitations": [
+    "Bounded local policy bundle evaluator implemented; offline CLI decision fixture simulator follows in C09."
+  ],
+  "rollback_or_recovery_observation": "Revert the isolated C08 policy evaluator commit via git revert without affecting existing route classification, storage adapter, or contract validation."
+}

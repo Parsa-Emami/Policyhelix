@@ -1,8 +1,8 @@
 {
   "project": "PolicyHelix",
   "date": "2026-11-03",
-  "base_commit": "e59243a",
-  "scope": "Task C07: model input output and resource classes, explicit public route configuration, and default private route semantics",
+  "base_commit": "d8d4f8b",
+  "scope": "Task C08: evaluate bounded local policy bundles, enforce invalid policy and deadline deny/error semantics without silent fallback permit",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -10,21 +10,21 @@
     "C04",
     "C05",
     "C06",
-    "C07"
+    "C07",
+    "C08"
   ],
   "commands": [
     "npm run validate:plan",
     "go test -v -race ./...",
     "npm test",
-    "npm run test:browser",
-    "npm run test:clone",
+    "npm run build",
     "python3 scripts/validate_repo.py"
   ],
-  "validation_results": "docs/evidence/C07.json",
-  "final_source_identity": "sha256:2788d1ea3b7e473eb94b183e27a52349db2985761f457a84f47dba2a497eb1b7",
+  "validation_results": "docs/evidence/C08.json",
+  "final_source_identity": "sha256:6d5454776438b8e9f72eb34258b6225fe2c0a3b168f342b53991a4eed9064a53",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C08",
+  "next_task": "C09",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C07 verified. Domain model (internal/policy/model.go), tests (tests/model_test.go), and fixtures (tests/fixtures/policyhelix/C07/) implemented. Ready for C08 (feat(opa): evaluate bounded local policy bundles)."
+  "continuation": "Task C08 verified. Bounded local policy bundle evaluator (internal/policy/opa.go), tests (tests/opa_test.go), and fixtures (tests/fixtures/policyhelix/C08/) implemented. Ready for C09 (feat(simulator): run expected decision fixtures offline)."
 }

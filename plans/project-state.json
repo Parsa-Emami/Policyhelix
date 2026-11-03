@@ -1,7 +1,7 @@
 {
   "project": "PolicyHelix",
-  "reviewed_commit": "e59243a",
-  "readiness": "DOMAIN_MODEL_VERIFIED",
+  "reviewed_commit": "d8d4f8b",
+  "readiness": "BOUNDED_OPA_EVALUATOR_VERIFIED",
   "core_ready": false,
   "implemented": [
     "responsive web shell",
@@ -11,10 +11,11 @@
     "typed versioned domain inputs and results",
     "recoverable local authoritative storage writes",
     "engine clean-checkout verification and runtime CI",
-    "model input output and resource classes"
+    "model input output and resource classes",
+    "evaluate bounded local policy bundles"
   ],
-  "engine": "domain route & resource classes, recoverable storage, typed contracts v1 & runtime CI",
-  "next_task": "C08",
+  "engine": "bounded local policy bundle evaluator, domain route & resource classes, recoverable storage, typed contracts v1 & runtime CI",
+  "next_task": "C09",
   "next_command": "npm run plan -- next",
   "full_product_endpoint": "C30 locally usable; C40 full published OSS v1"
 }

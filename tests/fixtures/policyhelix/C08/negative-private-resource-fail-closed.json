@@ -1,0 +1,99 @@
+{
+  "fixture_id": "C08-NEG-05",
+  "commit_id": "C08",
+  "description": "Unauthenticated access to private analytics resource fails closed with UNAUTHENTICATED_DENY and PRIVATE_RESOURCE_FAIL_CLOSED",
+  "trusted_issuers": [
+    "https://issuer.policyhelix.local"
+  ],
+  "trusted_signers": [
+    "ed25519-primary-2026"
+  ],
+  "preload_bundle": {
+    "schema_version": "1",
+    "bundle_id": "bundle-analytics-v1",
+    "package": "policyhelix.authz",
+    "issuer": "https://issuer.policyhelix.local",
+    "signer_key_id": "ed25519-primary-2026",
+    "signature": "ed25519:7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a",
+    "signature_verified": true,
+    "revision": 1,
+    "issued_at": "2026-11-03T10:00:00Z",
+    "expires_at": "2026-11-04T10:00:00Z",
+    "digest": "sha256:da82c8fcc28285a1cf3362dd08020d5d0a567f52bc1f20073074608b24c983d4",
+    "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+    "routes": [
+      {
+        "pattern": "/api/v1/analytics/reports",
+        "action": "read",
+        "classification": "private",
+        "allow_unauthenticated": false,
+        "required_roles": [
+          "operator",
+          "admin"
+        ],
+        "description": "Private analytics reports endpoint"
+      },
+      {
+        "pattern": "/healthz",
+        "action": "read",
+        "classification": "public",
+        "allow_unauthenticated": true,
+        "description": "Explicit public health endpoint"
+      }
+    ],
+    "rules": [
+      {
+        "id": "rule-operator-analytics-read",
+        "effect": "allow",
+        "path_pattern": "/api/v1/analytics/reports",
+        "actions": [
+          "read"
+        ],
+        "roles": [
+          "operator",
+          "admin"
+        ],
+        "resource_class": "private",
+        "reason_code": "policy_allow_role_operator",
+        "reason_message": "Operator granted read access to analytics reports",
+        "obligations": [
+          {
+            "id": "audit_log_decision",
+            "type": "audit"
+          }
+        ]
+      },
+      {
+        "id": "rule-public-healthz",
+        "effect": "allow",
+        "path_pattern": "/healthz",
+        "actions": [
+          "read"
+        ],
+        "resource_class": "public",
+        "reason_code": "EXPLICIT_PUBLIC_ALLOW",
+        "reason_message": "Explicit public health route"
+      }
+    ]
+  },
+  "input": {
+    "request_id": "req-c08-neg-05",
+    "path": "/api/v1/analytics/reports",
+    "action": "read",
+    "deadline_ms": 50,
+    "eval_time": "2026-11-03T12:00:00Z",
+    "subject": {
+      "id": "anonymous-caller",
+      "issuer": "",
+      "roles": [],
+      "authenticated": false,
+      "session_epoch": 0
+    }
+  },
+  "expected": {
+    "allow": false,
+    "error_code": "PRIVATE_RESOURCE_FAIL_CLOSED",
+    "reason_code": "UNAUTHENTICATED_DENY",
+    "within_deadline": true
+  }
+}

@@ -69,10 +69,12 @@
     },
     {
       "id": "C08",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C08.json"
+      ],
+      "source_identity": "sha256:6d5454776438b8e9f72eb34258b6225fe2c0a3b168f342b53991a4eed9064a53",
+      "notes": "Bounded local OPA policy bundle evaluator implemented in internal/policy/opa.go; F02 invalid policy and deadline deny/error semantics, tampered byte detection, and monotonic authority retention verified."
     },
     {
       "id": "C09",

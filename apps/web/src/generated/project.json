@@ -107,7 +107,7 @@
       "id": "C08",
       "title": "feat(opa): evaluate bounded local policy bundles",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Invalid policy and deadline produce deny/error; no silent fallback permit."
       ],
