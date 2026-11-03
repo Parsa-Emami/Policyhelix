@@ -1,0 +1,118 @@
+{
+  "schema_version": 1,
+  "commit_id": "C09",
+  "project": "PolicyHelix",
+  "date": "2026-11-03",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: run expected decision fixtures offline",
+  "source_identity": "sha256:14851fe759e9a2503cca861c4bcb0a97abac47d14cd40459ef6098b103cdb56b",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "environment": {
+    "os": "linux",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.23.6 linux/amd64"
+    },
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "unmeasured planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.23.6 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C09/positive-changed-deny-to-allow.json",
+      "sha256": "14868f8995e400fe082cb094d99411f3d44df6d06f0684ee95fce802a687cd0d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C09 positive changed decision deny_to_allow"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C09/positive-changed-allow-to-deny.json",
+      "sha256": "71f8eee57bb4f19835d8a01b0ab768866b9bdc1487211604abf95520a974b040",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C09 positive changed decision allow_to_deny"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C09/positive-unchanged-allow.json",
+      "sha256": "c3dd38298b44fe426b966b8ca548cce6ac5ab9e743be8252b9321e6d340b5e96",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C09 positive unchanged decision report"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C09/negative-malformed-fixture.json",
+      "sha256": "509c5404ae9e940961b467979211315a7fc1523ba20c3171b4331302718e1da7",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C09 malformed fixture error handling"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C09/negative-provider-unavailable.json",
+      "sha256": "95be1bf60dfbeef517dd1f90ebf3f187f8ffda11f90e175ccc8a66e737c9da6f",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C09 unavailable provider error handling"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C09/negative-private-resource-fail-closed.json",
+      "sha256": "12726f273fc370b1b7e036e09a832a872840a10003d29b398ef6e0d964bb056c",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C09 unauthenticated private resource fail-closed simulation"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "go test -v ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "ok github.com/parsa-emami/policyhelix/cmd/policyhelix; ok github.com/parsa-emami/policyhelix/internal/contracts; ok github.com/parsa-emami/policyhelix/internal/policy; ok github.com/parsa-emami/policyhelix/internal/storage; ok github.com/parsa-emami/policyhelix/tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "16 tests passed, 0 failed"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "VALIDATION PASSED"
+    }
+  ],
+  "results": [
+    "Offline decision fixture simulator engine implemented in internal/policy/simulator.go (SimulationFixture, RunSimulation, RunSimulationFile, RunSimulationDir, SimulationReport, SimulationSuiteReport)",
+    "Engine CLI extended in cmd/policyhelix/main.go with --simulate and --simulate-fixture flags, supporting single fixture execution and full directory suite evaluation with structured JSON reports",
+    "HTTP simulator endpoint POST /v1/runtime/simulate implemented in cmd/policyhelix/main.go loopback server",
+    "Enforced Requirement F03: CLI reports changed allow/deny decisions with reasons and policy digest across policy revisions",
+    "Comprehensive regression suite implemented in tests/simulator_test.go verifying deny-to-allow, allow-to-deny, unchanged decisions, directory execution, negative cases, repeat-after-restart invariance, and manifest SHA-256 hashes",
+    "6 synthetic licensed test fixtures created under tests/fixtures/policyhelix/C09/ with manifest.json"
+  ],
+  "observed_limitations": [
+    "Offline CLI decision fixture simulation implemented; signed bundle packaging pipeline follows in C10."
+  ],
+  "rollback_or_recovery_observation": "Revert the isolated C09 simulator commit via git revert without affecting bounded local policy evaluation, contracts validation, or storage adapters."
+}

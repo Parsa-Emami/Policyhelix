@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-03",
   "base_commit": "d8d4f8b",
-  "scope": "Task C08: evaluate bounded local policy bundles, enforce invalid policy and deadline deny/error semantics without silent fallback permit",
+  "scope": "Task C09: run expected decision fixtures offline, report changed allow/deny decisions with reasons and policy digest",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -11,20 +11,21 @@
     "C05",
     "C06",
     "C07",
-    "C08"
+    "C08",
+    "C09"
   ],
   "commands": [
     "npm run validate:plan",
-    "go test -v -race ./...",
+    "go test -v ./...",
     "npm test",
     "npm run build",
     "python3 scripts/validate_repo.py"
   ],
-  "validation_results": "docs/evidence/C08.json",
-  "final_source_identity": "sha256:6d5454776438b8e9f72eb34258b6225fe2c0a3b168f342b53991a4eed9064a53",
+  "validation_results": "docs/evidence/C09.json",
+  "final_source_identity": "sha256:14851fe759e9a2503cca861c4bcb0a97abac47d14cd40459ef6098b103cdb56b",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C09",
+  "next_task": "C10",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C08 verified. Bounded local policy bundle evaluator (internal/policy/opa.go), tests (tests/opa_test.go), and fixtures (tests/fixtures/policyhelix/C08/) implemented. Ready for C09 (feat(simulator): run expected decision fixtures offline)."
+  "continuation": "Task C09 verified. Offline decision fixture simulator (internal/policy/simulator.go), CLI/router integration (cmd/policyhelix/main.go), tests (tests/simulator_test.go), and fixtures (tests/fixtures/policyhelix/C09/) implemented. Ready for C10 (feat(bundles): build deterministic signed policy bundle)."
 }

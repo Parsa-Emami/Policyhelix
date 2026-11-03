@@ -119,7 +119,7 @@
       "id": "C09",
       "title": "feat(simulator): run expected decision fixtures offline",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "CLI reports changed allow/deny decisions with reasons and policy digest."
       ],

@@ -1,0 +1,57 @@
+{
+  "commit_id": "C09",
+  "fixtures": [
+    {
+      "fixture_id": "C09-POS-01",
+      "path": "tests/fixtures/policyhelix/C09/positive-changed-deny-to-allow.json",
+      "sha256": "14868f8995e400fe082cb094d99411f3d44df6d06f0684ee95fce802a687cd0d",
+      "type": "positive",
+      "stage": "simulate-changed-decision-deny-to-allow",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C09-POS-02",
+      "path": "tests/fixtures/policyhelix/C09/positive-changed-allow-to-deny.json",
+      "sha256": "71f8eee57bb4f19835d8a01b0ab768866b9bdc1487211604abf95520a974b040",
+      "type": "positive",
+      "stage": "simulate-changed-decision-allow-to-deny",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C09-POS-03",
+      "path": "tests/fixtures/policyhelix/C09/positive-unchanged-allow.json",
+      "sha256": "c3dd38298b44fe426b966b8ca548cce6ac5ab9e743be8252b9321e6d340b5e96",
+      "type": "positive",
+      "stage": "simulate-unchanged-decision-allow",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C09-NEG-01",
+      "path": "tests/fixtures/policyhelix/C09/negative-malformed-fixture.json",
+      "sha256": "509c5404ae9e940961b467979211315a7fc1523ba20c3171b4331302718e1da7",
+      "type": "negative",
+      "stage": "simulate-malformed-fixture-error",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C09-NEG-02",
+      "path": "tests/fixtures/policyhelix/C09/negative-provider-unavailable.json",
+      "sha256": "95be1bf60dfbeef517dd1f90ebf3f187f8ffda11f90e175ccc8a66e737c9da6f",
+      "type": "negative",
+      "stage": "simulate-provider-unavailable-error",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C09-NEG-03",
+      "path": "tests/fixtures/policyhelix/C09/negative-private-resource-fail-closed.json",
+      "sha256": "12726f273fc370b1b7e036e09a832a872840a10003d29b398ef6e0d964bb056c",
+      "type": "negative",
+      "stage": "simulate-private-resource-fail-closed",
+      "license": "Apache-2.0"
+    }
+  ],
+  "license": "Apache-2.0",
+  "project": "PolicyHelix",
+  "provenance": "repository-authored synthetic licensed fixtures",
+  "schema_version": 1
+}

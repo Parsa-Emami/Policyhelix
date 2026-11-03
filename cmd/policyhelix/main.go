@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/parsa-emami/policyhelix/internal/contracts"
+	"github.com/parsa-emami/policyhelix/internal/policy"
 	"github.com/parsa-emami/policyhelix/internal/storage"
 )
 
@@ -292,6 +293,52 @@ func setupRouter() *http.ServeMux {
 		_ = json.NewEncoder(w).Encode(result)
 	})
 
+	mux.HandleFunc("/v1/runtime/simulate", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", "POST")
+			http.Error(w, `{"error":"method_not_allowed"}`, http.StatusMethodNotAllowed)
+			return
+		}
+		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 1048576))
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(policy.SimulationReport{
+				Status:  "error",
+				Reasons: []string{policy.ErrCodeMalformedFixture},
+				Error: &policy.BundleError{
+					Code:    policy.ErrCodeMalformedFixture,
+					Message: "Request body read error or exceeded 1MB limit",
+				},
+			})
+			return
+		}
+
+		var fx policy.SimulationFixture
+		if err := json.Unmarshal(body, &fx); err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(policy.SimulationReport{
+				Status:  "error",
+				Reasons: []string{policy.ErrCodeMalformedFixture},
+				Error: &policy.BundleError{
+					Code:    policy.ErrCodeMalformedFixture,
+					Message: fmt.Sprintf("Malformed fixture JSON: %v", err),
+				},
+			})
+			return
+		}
+
+		report := policy.RunSimulation(r.Context(), fx)
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if report.Status == "failed" {
+			w.WriteHeader(http.StatusUnprocessableEntity)
+		} else {
+			w.WriteHeader(http.StatusOK)
+		}
+		_ = json.NewEncoder(w).Encode(report)
+	})
+
 	return mux
 }
 
@@ -342,6 +389,8 @@ func main() {
 	smokeFlag := flag.Bool("smoke-test", false, "Execute self-contained engine smoke test")
 	fixtureFlag := flag.String("fixture", "", "Path to fixture file to evaluate")
 	contractFlag := flag.String("evaluate-contract", "", "Path to v1 domain contract input JSON to evaluate")
+	simulateFlag := flag.String("simulate", "", "Path to offline decision simulation fixture JSON or directory")
+	simulateFixtureFlag := flag.String("simulate-fixture", "", "Alias for -simulate")
 	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	flag.Parse()
@@ -405,6 +454,42 @@ func main() {
 		code, res := contracts.ValidateAndEvaluate(context.Background(), raw)
 		_ = json.NewEncoder(os.Stdout).Encode(res)
 		if code != http.StatusOK && code != 499 {
+			os.Exit(1)
+		}
+		return
+	}
+
+	targetSim := *simulateFlag
+	if targetSim == "" {
+		targetSim = *simulateFixtureFlag
+	}
+	if targetSim != "" {
+		fi, err := os.Stat(targetSim)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Simulator path error: %v\n", err)
+			_ = json.NewEncoder(os.Stdout).Encode(policy.SimulationReport{
+				Status:  "error",
+				Reasons: []string{policy.ErrCodeMalformedFixture},
+				Error: &policy.BundleError{
+					Code:    policy.ErrCodeMalformedFixture,
+					Message: err.Error(),
+				},
+			})
+			os.Exit(1)
+		}
+
+		if fi.IsDir() {
+			suite, err := policy.RunSimulationDir(context.Background(), targetSim)
+			_ = json.NewEncoder(os.Stdout).Encode(suite)
+			if err != nil || suite.Status != "passed" {
+				os.Exit(1)
+			}
+			return
+		}
+
+		rep, err := policy.RunSimulationFile(context.Background(), targetSim)
+		_ = json.NewEncoder(os.Stdout).Encode(rep)
+		if err != nil || rep.Status != "passed" {
 			os.Exit(1)
 		}
 		return

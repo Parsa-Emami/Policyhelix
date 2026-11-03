@@ -78,10 +78,12 @@
     },
     {
       "id": "C09",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C09.json"
+      ],
+      "source_identity": "sha256:14851fe759e9a2503cca861c4bcb0a97abac47d14cd40459ef6098b103cdb56b",
+      "notes": "Offline decision fixture simulator implemented in internal/policy/simulator.go and cmd/policyhelix/main.go; F03 changed allow/deny decisions with reasons and policy digest verified."
     },
     {
       "id": "C10",
