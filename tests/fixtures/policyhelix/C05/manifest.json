@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "commit_id": "C05",
+  "project": "PolicyHelix",
+  "provenance": "repository-authored synthetic licensed fixtures",
+  "license": "Apache-2.0",
+  "fixtures": [
+    {
+      "fixture_id": "C05-POS-01",
+      "path": "tests/fixtures/policyhelix/C05/positive-authoritative-write.json",
+      "sha256": "5170832db0e3e4299c1a407d19bc439f60f085eaf9f0ef1b82efff9707e62c7a",
+      "type": "positive",
+      "stage": "authoritative-local-write",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C05-NEG-01",
+      "path": "tests/fixtures/policyhelix/C05/negative-replayed-conflict.json",
+      "sha256": "b6dcbfabcdd882f378b2a179422380db8af63c028fb8512252e4d1fb2ef56b92",
+      "type": "negative",
+      "stage": "operation-id-conflict-rejection",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C05-NEG-02",
+      "path": "tests/fixtures/policyhelix/C05/negative-unauthenticated-write.json",
+      "sha256": "f892d7f6da984af276e6d2ccb8d3709adb79a2159e307cfca356f41412f202a3",
+      "type": "negative",
+      "stage": "unauthenticated-write-rejected-before-side-effects",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C05-NEG-03",
+      "path": "tests/fixtures/policyhelix/C05/negative-scope-or-provider-violation.json",
+      "sha256": "8478c9de1bb8d5b199b14f6c9924b2b377e18a39cb1525d1f54410ed5fa2bb97",
+      "type": "negative",
+      "stage": "owner-scope-violation-rejected",
+      "license": "Apache-2.0"
+    }
+  ]
+}

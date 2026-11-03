@@ -1,0 +1,23 @@
+{
+  "schema_version": "1",
+  "operation_id": "op-c05-neg-scope",
+  "record_id": "other_tenant:secret-record-001",
+  "owner_scope": "service:analytics",
+  "classification": "private",
+  "identity": {
+    "subject_id": "user_alice",
+    "issuer": "https://idp.local.test/realms/policyhelix",
+    "roles": [
+      "operator"
+    ],
+    "authenticated": true,
+    "session_epoch": 1730000000,
+    "min_required_epoch": 1720000000,
+    "untrusted_headers_stripped": true,
+    "provider_state": "ready"
+  },
+  "payload": {
+    "policy_digest": "sha256:4a5c88e5d2639201f99c235b2e912f2cbe6783965b1287f3b89b1424e12e12e8",
+    "bundle_revision": 3
+  }
+}

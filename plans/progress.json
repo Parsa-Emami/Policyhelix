@@ -42,10 +42,12 @@
     },
     {
       "id": "C05",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C05.json"
+      ],
+      "source_identity": "sha256:9f22b444ca393e187c01371a79d2fb5dc75c06384bd18c437b6bc7c3ff1e71ab",
+      "notes": "ADR-0003 local single-writer storage port, atomic manifest publication, stable operation IDs, idempotency replay, and interrupted/disk-full recovery verified."
     },
     {
       "id": "C06",

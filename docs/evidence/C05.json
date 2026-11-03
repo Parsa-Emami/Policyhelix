@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "commit_id": "C05",
+  "project": "PolicyHelix",
+  "date": "2026-11-03",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: prove recoverable local authoritative writes",
+  "source_identity": "sha256:9f22b444ca393e187c01371a79d2fb5dc75c06384bd18c437b6bc7c3ff1e71ab",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "environment": {
+    "os": "linux",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.23.6 linux/amd64"
+    },
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "unmeasured planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.23.6 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C05/positive-authoritative-write.json",
+      "sha256": "5170832db0e3e4299c1a407d19bc439f60f085eaf9f0ef1b82efff9707e62c7a",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C05 authoritative local write"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C05/negative-replayed-conflict.json",
+      "sha256": "b6dcbfabcdd882f378b2a179422380db8af63c028fb8512252e4d1fb2ef56b92",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C05 operation ID conflict rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C05/negative-unauthenticated-write.json",
+      "sha256": "f892d7f6da984af276e6d2ccb8d3709adb79a2159e307cfca356f41412f202a3",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C05 unauthenticated write rejection before side effects"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C05/negative-scope-or-provider-violation.json",
+      "sha256": "8478c9de1bb8d5b199b14f6c9924b2b377e18a39cb1525d1f54410ed5fa2bb97",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C05 owner scope violation rejection"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "go test ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "ok github.com/parsa-emami/policyhelix/cmd/policyhelix; ok github.com/parsa-emami/policyhelix/internal/contracts; ok github.com/parsa-emami/policyhelix/internal/storage; ok github.com/parsa-emami/policyhelix/tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "16 tests passed, 0 failed"
+    },
+    {
+      "command": "npm run test:browser",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "2 passed (2.2s)"
+    },
+    {
+      "command": "npm run test:clone",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "real git clone -> npm run setup -> web startup"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "VALIDATION PASSED"
+    }
+  ],
+  "results": [
+    "ADR-0003 single-writer storage adapter (internal/storage/adapter.go) implemented using exclusive file locking (syscall.Flock), staged content-addressed payloads, and atomic manifest publication",
+    "Pre-allocation identity and owner-scope gate rejects unauthenticated, expired, forged-header, provider-outage, and cross-scope writes before any disk side effects",
+    "Stable operation IDs enforce idempotency: exact retries return committed receipts (replayed: true), while payload/target mismatches fail loudly with OPERATION_ID_CONFLICT",
+    "Startup reconciliation purges uncommitted orphan staging files (.staging/), verifies SHA-256 object integrity, and recovers cleanly from interrupted or disk-full failures",
+    "Comprehensive test coverage in tests/storage_test.go and internal/storage/adapter_test.go exercising positive writes, replay, lock contention, crash/disk-full recovery, tamper detection, and C05 fixtures"
+  ],
+  "observed_limitations": [
+    "Local single-writer storage port verified; clean-checkout CI runtime collection and provider-backed integration follow at C06."
+  ],
+  "rollback_or_recovery_observation": "Revert the isolated storage adapter commit via git revert or retain the latest valid manifest.json and content-addressed objects/ directory, which startup reconciliation automatically verifies."
+}

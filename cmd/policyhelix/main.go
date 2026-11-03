@@ -16,6 +16,7 @@ import (
 	"time"
 
 	"github.com/parsa-emami/policyhelix/internal/contracts"
+	"github.com/parsa-emami/policyhelix/internal/storage"
 )
 
 const (
@@ -341,6 +342,8 @@ func main() {
 	smokeFlag := flag.Bool("smoke-test", false, "Execute self-contained engine smoke test")
 	fixtureFlag := flag.String("fixture", "", "Path to fixture file to evaluate")
 	contractFlag := flag.String("evaluate-contract", "", "Path to v1 domain contract input JSON to evaluate")
+	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
+	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	flag.Parse()
 
 	if *versionFlag {
@@ -404,6 +407,43 @@ func main() {
 		if code != http.StatusOK && code != 499 {
 			os.Exit(1)
 		}
+		return
+	}
+
+	if *writeStorageFlag != "" {
+		raw, err := os.ReadFile(*writeStorageFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Storage fixture read error: %v\n", err)
+			os.Exit(1)
+		}
+		var req storage.WriteRequest
+		if err := json.Unmarshal(raw, &req); err != nil {
+			fmt.Fprintf(os.Stderr, "Storage fixture JSON error: %v\n", err)
+			os.Exit(1)
+		}
+		dir := *storageDirFlag
+		if dir == "" {
+			tmp, err := os.MkdirTemp("", "policyhelix-storage-*")
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Storage temp dir error: %v\n", err)
+				os.Exit(1)
+			}
+			defer os.RemoveAll(tmp)
+			dir = tmp
+		}
+		ad, _, err := storage.Open(dir)
+		if err != nil {
+			_ = json.NewEncoder(os.Stdout).Encode(map[string]interface{}{"status": "failed", "error": err})
+			os.Exit(1)
+		}
+		defer ad.Close()
+
+		receipt, sErr := ad.WriteRecord(context.Background(), req)
+		if sErr != nil {
+			_ = json.NewEncoder(os.Stdout).Encode(map[string]interface{}{"status": "failed", "error": sErr})
+			os.Exit(1)
+		}
+		_ = json.NewEncoder(os.Stdout).Encode(receipt)
 		return
 	}
 

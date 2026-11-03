@@ -1,17 +1,18 @@
 {
   "project": "PolicyHelix",
   "reviewed_commit": "d8662c1c0fbb315307fa6b56f86c6735b7b028c5",
-  "readiness": "CONTRACTS_TYPED",
+  "readiness": "STORAGE_AUTHORITATIVE",
   "core_ready": false,
   "implemented": [
     "responsive web shell",
     "roadmap browser",
     "local bounded JSON structure preview",
     "unified local Go engine setup and process supervisor",
-    "typed versioned domain inputs and results"
+    "typed versioned domain inputs and results",
+    "recoverable local authoritative storage writes"
   ],
-  "engine": "typed domain contracts v1 (in-memory evaluation & boundaries)",
-  "next_task": "C05",
+  "engine": "recoverable local storage port & typed contracts v1",
+  "next_task": "C06",
   "next_command": "npm run plan -- next",
   "full_product_endpoint": "C30 locally usable; C40 full published OSS v1"
 }

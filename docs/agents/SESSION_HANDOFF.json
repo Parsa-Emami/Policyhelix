@@ -2,12 +2,13 @@
   "project": "PolicyHelix",
   "date": "2026-11-03",
   "base_commit": "d8662c1c0fbb315307fa6b56f86c6735b7b028c5",
-  "scope": "Task C04: define typed versioned domain inputs and results, schema constraints, Go engine validator, and C04 test fixtures",
+  "scope": "Task C05: prove recoverable local authoritative writes using ADR-0003 storage port, single-writer lock, atomic manifest publication, idempotency guard, and crash/disk-full recovery",
   "core_tasks_verified": [
     "C01",
     "C02",
     "C03",
-    "C04"
+    "C04",
+    "C05"
   ],
   "commands": [
     "npm run validate:plan",
@@ -17,11 +18,11 @@
     "npm run test:clone",
     "python3 scripts/validate_repo.py"
   ],
-  "validation_results": "docs/evidence/C04.json",
-  "final_source_identity": "sha256:4d7ae45fe6398f5b8f0ca43169f44ba44771e9a9307d12f6a707a216c891461a",
+  "validation_results": "docs/evidence/C05.json",
+  "final_source_identity": "sha256:9f22b444ca393e187c01371a79d2fb5dc75c06384bd18c437b6bc7c3ff1e71ab",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C05",
+  "next_task": "C06",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C04 verified. Typed versioned domain contracts (v1), JSON schemas, Go engine validation with size/cancellation boundaries, and full positive/negative fixture suite implemented. Ready for C05 (prove recoverable local authoritative writes)."
+  "continuation": "Task C05 verified. ADR-0003 single-writer storage adapter (internal/storage/adapter.go), STORAGE_PROOF.md, C05 fixtures, and recovery/tamper/security tests (tests/storage_test.go) verified. Ready for C06 (verify the actual engine from a clean checkout in CI)."
 }
