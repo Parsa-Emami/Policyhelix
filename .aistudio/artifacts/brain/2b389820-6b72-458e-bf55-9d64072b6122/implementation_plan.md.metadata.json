@@ -1,6 +1,0 @@
-{
-  "summary": "Implementation plan for Task C08 (feat(opa): evaluate bounded local policy bundles), detailing bounded policy bundle evaluation, deadline enforcement, cryptographic/freshness/monotonic revision checks, fail-closed semantics, C08 fixtures, and verification criteria.",
-  "updatedAt": "2026-11-03T13:31:06.437373885Z",
-  "requestFeedback": true,
-  "userFacing": true
-}
