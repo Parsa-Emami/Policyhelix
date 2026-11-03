@@ -1,0 +1,4 @@
+interface:
+  display_name: "Persian RTL UX"
+  short_description: "Improve Persian interfaces and reading usability"
+  default_prompt: "Use $persian-rtl-ux to inspect Persian direction, identifiers, inputs and responsive reading. For articles/cards, check actual title wrapping, thumbnail crops and instructional images; report runtime verification limits. Apply local contracts only where relevant."
