@@ -60,10 +60,12 @@
     },
     {
       "id": "C07",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C07.json"
+      ],
+      "source_identity": "sha256:2788d1ea3b7e473eb94b183e27a52349db2985761f457a84f47dba2a497eb1b7",
+      "notes": "Domain model for route and resource classes implemented in internal/policy/model.go; F01 public routes explicit and unspecified routes default-private verified."
     },
     {
       "id": "C08",

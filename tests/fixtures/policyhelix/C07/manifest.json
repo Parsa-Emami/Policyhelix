@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "commit_id": "C07",
+  "project": "PolicyHelix",
+  "provenance": "repository-authored synthetic licensed fixtures",
+  "license": "Apache-2.0",
+  "fixtures": [
+    {
+      "fixture_id": "C07-POS-01",
+      "path": "tests/fixtures/policyhelix/C07/positive-explicit-public-allow.json",
+      "sha256": "f27ba81b1512037d05bf37f1972f4c8be9640c171217775998aee17a136ca2f6",
+      "type": "positive",
+      "stage": "explicit-public-route-evaluation",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C07-POS-02",
+      "path": "tests/fixtures/policyhelix/C07/positive-authenticated-private-allow.json",
+      "sha256": "f2b2f5fa4fbc892773a335061df68e525cf9aab48d8c1832dc1bbcc1ec5578a0",
+      "type": "positive",
+      "stage": "authenticated-private-route-evaluation",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C07-NEG-01",
+      "path": "tests/fixtures/policyhelix/C07/negative-unspecified-route-fails-closed.json",
+      "sha256": "2fc10e05d91e930bdcbafb5dcfc9b6bd41095f7cf864db82ac847c693f4c3b09",
+      "type": "negative",
+      "stage": "unspecified-route-defaults-private-fails-closed",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C07-NEG-02",
+      "path": "tests/fixtures/policyhelix/C07/negative-unauthenticated-private-denied.json",
+      "sha256": "0760e82185b9236800fa350afb886ae62268b518e633060a114af08d27c4d1da",
+      "type": "negative",
+      "stage": "unauthenticated-private-route-denied",
+      "license": "Apache-2.0"
+    }
+  ]
+}

@@ -1,15 +1,16 @@
 {
   "project": "PolicyHelix",
   "date": "2026-11-03",
-  "base_commit": "a203c4df9f48ddd9b46d97cc159372196ebee7f5",
-  "scope": "Task C06: verify the actual engine from a clean checkout via runtime CI workflow, ENGINE_TESTS documentation, and positive/negative security invariant suites",
+  "base_commit": "e59243a",
+  "scope": "Task C07: model input output and resource classes, explicit public route configuration, and default private route semantics",
   "core_tasks_verified": [
     "C01",
     "C02",
     "C03",
     "C04",
     "C05",
-    "C06"
+    "C06",
+    "C07"
   ],
   "commands": [
     "npm run validate:plan",
@@ -19,11 +20,11 @@
     "npm run test:clone",
     "python3 scripts/validate_repo.py"
   ],
-  "validation_results": "docs/evidence/C06.json",
-  "final_source_identity": "sha256:6c740f44ff12631a2aae55489afb5cf1b8ea891ea43943b9c8b738095544d247",
+  "validation_results": "docs/evidence/C07.json",
+  "final_source_identity": "sha256:2788d1ea3b7e473eb94b183e27a52349db2985761f457a84f47dba2a497eb1b7",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C07",
+  "next_task": "C08",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C06 verified. Clean checkout runtime CI workflow (.github/workflows/runtime.yml), engine test documentation (docs/engineering/ENGINE_TESTS.md), C06 fixtures, and runtime CI tests (tests/runtime_ci_test.go) verified. Ready for C07."
+  "continuation": "Task C07 verified. Domain model (internal/policy/model.go), tests (tests/model_test.go), and fixtures (tests/fixtures/policyhelix/C07/) implemented. Ready for C08 (feat(opa): evaluate bounded local policy bundles)."
 }

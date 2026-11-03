@@ -1,0 +1,19 @@
+{
+  "schema_version": "1",
+  "request_id": "c07-pos-pub-001",
+  "path": "/healthz",
+  "action": "read",
+  "subject": {
+    "id": "anonymous_visitor",
+    "issuer": "https://idp.local.test/realms/policyhelix",
+    "roles": [],
+    "authenticated": false,
+    "session_epoch": 1730000000
+  },
+  "expected": {
+    "allow": true,
+    "classification": "public",
+    "is_explicit": true,
+    "reason_code": "EXPLICIT_PUBLIC_ALLOW"
+  }
+}

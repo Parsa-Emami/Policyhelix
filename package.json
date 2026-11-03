@@ -27,7 +27,7 @@
     "plan": "node scripts/roadmap.mjs",
     "release:check": "node scripts/roadmap.mjs release-check",
     "test:clone": "node scripts/clone-smoke.mjs",
-    "pretest": "npm run build:engine"
+    "pretest": "npm run build && npm run build:engine"
   },
   "dependencies": {
     "react": "19.3.1",

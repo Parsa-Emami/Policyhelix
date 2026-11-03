@@ -1,0 +1,117 @@
+{
+  "schema_version": 1,
+  "commit_id": "C07",
+  "project": "PolicyHelix",
+  "date": "2026-11-03",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: model input output and resource classes",
+  "source_identity": "sha256:2788d1ea3b7e473eb94b183e27a52349db2985761f457a84f47dba2a497eb1b7",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "environment": {
+    "os": "linux",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "unmeasured planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C07/positive-explicit-public-allow.json",
+      "sha256": "f27ba81b1512037d05bf37f1972f4c8be9640c171217775998aee17a136ca2f6",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C07 explicit public route evaluation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C07/positive-authenticated-private-allow.json",
+      "sha256": "f2b2f5fa4fbc892773a335061df68e525cf9aab48d8c1832dc1bbcc1ec5578a0",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C07 authenticated private route evaluation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C07/negative-unspecified-route-fails-closed.json",
+      "sha256": "2fc10e05d91e930bdcbafb5dcfc9b6bd41095f7cf864db82ac847c693f4c3b09",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C07 unspecified route default-private fail closed"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C07/negative-unauthenticated-private-denied.json",
+      "sha256": "0760e82185b9236800fa350afb886ae62268b518e633060a114af08d27c4d1da",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C07 unauthenticated private route denied"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "go test -v -race ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "ok github.com/parsa-emami/policyhelix/cmd/policyhelix; ok github.com/parsa-emami/policyhelix/internal/contracts; ok github.com/parsa-emami/policyhelix/internal/policy; ok github.com/parsa-emami/policyhelix/internal/storage; ok github.com/parsa-emami/policyhelix/tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "16 tests passed, 0 failed"
+    },
+    {
+      "command": "npm run test:browser",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "2 passed (1.1s)"
+    },
+    {
+      "command": "npm run test:clone",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "real git clone -> npm run setup -> web startup"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "VALIDATION PASSED"
+    }
+  ],
+  "results": [
+    "Domain model implemented in internal/policy/model.go defining ResourceClass (public, internal, private, restricted), RouteRule, RouteRegistry, and EvaluationInput/Output",
+    "Enforced Requirement F01: Public routes are explicit configuration and all unspecified routes strictly default to private fail-closed",
+    "Registration validation prevents unauthenticated access from being enabled on non-public routes",
+    "Comprehensive test suite in tests/model_test.go verifying explicit public routes, unspecified route fail-closed behavior, private resource protection, role checks, and restart invariance",
+    "Synthetic C07 fixtures created under tests/fixtures/policyhelix/C07/ with manifest.json and exact SHA-256 digests"
+  ],
+  "observed_limitations": [
+    "Domain route and resource classes modeled; bounded OPA policy bundle evaluation follows in C08."
+  ],
+  "rollback_or_recovery_observation": "Revert the isolated domain model commit via git revert without affecting storage adapter or contract validation."
+}

@@ -1,7 +1,7 @@
 {
   "project": "PolicyHelix",
-  "reviewed_commit": "a203c4df9f48ddd9b46d97cc159372196ebee7f5",
-  "readiness": "RUNTIME_CI_VERIFIED",
+  "reviewed_commit": "e59243a",
+  "readiness": "DOMAIN_MODEL_VERIFIED",
   "core_ready": false,
   "implemented": [
     "responsive web shell",
@@ -10,10 +10,11 @@
     "unified local Go engine setup and process supervisor",
     "typed versioned domain inputs and results",
     "recoverable local authoritative storage writes",
-    "engine clean-checkout verification and runtime CI"
+    "engine clean-checkout verification and runtime CI",
+    "model input output and resource classes"
   ],
-  "engine": "recoverable local storage port, typed contracts v1 & runtime CI",
-  "next_task": "C07",
+  "engine": "domain route & resource classes, recoverable storage, typed contracts v1 & runtime CI",
+  "next_task": "C08",
   "next_command": "npm run plan -- next",
   "full_product_endpoint": "C30 locally usable; C40 full published OSS v1"
 }

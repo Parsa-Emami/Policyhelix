@@ -1,0 +1,21 @@
+{
+  "schema_version": "1",
+  "request_id": "c07-pos-priv-001",
+  "path": "/api/v1/vault/secrets",
+  "action": "read",
+  "subject": {
+    "id": "user_operator",
+    "issuer": "https://idp.local.test/realms/policyhelix",
+    "roles": [
+      "operator"
+    ],
+    "authenticated": true,
+    "session_epoch": 1730000000
+  },
+  "expected": {
+    "allow": true,
+    "classification": "private",
+    "is_explicit": true,
+    "reason_code": "AUTHENTICATED_ALLOW"
+  }
+}

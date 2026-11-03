@@ -20,5 +20,6 @@ test('roadmap rejects absent resources, escaping paths and unproved completion',
   const unsafe = structuredClone(values); unsafe[0].commits[6].deliverables.push('../escape'); assert.ok(validate(...unsafe).some(e => e.includes('unsafe')));
   const circular = structuredClone(values); circular[0].commits[0].verification_commands[1].introduced_by = 'C06'; assert.ok(validate(...circular).some(e => e.includes('future task')));
   const unsafeFixture = structuredClone(values); unsafeFixture[0].commits[6].resources.fixture.path = '../escape'; assert.ok(validate(...unsafeFixture).some(e => e.includes('unsafe')));
-  const fake = structuredClone(values); fake[1].commits[6].status = 'verified'; assert.ok(validate(...fake).some(e => e.includes('unproved')));
+  const fakeIndex = values[1].commits.findIndex(c => c.status !== 'verified');
+  const fake = structuredClone(values); fake[1].commits[fakeIndex].status = 'verified'; assert.ok(validate(...fake).some(e => e.includes('unproved')));
 });

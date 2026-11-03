@@ -1,0 +1,19 @@
+{
+  "schema_version": "1",
+  "request_id": "c07-neg-unauth-priv-001",
+  "path": "/api/v1/vault/secrets",
+  "action": "read",
+  "subject": {
+    "id": "anonymous_visitor",
+    "issuer": "https://idp.local.test/realms/policyhelix",
+    "roles": [],
+    "authenticated": false,
+    "session_epoch": 1730000000
+  },
+  "expected": {
+    "allow": false,
+    "classification": "private",
+    "is_explicit": true,
+    "reason_code": "UNAUTHENTICATED_DENY"
+  }
+}

@@ -95,7 +95,7 @@
       "id": "C07",
       "title": "feat(policy): model input output and resource classes",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Public routes are explicit configuration and all unspecified routes default private."
       ],
