@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "commit_id": "C01",
+  "project": "PolicyHelix",
+  "provenance": "repository-authored synthetic licensed fixtures",
+  "license": "Apache-2.0",
+  "fixtures": [
+    {
+      "fixture_id": "C01-POS-01",
+      "path": "tests/fixtures/policyhelix/C01/positive-decision.json",
+      "sha256": "0fb4991cec5b16221b5248b588c5ca19e7a380e9ba5319880f805bd9cc91ec05",
+      "type": "positive",
+      "stage": "simulator-fixture",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C01-NEG-01",
+      "path": "tests/fixtures/policyhelix/C01/invalid-spoofed-header.json",
+      "sha256": "029d3165d5fde9b8f711ae0aa267069f02b7ce3d0d4c781dd116db8dbe1493d5",
+      "type": "negative",
+      "stage": "test-spoofed-header-direct-origin",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C01-NEG-02",
+      "path": "tests/fixtures/policyhelix/C01/invalid-revoked-session.json",
+      "sha256": "6dfb6d6746a62b7daec3aeceabab6f79ca62d8a698c2cfa959a91fa1e497c25b",
+      "type": "negative",
+      "stage": "revoke",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C01-NEG-03",
+      "path": "tests/fixtures/policyhelix/C01/invalid-stale-bundle.json",
+      "sha256": "87523cb6a4c04c4656eadd9a5bc365f69b41a2296eec205d468c647ca3c8c5cb",
+      "type": "negative",
+      "stage": "simulate-outage-and-expired-policy",
+      "license": "Apache-2.0"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+{
+  "$schema": "https://policyhelix.local/schemas/c01/decision-fixture.json",
+  "fixture_id": "C01-NEG-03",
+  "name": "Expired bundle freshness or decision engine outage fail closed",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture for PolicyHelix reference workflow",
+  "stage": "simulate-outage-and-expired-policy",
+  "input": {
+    "subject": {
+      "id": "user_alice",
+      "issuer": "https://idp.local.test/realms/policyhelix",
+      "email": "alice@local.test",
+      "roles": [
+        "operator"
+      ],
+      "session_epoch": 1730000000
+    },
+    "resource": {
+      "id": "service:analytics/data/report-2026",
+      "type": "dataset",
+      "classification": "internal"
+    },
+    "action": "read",
+    "context": {
+      "engine_outage_simulated": true,
+      "bundle_timestamp": "2025-01-01T00:00:00Z"
+    }
+  },
+  "policy_bundle": {
+    "digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "revision": 0,
+    "signed_at": "2025-01-01T00:00:00Z",
+    "signature_algorithm": "ed25519"
+  },
+  "expected_decision": {
+    "subject": "user_alice",
+    "resource": "service:analytics/data/report-2026",
+    "action": "read",
+    "policy_digest": "sha256:0000000000000000000000000000000000000000000000000000000000000000",
+    "allow": false,
+    "reasons": [
+      "bundle_freshness_expired_fail_closed",
+      "decision_engine_unreachable_fail_closed"
+    ],
+    "obligations": [
+      "emit_outage_telemetry"
+    ]
+  }
+}

@@ -1,15 +1,11 @@
 {
+  "schema_version": 1,
   "project": "PolicyHelix",
   "status": "planned acceptance contract; not executed domain proof",
-  "input": "repository-authored synthetic licensed fixtures",
-  "steps": [
-    "Simulator fixture",
-    "sign/verify bundle",
-    "protect owned upstream",
-    "test spoofed header/direct origin",
-    "revoke",
-    "simulate decision/IdP outage and expired policy."
-  ],
+  "engine_implemented": false,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixtures",
+  "description": "Synthetic reference workflow defining PolicyHelix open-source clone-to-value acceptance, observable invariants and negative verification cases.",
   "expected_invariants": [
     "Private resources fail closed",
     "Only authenticated normalized identity enters policy",
@@ -19,6 +15,117 @@
     "fixture policy در simulator نتیجهٔ expected بدهد و دلیل deny مشخص باشد",
     "origin مستقیم و header جعلی identity مسیر دسترسی نسازند",
     "decision/IdP outage، revoke و bundle قدیمی باید رفتار fail-closed مستند داشته باشند"
+  ],
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "action": "Simulator fixture evaluation",
+      "summary": "Evaluate synthetic authorization request against candidate policy fixture in the local simulator and produce structured decision output with explicit allow/deny reasons.",
+      "fixture_ref": "tests/fixtures/policyhelix/C01/positive-decision.json",
+      "invariants_checked": [
+        "Private resources fail closed",
+        "Only authenticated normalized identity enters policy"
+      ],
+      "expected_result": {
+        "allow": true,
+        "reasons": [
+          "policy_allow_role_operator"
+        ],
+        "obligations": []
+      },
+      "execution_status": "planned specification; engine execution unimplemented"
+    },
+    {
+      "step_id": "STEP-02",
+      "action": "Sign and verify policy bundle",
+      "summary": "Package policy source into versioned signed bundle; verify Ed25519 signature, digest integrity and monotonic revision tracking.",
+      "fixture_ref": "tests/fixtures/policyhelix/C01/positive-decision.json",
+      "invariants_checked": [
+        "Bundle signature plus freshness and monotonic revision"
+      ],
+      "expected_result": {
+        "signature_valid": true,
+        "monotonic_revision_enforced": true
+      },
+      "execution_status": "planned specification; engine execution unimplemented"
+    },
+    {
+      "step_id": "STEP-03",
+      "action": "Protect owned upstream service",
+      "summary": "Route authenticated client traffic through PolicyHelix local gateway to protect a private owned upstream endpoint (dataset report).",
+      "fixture_ref": "tests/fixtures/policyhelix/C01/positive-decision.json",
+      "invariants_checked": [
+        "Private resources fail closed",
+        "Only authenticated normalized identity enters policy"
+      ],
+      "expected_result": {
+        "proxy_allowed": true,
+        "upstream_protected": true
+      },
+      "execution_status": "planned specification; engine execution unimplemented"
+    },
+    {
+      "step_id": "STEP-04",
+      "action": "Test spoofed header and direct origin bypass",
+      "summary": "Attempt direct origin access and send spoofed identity headers (X-Remote-User: admin); assert fail-closed rejection without entering policy engine.",
+      "fixture_ref": "tests/fixtures/policyhelix/C01/invalid-spoofed-header.json",
+      "invariants_checked": [
+        "Private resources fail closed",
+        "Only authenticated normalized identity enters policy"
+      ],
+      "expected_result": {
+        "allow": false,
+        "reasons": [
+          "unauthenticated_normalized_identity_required",
+          "direct_origin_blocked"
+        ],
+        "obligations": [
+          "audit_security_alert_spoofed_header"
+        ]
+      },
+      "execution_status": "planned specification; engine execution unimplemented"
+    },
+    {
+      "step_id": "STEP-05",
+      "action": "Revoke active session",
+      "summary": "Trigger session revocation epoch update in SQLite session store; subsequent requests with revoked credentials fail closed within 30 seconds bound.",
+      "fixture_ref": "tests/fixtures/policyhelix/C01/invalid-revoked-session.json",
+      "invariants_checked": [
+        "Private resources fail closed",
+        "Only authenticated normalized identity enters policy"
+      ],
+      "expected_result": {
+        "allow": false,
+        "reasons": [
+          "session_revoked"
+        ],
+        "obligations": [
+          "terminate_client_session"
+        ]
+      },
+      "execution_status": "planned specification; engine execution unimplemented"
+    },
+    {
+      "step_id": "STEP-06",
+      "action": "Simulate decision outage and expired policy",
+      "summary": "Simulate IdP/decision engine unavailability and expired policy bundle; enforce documented fail-closed behavior.",
+      "fixture_ref": "tests/fixtures/policyhelix/C01/invalid-stale-bundle.json",
+      "invariants_checked": [
+        "Private resources fail closed",
+        "Bundle signature plus freshness and monotonic revision"
+      ],
+      "expected_result": {
+        "allow": false,
+        "reasons": [
+          "bundle_freshness_expired_fail_closed",
+          "decision_engine_unreachable_fail_closed"
+        ],
+        "obligations": [
+          "emit_outage_telemetry"
+        ]
+      },
+      "execution_status": "planned specification; engine execution unimplemented"
+    }
   ],
   "clean_host_commands": [
     "git clone https://github.com/Parsa-Emami/Policyhelix.git",

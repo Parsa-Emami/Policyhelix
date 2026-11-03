@@ -1,0 +1,44 @@
+{
+  "$schema": "https://policyhelix.local/schemas/c01/decision-fixture.json",
+  "fixture_id": "C01-NEG-01",
+  "name": "Spoofed identity header and direct origin bypass rejection",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture for PolicyHelix reference workflow",
+  "stage": "test-spoofed-header-direct-origin",
+  "input": {
+    "headers": {
+      "X-Remote-User": "admin",
+      "X-Forwarded-Email": "admin@local.test"
+    },
+    "resource": {
+      "id": "service:analytics/data/report-2026",
+      "type": "dataset",
+      "classification": "internal"
+    },
+    "action": "read",
+    "context": {
+      "protocol": "http",
+      "direct_origin_attempt": true
+    }
+  },
+  "policy_bundle": {
+    "digest": "sha256:4a5c88e5d2639201f99c235b2e912f2cbe6783965b1287f3b89b1424e12e12e8",
+    "revision": 1,
+    "signed_at": "2026-11-03T10:00:00Z",
+    "signature_algorithm": "ed25519"
+  },
+  "expected_decision": {
+    "subject": "anonymous",
+    "resource": "service:analytics/data/report-2026",
+    "action": "read",
+    "policy_digest": "sha256:4a5c88e5d2639201f99c235b2e912f2cbe6783965b1287f3b89b1424e12e12e8",
+    "allow": false,
+    "reasons": [
+      "unauthenticated_normalized_identity_required",
+      "direct_origin_blocked"
+    ],
+    "obligations": [
+      "audit_security_alert_spoofed_header"
+    ]
+  }
+}

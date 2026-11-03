@@ -1,0 +1,47 @@
+{
+  "$schema": "https://policyhelix.local/schemas/c01/decision-fixture.json",
+  "fixture_id": "C01-NEG-02",
+  "name": "Revoked session epoch rejection",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture for PolicyHelix reference workflow",
+  "stage": "revoke",
+  "input": {
+    "subject": {
+      "id": "user_bob",
+      "issuer": "https://idp.local.test/realms/policyhelix",
+      "email": "bob@local.test",
+      "roles": [
+        "operator"
+      ],
+      "session_epoch": 1729990000
+    },
+    "resource": {
+      "id": "service:analytics/data/report-2026",
+      "type": "dataset",
+      "classification": "internal"
+    },
+    "action": "read",
+    "context": {
+      "revocation_cutoff_epoch": 1730000000
+    }
+  },
+  "policy_bundle": {
+    "digest": "sha256:4a5c88e5d2639201f99c235b2e912f2cbe6783965b1287f3b89b1424e12e12e8",
+    "revision": 1,
+    "signed_at": "2026-11-03T10:00:00Z",
+    "signature_algorithm": "ed25519"
+  },
+  "expected_decision": {
+    "subject": "user_bob",
+    "resource": "service:analytics/data/report-2026",
+    "action": "read",
+    "policy_digest": "sha256:4a5c88e5d2639201f99c235b2e912f2cbe6783965b1287f3b89b1424e12e12e8",
+    "allow": false,
+    "reasons": [
+      "session_revoked"
+    ],
+    "obligations": [
+      "terminate_client_session"
+    ]
+  }
+}

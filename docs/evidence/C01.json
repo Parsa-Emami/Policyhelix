@@ -1,0 +1,74 @@
+{
+  "schema_version": 1,
+  "commit_id": "C01",
+  "project": "PolicyHelix",
+  "date": "2026-11-03",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: freeze the reference workflow specification, fixtures and validator; no engine execution inferred",
+  "source_identity": "sha256:8e344ed576b57f50ac48ec1d9ed9215ef340ccd0f7f1932082827f18485a8add",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "environment": {
+    "os": "linux",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0"
+    },
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "unmeasured planning target"
+    }
+  },
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C01/positive-decision.json",
+      "sha256": "0fb4991cec5b16221b5248b588c5ca19e7a380e9ba5319880f805bd9cc91ec05",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic fixture for PolicyHelix reference workflow"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C01/invalid-spoofed-header.json",
+      "sha256": "029d3165d5fde9b8f711ae0aa267069f02b7ce3d0d4c781dd116db8dbe1493d5",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic fixture for PolicyHelix reference workflow"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C01/invalid-revoked-session.json",
+      "sha256": "6dfb6d6746a62b7daec3aeceabab6f79ca62d8a698c2cfa959a91fa1e497c25b",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic fixture for PolicyHelix reference workflow"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C01/invalid-stale-bundle.json",
+      "sha256": "87523cb6a4c04c4656eadd9a5bc365f69b41a2296eec205d468c647ca3c8c5cb",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic fixture for PolicyHelix reference workflow"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "node scripts/verify-reference.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "All positive and negative reference contract checks passed."
+    }
+  ],
+  "results": [
+    "Frozen reference workflow specification in docs/product/REFERENCE_WORKFLOW.md",
+    "Machine contract frozen in tests/scenarios/clone-to-value.json",
+    "Synthetic licensed positive and negative fixtures placed in tests/fixtures/policyhelix/C01/",
+    "Reference validator scripts/verify-reference.mjs validates structure and passes negative regression tests"
+  ],
+  "observed_limitations": [
+    "No runtime engine capability is implemented or claimed in C01; engine integration starts at C03."
+  ],
+  "rollback_or_recovery_observation": "Revert the isolated documentation, fixture and script changes cleanly via git revert when no incompatible data was accepted."
+}

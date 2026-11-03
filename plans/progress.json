@@ -6,10 +6,12 @@
   "commits": [
     {
       "id": "C01",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C01.json"
+      ],
+      "source_identity": "sha256:8e344ed576b57f50ac48ec1d9ed9215ef340ccd0f7f1932082827f18485a8add",
+      "notes": "Frozen open-source reference workflow specification, synthetic fixtures, and self-contained validator."
     },
     {
       "id": "C02",

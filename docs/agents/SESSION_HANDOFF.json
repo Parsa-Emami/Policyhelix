@@ -1,20 +1,22 @@
 {
   "project": "PolicyHelix",
-  "date": "2026-10-16",
-  "base_commit": "c55ad8e70bd525a5dc19f80ccf171031387b14c1",
-  "scope": "Repair CI for all main and Dependabot heads: historical source records, exact current Git checkout and real regression tests",
-  "core_tasks_verified": [],
-  "commands": [
-    "python3 -m unittest discover -s tests/engineering -p 'test_*.py' -v",
-    "python3 scripts/verify_ci_source.py",
-    "npm run check",
-    "npm run test:clone"
+  "date": "2026-11-03",
+  "base_commit": "63aee4bbe78386a126432da169ee92b23f733fea",
+  "scope": "Task C01: freeze the open-source clone-to-value reference workflow, machine scenario contract, synthetic fixtures, and self-contained validator",
+  "core_tasks_verified": [
+    "C01"
   ],
-  "validation_results": "docs/evidence/ci-integrity-repair.json",
-  "final_source_identity": "Read the source_identity in docs/evidence/oss-roadmap.json; it excludes evidence and SHA256SUMS.txt to avoid recursive hashing. This is a source digest, not a fabricated remote commit ID.",
+  "commands": [
+    "npm run validate:plan",
+    "node scripts/verify-reference.mjs",
+    "node --test tests/web/*.test.mjs",
+    "python3 -m unittest discover -s tests/engineering -p 'test_*.py' -v"
+  ],
+  "validation_results": "docs/evidence/C01.json",
+  "final_source_identity": "sha256:8e344ed576b57f50ac48ec1d9ed9215ef340ccd0f7f1932082827f18485a8add",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C01",
+  "next_task": "C02",
   "next_command": "npm run plan -- next",
-  "continuation": "See docs/engineering/CI_SOURCE_INTEGRITY.md for source proof scope. Historical evidence retains its original source; current runtime results are the actual new CI jobs. Core implementation remains at the existing next task."
+  "continuation": "Task C01 verified. Frozen specification and synthetic fixtures established without claiming engine execution. Ready for C02 (lock reproducible open-source resources)."
 }
