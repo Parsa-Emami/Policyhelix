@@ -75,10 +75,15 @@ Updated 2026-10-16. These current web facts come from the committed npm lockfile
 | `typescript` | 7.0.2 | Apache-2.0 |
 | `vite` | 8.3.4 | MIT |
 
-## Planned engine resources
+## Planned engine resources and toolchain locks
 
-- https://www.openpolicyagent.org/docs/
-- https://www.keycloak.org/documentation
-- https://openid.net/specs/openid-connect-core-1_0.html
+Locked at task C02 from official upstream sources:
 
-Resolve exact pins and licenses at C02; upstream resources are not claimed installed by this document.
+| Upstream Resource | Pinned Version / Release | Declared License | Official Upstream Source |
+|---|---|---|---|
+| Go Compiler and Standard Library | `1.26.2` | BSD-3-Clause | https://go.dev/dl/ |
+| Open Policy Agent (OPA) | `v1.2.0` | Apache-2.0 | https://www.openpolicyagent.org/docs/ |
+| Keycloak OIDC Provider | `26.1.3` | Apache-2.0 | https://www.keycloak.org/documentation |
+| OpenID Connect Core 1.0 Specification | `1.0` | OpenID Foundation License | https://openid.net/specs/openid-connect-core-1_0.html |
+
+Upstream resources are locked for reproducible open-source local build and deployment; they are not claimed installed by this document alone. Complete distributed notices and full SBOM are compiled at C31.

@@ -1,22 +1,25 @@
 {
   "project": "PolicyHelix",
   "date": "2026-11-03",
-  "base_commit": "63aee4bbe78386a126432da169ee92b23f733fea",
-  "scope": "Task C01: freeze the open-source clone-to-value reference workflow, machine scenario contract, synthetic fixtures, and self-contained validator",
+  "base_commit": "220b2db632d4389e6eb123c52e4ea8be7d5bb004",
+  "scope": "Task C02: lock reproducible open-source resources, toolchain lock, third-party inventory and self-contained resource validator",
   "core_tasks_verified": [
-    "C01"
+    "C01",
+    "C02"
   ],
   "commands": [
     "npm run validate:plan",
+    "node scripts/verify-resources.mjs",
+    "npm ci --ignore-scripts",
+    "npm run check",
     "node scripts/verify-reference.mjs",
-    "node --test tests/web/*.test.mjs",
     "python3 -m unittest discover -s tests/engineering -p 'test_*.py' -v"
   ],
-  "validation_results": "docs/evidence/C01.json",
-  "final_source_identity": "sha256:8e344ed576b57f50ac48ec1d9ed9215ef340ccd0f7f1932082827f18485a8add",
+  "validation_results": "docs/evidence/C02.json",
+  "final_source_identity": "sha256:32e687fbc18d63402669889328ee2482a3c4132b5b1395ebc53759ecd91d5c31",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C02",
+  "next_task": "C03",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C01 verified. Frozen specification and synthetic fixtures established without claiming engine execution. Ready for C02 (lock reproducible open-source resources)."
+  "continuation": "Task C02 verified. Reproducible open-source compilers, runtimes, providers and self-contained resource validator locked. Ready for C03 (implement unified local engine setup and launch)."
 }

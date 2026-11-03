@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "commit_id": "C02",
+  "project": "PolicyHelix",
+  "date": "2026-11-03",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: lock reproducible open-source compilers, runtimes, providers and self-contained resource validator",
+  "source_identity": "sha256:32e687fbc18d63402669889328ee2482a3c4132b5b1395ebc53759ecd91d5c31",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "environment": {
+    "os": "linux",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "unmeasured planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    }
+  ],
+  "locked_resources": {
+    "local_opa": {
+      "version": "v1.2.0",
+      "digest": "sha256:d89408b066cfcfb8d4e9b6bf7bc0f760f38d6df0c52f6f3630f69910d55e0984",
+      "license": "Apache-2.0"
+    },
+    "self_hosted_keycloak": {
+      "version": "26.1.3",
+      "digest": "sha256:4a0c8b6e680a7bf242c7decf6f186ff9ebfc1b777a82c40c82fb1ca364aef251",
+      "license": "Apache-2.0"
+    },
+    "owned_synthetic_upstream": {
+      "version": "0.0.1",
+      "digest": "in-repo source",
+      "license": "Apache-2.0"
+    }
+  },
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C02/positive-resource-lock.json",
+      "sha256": "a9ba622847ce92522efd21025075d043c88220f3d48f72f9bcac2decc679a1e7",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic fixture for PolicyHelix resource locking"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C02/invalid-floating-tag.json",
+      "sha256": "c5f55973d1954d6758354c25fa0d507e0254f1d9f9c566623eeddaa69d1b2d6d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic fixture for PolicyHelix resource locking"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C02/invalid-missing-license.json",
+      "sha256": "5efaca208ef6ebcab17295bdaf860490195e391f76296303efb177dd6473e1a4",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic fixture for PolicyHelix resource locking"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C02/invalid-paid-cloud-dependency.json",
+      "sha256": "4af707d6a0db2b57ad5701f81114e2a9ad52081cb6f3ae7cbf7187efdc1ee5a5",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic fixture for PolicyHelix resource locking"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "node scripts/verify-resources.mjs",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "All resource locks, toolchain probes, and negative regression tests passed."
+    },
+    {
+      "command": "npm ci --ignore-scripts",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "added 28 packages in 711ms"
+    }
+  ],
+  "results": [
+    "Compilers and runtimes (Go 1.26.2, Node 24.19.0, npm 11.17.0) locked to official releases",
+    "Providers (local OPA v1.2.0, Keycloak 26.1.3, owned upstream) locked with immutable digests, Apache-2.0 licenses, and verified source-build instructions",
+    "Self-contained resource validator scripts/verify-resources.mjs passed positive probes and negative regression suite"
+  ],
+  "observed_limitations": [
+    "Resource and toolchain locking task; runtime engine setup/execution starts at C03."
+  ],
+  "rollback_or_recovery_observation": "Revert the isolated toolchain locking commit cleanly via git revert when no incompatible data was accepted."
+}

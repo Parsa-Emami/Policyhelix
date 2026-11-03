@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "commit_id": "C02",
+  "project": "PolicyHelix",
+  "provenance": "repository-authored synthetic licensed fixtures",
+  "license": "Apache-2.0",
+  "fixtures": [
+    {
+      "fixture_id": "C02-POS-01",
+      "path": "tests/fixtures/policyhelix/C02/positive-resource-lock.json",
+      "sha256": "a9ba622847ce92522efd21025075d043c88220f3d48f72f9bcac2decc679a1e7",
+      "type": "positive",
+      "stage": "toolchain-and-resource-locking",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C02-NEG-01",
+      "path": "tests/fixtures/policyhelix/C02/invalid-floating-tag.json",
+      "sha256": "c5f55973d1954d6758354c25fa0d507e0254f1d9f9c566623eeddaa69d1b2d6d",
+      "type": "negative",
+      "stage": "floating-tag-rejection",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C02-NEG-02",
+      "path": "tests/fixtures/policyhelix/C02/invalid-missing-license.json",
+      "sha256": "5efaca208ef6ebcab17295bdaf860490195e391f76296303efb177dd6473e1a4",
+      "type": "negative",
+      "stage": "missing-license-rejection",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C02-NEG-03",
+      "path": "tests/fixtures/policyhelix/C02/invalid-paid-cloud-dependency.json",
+      "sha256": "4af707d6a0db2b57ad5701f81114e2a9ad52081cb6f3ae7cbf7187efdc1ee5a5",
+      "type": "negative",
+      "stage": "mandatory-cloud-account-rejection",
+      "license": "Apache-2.0"
+    }
+  ]
+}

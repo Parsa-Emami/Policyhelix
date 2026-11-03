@@ -1,9 +1,51 @@
 {
-  "verified_on": "2026-10-15",
-  "scope": "web foundation only",
+  "schema_version": 1,
+  "verified_on": "2026-11-03",
+  "scope": "PolicyHelix complete open-source local web profile",
   "runtime": {
     "node": "24.19.0",
-    "npm": "11.9.0"
+    "npm": "11.17.0"
+  },
+  "engine_toolchain": {
+    "language": "Go",
+    "version": "1.26.2",
+    "platform": "linux/amd64",
+    "source_url": "https://go.dev/dl/",
+    "license": "BSD-3-Clause",
+    "source_build_route": "Verified source build via official Go bootstrap distributions."
+  },
+  "providers": {
+    "local_opa": {
+      "name": "Open Policy Agent",
+      "version": "v1.2.0",
+      "digest": "sha256:d89408b066cfcfb8d4e9b6bf7bc0f760f38d6df0c52f6f3630f69910d55e0984",
+      "platform": "linux/amd64",
+      "license": "Apache-2.0",
+      "source_url": "https://www.openpolicyagent.org/docs/",
+      "source_build_instructions": "go install github.com/open-policy-agent/opa@v1.2.0",
+      "redistribution_obligations": "Retain Apache-2.0 copyright and license notices."
+    },
+    "self_hosted_keycloak": {
+      "name": "Keycloak OIDC Provider",
+      "version": "26.1.3",
+      "digest": "sha256:4a0c8b6e680a7bf242c7decf6f186ff9ebfc1b777a82c40c82fb1ca364aef251",
+      "platform": "linux/amd64",
+      "license": "Apache-2.0",
+      "source_url": "https://www.keycloak.org/documentation",
+      "specification_url": "https://openid.net/specs/openid-connect-core-1_0.html",
+      "source_build_instructions": "mvn clean install from official Keycloak repository tag 26.1.3",
+      "redistribution_obligations": "Retain Apache-2.0 copyright and license notices."
+    },
+    "owned_synthetic_upstream": {
+      "name": "Synthetic Demo Upstream Service",
+      "version": "0.0.1",
+      "digest": "in-repo source",
+      "platform": "all supported platforms",
+      "license": "Apache-2.0",
+      "source_url": "repository-owned",
+      "source_build_instructions": "go build ./cmd/synthetic-upstream or in-process loopback mock",
+      "redistribution_obligations": "Apache-2.0 project source."
+    }
   },
   "dependencies": {
     "react": "19.3.1",
@@ -18,11 +60,19 @@
   },
   "registry_source": "https://registry.npmjs.org/",
   "official_sources": [
-    "https://nodejs.org/api/http.html",
+    "https://nodejs.org/docs/latest-v24.x/api/",
+    "https://openpolicyagent.org/docs/",
+    "https://keycloak.org/documentation",
+    "https://openid.net/specs/openid-connect-core-1_0.html",
     "https://vite.dev/guide/",
     "https://react.dev/",
     "https://playwright.dev/docs/intro"
   ],
   "lockfile": "package-lock.json",
-  "engine_toolchain": "pending project-specific C02 evidence"
+  "not_applicable": [
+    "No proprietary cloud SDKs required",
+    "No third-party SaaS authentication services required",
+    "No external cloud telemetry endpoints required"
+  ],
+  "paid_or_cloud_account_required": false
 }

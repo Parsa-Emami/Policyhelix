@@ -1,0 +1,20 @@
+{
+  "$schema": "https://policyhelix.local/schemas/c02/resource-fixture.json",
+  "fixture_id": "C02-NEG-03",
+  "name": "Resource requiring mandatory paid or proprietary cloud account",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture for PolicyHelix resource locking",
+  "resource": {
+    "name": "proprietary-cloud-authorizer",
+    "version": "2.0.0",
+    "digest": "sha256:2222222222222222222222222222222222222222222222222222222222222222",
+    "platform": "cloud",
+    "license": "Proprietary",
+    "source_url": "https://cloud.example.com",
+    "paid_or_cloud_account_required": true
+  },
+  "expected_validation": {
+    "valid": false,
+    "rejection_reason": "mandatory_paid_or_cloud_account_forbidden"
+  }
+}

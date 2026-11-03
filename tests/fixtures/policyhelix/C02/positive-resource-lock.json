@@ -1,0 +1,24 @@
+{
+  "$schema": "https://policyhelix.local/schemas/c02/resource-fixture.json",
+  "fixture_id": "C02-POS-01",
+  "name": "Fully specified and locked open-source resource entry",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture for PolicyHelix resource locking",
+  "resource": {
+    "name": "open-policy-agent",
+    "version": "v1.2.0",
+    "digest": "sha256:d89408b066cfcfb8d4e9b6bf7bc0f760f38d6df0c52f6f3630f69910d55e0984",
+    "platform": "linux/amd64",
+    "license": "Apache-2.0",
+    "source_url": "https://www.openpolicyagent.org/docs/",
+    "source_build_instructions": "go install github.com/open-policy-agent/opa@v1.2.0",
+    "redistribution_obligations": "Include Apache-2.0 license notice and copyright in third-party notices.",
+    "paid_or_cloud_account_required": false
+  },
+  "expected_validation": {
+    "valid": true,
+    "immutable_digest_enforced": true,
+    "compatible_license": true,
+    "source_build_present": true
+  }
+}

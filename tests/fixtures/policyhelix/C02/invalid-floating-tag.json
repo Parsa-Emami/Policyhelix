@@ -1,0 +1,21 @@
+{
+  "$schema": "https://policyhelix.local/schemas/c02/resource-fixture.json",
+  "fixture_id": "C02-NEG-01",
+  "name": "Floating provider tag without immutable digest",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture for PolicyHelix resource locking",
+  "resource": {
+    "name": "open-policy-agent",
+    "version": "latest",
+    "digest": null,
+    "platform": "linux/amd64",
+    "license": "Apache-2.0",
+    "source_url": "https://www.openpolicyagent.org/docs/",
+    "source_build_instructions": "go install github.com/open-policy-agent/opa@latest",
+    "paid_or_cloud_account_required": false
+  },
+  "expected_validation": {
+    "valid": false,
+    "rejection_reason": "floating_or_mutable_tag_rejected"
+  }
+}

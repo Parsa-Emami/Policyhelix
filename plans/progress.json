@@ -15,10 +15,12 @@
     },
     {
       "id": "C02",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C02.json"
+      ],
+      "source_identity": "sha256:32e687fbc18d63402669889328ee2482a3c4132b5b1395ebc53759ecd91d5c31",
+      "notes": "Locked reproducible open-source compilers, runtimes, providers and self-contained resource validator."
     },
     {
       "id": "C03",

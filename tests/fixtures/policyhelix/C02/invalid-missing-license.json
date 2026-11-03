@@ -1,0 +1,20 @@
+{
+  "$schema": "https://policyhelix.local/schemas/c02/resource-fixture.json",
+  "fixture_id": "C02-NEG-02",
+  "name": "Resource missing official source or license declaration",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture for PolicyHelix resource locking",
+  "resource": {
+    "name": "unlicensed-mock-upstream",
+    "version": "1.0.0",
+    "digest": "sha256:1111111111111111111111111111111111111111111111111111111111111111",
+    "platform": "linux/amd64",
+    "license": null,
+    "source_url": null,
+    "paid_or_cloud_account_required": false
+  },
+  "expected_validation": {
+    "valid": false,
+    "rejection_reason": "missing_official_source_or_license"
+  }
+}
