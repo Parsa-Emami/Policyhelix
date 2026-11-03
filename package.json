@@ -16,7 +16,7 @@
     "build:engine": "go build -o dist/engine/policyhelix ./cmd/policyhelix",
     "start": "node scripts/start-local.mjs",
     "serve:web": "node scripts/serve-web.mjs",
-    "test": "node --test tests/web/*.test.mjs",
+    "test": "node --test tests/web/*.test.mjs tests/contracts/*.test.mjs",
     "test:engine": "go test ./...",
     "test:browser": "playwright test",
     "package:web": "node scripts/package-web.mjs",

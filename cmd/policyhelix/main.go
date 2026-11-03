@@ -14,6 +14,8 @@ import (
 	"strings"
 	"syscall"
 	"time"
+
+	"github.com/parsa-emami/policyhelix/internal/contracts"
 )
 
 const (
@@ -261,6 +263,34 @@ func setupRouter() *http.ServeMux {
 		_ = json.NewEncoder(w).Encode(res)
 	})
 
+	mux.HandleFunc("/v1/runtime/evaluate-contract", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", "POST")
+			http.Error(w, `{"error":"method_not_allowed"}`, http.StatusMethodNotAllowed)
+			return
+		}
+		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 131072))
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusRequestEntityTooLarge)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"schema_version": contracts.CurrentSchemaVersion,
+				"status":         "failed",
+				"error": map[string]interface{}{
+					"code":      contracts.ErrPayloadTooLarge,
+					"message":   "Payload exceeds maximum allowed stream limit",
+					"retryable": false,
+				},
+			})
+			return
+		}
+
+		code, result := contracts.ValidateAndEvaluate(r.Context(), body)
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(code)
+		_ = json.NewEncoder(w).Encode(result)
+	})
+
 	return mux
 }
 
@@ -310,6 +340,7 @@ func main() {
 	versionFlag := flag.Bool("version", false, "Print engine version and exit")
 	smokeFlag := flag.Bool("smoke-test", false, "Execute self-contained engine smoke test")
 	fixtureFlag := flag.String("fixture", "", "Path to fixture file to evaluate")
+	contractFlag := flag.String("evaluate-contract", "", "Path to v1 domain contract input JSON to evaluate")
 	flag.Parse()
 
 	if *versionFlag {
@@ -359,6 +390,20 @@ func main() {
 			os.Exit(1)
 		}
 		_ = json.NewEncoder(os.Stdout).Encode(res)
+		return
+	}
+
+	if *contractFlag != "" {
+		raw, err := os.ReadFile(*contractFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Contract read error: %v\n", err)
+			os.Exit(1)
+		}
+		code, res := contracts.ValidateAndEvaluate(context.Background(), raw)
+		_ = json.NewEncoder(os.Stdout).Encode(res)
+		if code != http.StatusOK && code != 499 {
+			os.Exit(1)
+		}
 		return
 	}
 

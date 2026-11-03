@@ -1,16 +1,17 @@
 {
   "project": "PolicyHelix",
-  "reviewed_commit": "c781bd7f03baf38124300d8428ab630b73d19bda",
-  "readiness": "RUNTIME_SUPERVISED",
+  "reviewed_commit": "d8662c1c0fbb315307fa6b56f86c6735b7b028c5",
+  "readiness": "CONTRACTS_TYPED",
   "core_ready": false,
   "implemented": [
     "responsive web shell",
     "roadmap browser",
     "local bounded JSON structure preview",
-    "unified local Go engine setup and process supervisor"
+    "unified local Go engine setup and process supervisor",
+    "typed versioned domain inputs and results"
   ],
-  "engine": "supervised loopback runtime (minimal health)",
-  "next_task": "C04",
+  "engine": "typed domain contracts v1 (in-memory evaluation & boundaries)",
+  "next_task": "C05",
   "next_command": "npm run plan -- next",
   "full_product_endpoint": "C30 locally usable; C40 full published OSS v1"
 }

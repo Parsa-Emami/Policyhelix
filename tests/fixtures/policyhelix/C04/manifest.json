@@ -1,0 +1,49 @@
+{
+  "schema_version": 1,
+  "commit_id": "C04",
+  "project": "PolicyHelix",
+  "provenance": "repository-authored synthetic licensed fixtures",
+  "license": "Apache-2.0",
+  "fixtures": [
+    {
+      "fixture_id": "C04-POS-01",
+      "path": "tests/fixtures/policyhelix/C04/positive-operator-allow.json",
+      "sha256": "1553f1f6fc1949c7bd92e6c64f54d209e51f8a469f1964be9b5f4455410feb7b",
+      "type": "positive",
+      "stage": "domain-contracts-allow",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C04-NEG-01",
+      "path": "tests/fixtures/policyhelix/C04/negative-private-unauthenticated.json",
+      "sha256": "54f846851a713e39c618038fa033ab59408af8aef668e9b9e372b8ec379c5659",
+      "type": "negative",
+      "stage": "unauthenticated-private-fail-closed",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C04-NEG-02",
+      "path": "tests/fixtures/policyhelix/C04/negative-unsupported-version.json",
+      "sha256": "b45f9f265a8ccaf9a882f08937516c877b6353f655046f28d8924b0998d3ae8f",
+      "type": "negative",
+      "stage": "unsupported-schema-version-rejected",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C04-NEG-03",
+      "path": "tests/fixtures/policyhelix/C04/negative-oversized-or-timeout.json",
+      "sha256": "7b6fb98203431bacceb1149da1dc125d863e122cbb3b1efd73709ad6d847f1a1",
+      "type": "negative",
+      "stage": "deadline-or-cancellation-enforced",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C04-NEG-04",
+      "path": "tests/fixtures/policyhelix/C04/negative-unavailable-provider.json",
+      "sha256": "5285de164ef68d79a865aeeeed30efb1a1faf9c28d1e026dcf66a33a37037584",
+      "type": "negative",
+      "stage": "provider-outage-fail-closed",
+      "license": "Apache-2.0"
+    }
+  ]
+}

@@ -1,0 +1,124 @@
+{
+  "schema_version": 1,
+  "commit_id": "C04",
+  "project": "PolicyHelix",
+  "date": "2026-11-03",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: define typed versioned domain inputs and results",
+  "source_identity": "sha256:4d7ae45fe6398f5b8f0ca43169f44ba44771e9a9307d12f6a707a216c891461a",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "environment": {
+    "os": "linux",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.23.6 linux/amd64"
+    },
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "unmeasured planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.23.6 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C04/positive-operator-allow.json",
+      "sha256": "1553f1f6fc1949c7bd92e6c64f54d209e51f8a469f1964be9b5f4455410feb7b",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C04 domain contracts allow"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C04/negative-private-unauthenticated.json",
+      "sha256": "54f846851a713e39c618038fa033ab59408af8aef668e9b9e372b8ec379c5659",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C04 unauthenticated private access fail-closed"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C04/negative-unsupported-version.json",
+      "sha256": "b45f9f265a8ccaf9a882f08937516c877b6353f655046f28d8924b0998d3ae8f",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C04 unsupported schema version rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C04/negative-oversized-or-timeout.json",
+      "sha256": "7b6fb98203431bacceb1149da1dc125d863e122cbb3b1efd73709ad6d847f1a1",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C04 deadline or cancellation enforcement"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C04/negative-unavailable-provider.json",
+      "sha256": "5285de164ef68d79a865aeeeed30efb1a1faf9c28d1e026dcf66a33a37037584",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C04 provider outage fail-closed"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "go test ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "ok github.com/parsa-emami/policyhelix/cmd/policyhelix; ok github.com/parsa-emami/policyhelix/internal/contracts"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "16 tests passed, 0 failed"
+    },
+    {
+      "command": "npm run test:browser",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "2 passed (2.2s)"
+    },
+    {
+      "command": "npm run test:clone",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "real git clone -> npm run setup -> web startup"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "VALIDATION PASSED: Checked 102 JSON files and repository contract invariants."
+    }
+  ],
+  "results": [
+    "Strict v1 JSON Schemas (contracts/input.schema.json, contracts/result.schema.json) with additionalProperties: false and explicit typed properties",
+    "Go engine contract validator (internal/contracts/validator.go) enforcing 64 KiB payload limits, 1..200ms deadlines, cancellation, and deterministic SHA-256 digests",
+    "Go engine CLI flag --evaluate-contract and loopback HTTP endpoint POST /v1/runtime/evaluate-contract wired into cmd/policyhelix",
+    "Local supervisor HTTP proxy /api/v1/runtime/evaluate-contract routing POST requests directly to Go engine loopback endpoint",
+    "Synthetic C04 fixtures and manifest (tests/fixtures/policyhelix/C04/) covering positive allow, unauthenticated private, unsupported version, timeout/cancellation, and provider outage",
+    "Node contract test suite (tests/contracts/domain-contracts.test.mjs) validating schema draft 2020-12, fixture digests, and live supervisor proxy evaluations"
+  ],
+  "observed_limitations": [
+    "Domain inputs and results typed and enforced in memory/HTTP; recoverable local authoritative storage writes follow at C05."
+  ],
+  "rollback_or_recovery_observation": "Revert the isolated contract specification and engine validator commit cleanly via git revert when no incompatible data was accepted."
+}

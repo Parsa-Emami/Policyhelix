@@ -1,54 +1,221 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "urn:parsa:policyhelix:input:0",
-  "title": "authorization-decision planning draft",
+  "$id": "https://policyhelix.local/schemas/v1/input.schema.json",
+  "title": "PolicyHelix Authorization Decision Input v1",
+  "description": "Strict versioned typed domain input contract for PolicyHelix authorization evaluation.",
   "type": "object",
   "additionalProperties": false,
-  "properties": {
-    "subject": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 4096
-    },
-    "resource": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 4096
-    },
-    "action": {
-      "type": "string",
-      "minLength": 1,
-      "maxLength": 4096
-    },
-    "policy_digest": {
-      "type": "string",
-      "pattern": "^[a-f0-9]{64}$"
-    },
-    "allow": {
-      "type": "boolean"
-    },
-    "reasons": {
-      "type": "array",
-      "maxItems": 100000,
-      "items": {
-        "type": "object"
-      }
-    },
-    "obligations": {
-      "type": "array",
-      "maxItems": 100000,
-      "items": {
-        "type": "object"
-      }
-    }
-  },
   "required": [
+    "schema_version",
+    "request_id",
     "subject",
     "resource",
     "action",
-    "policy_digest",
-    "allow",
-    "reasons",
-    "obligations"
-  ]
+    "context",
+    "policy_bundle",
+    "limits"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1",
+      "description": "Version of the input contract; must strictly equal '1'."
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128,
+      "pattern": "^[a-zA-Z0-9._:-]{1,128}$",
+      "description": "Unique traceable request identifier."
+    },
+    "subject": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "issuer",
+        "roles",
+        "authenticated",
+        "session_epoch"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 256
+        },
+        "issuer": {
+          "type": "string",
+          "format": "uri",
+          "maxLength": 512
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "maxLength": 256
+        },
+        "roles": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]+$"
+          }
+        },
+        "authenticated": {
+          "type": "boolean"
+        },
+        "session_epoch": {
+          "type": "integer",
+          "minimum": 0
+        }
+      }
+    },
+    "resource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "type",
+        "classification"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "service",
+            "dataset",
+            "endpoint",
+            "policy_bundle"
+          ]
+        },
+        "classification": {
+          "type": "string",
+          "enum": [
+            "public",
+            "internal",
+            "private",
+            "restricted"
+          ]
+        }
+      }
+    },
+    "action": {
+      "type": "string",
+      "enum": [
+        "read",
+        "write",
+        "execute",
+        "admin",
+        "simulate"
+      ]
+    },
+    "context": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "protocol",
+        "source_ip",
+        "client_id",
+        "timestamp",
+        "untrusted_headers_stripped"
+      ],
+      "properties": {
+        "protocol": {
+          "type": "string",
+          "enum": [
+            "https",
+            "loopback"
+          ]
+        },
+        "source_ip": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64
+        },
+        "client_id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "untrusted_headers_stripped": {
+          "type": "boolean"
+        }
+      }
+    },
+    "policy_bundle": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "digest",
+        "revision",
+        "signed_at",
+        "signature_verified"
+      ],
+      "properties": {
+        "digest": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{64}$"
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "signed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "signature_verified": {
+          "type": "boolean"
+        },
+        "provider_state": {
+          "type": "string",
+          "enum": [
+            "ready",
+            "unavailable"
+          ]
+        }
+      }
+    },
+    "limits": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "max_payload_bytes",
+        "deadline_ms"
+      ],
+      "properties": {
+        "max_payload_bytes": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 65536
+        },
+        "deadline_ms": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 200
+        },
+        "cancel_after_ms": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 10000
+        }
+      }
+    }
+  }
 }

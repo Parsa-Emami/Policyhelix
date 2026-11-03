@@ -1,25 +1,27 @@
 {
   "project": "PolicyHelix",
   "date": "2026-11-03",
-  "base_commit": "220b2db632d4389e6eb123c52e4ea8be7d5bb004",
-  "scope": "Task C03: implement unified local engine setup and launch, Go runtime, single-terminal supervisor, and smoke tests",
+  "base_commit": "d8662c1c0fbb315307fa6b56f86c6735b7b028c5",
+  "scope": "Task C04: define typed versioned domain inputs and results, schema constraints, Go engine validator, and C04 test fixtures",
   "core_tasks_verified": [
     "C01",
     "C02",
-    "C03"
+    "C03",
+    "C04"
   ],
   "commands": [
     "npm run validate:plan",
     "go test -v ./...",
     "npm test",
     "npm run test:browser",
-    "npm run test:clone"
+    "npm run test:clone",
+    "python3 scripts/validate_repo.py"
   ],
-  "validation_results": "docs/evidence/C03.json",
-  "final_source_identity": "sha256:d8b2e1f40aa91240c5f206689d71fa970e7a5c898b631d8e64cbebfb0e1b369c",
+  "validation_results": "docs/evidence/C04.json",
+  "final_source_identity": "sha256:4d7ae45fe6398f5b8f0ca43169f44ba44771e9a9307d12f6a707a216c891461a",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C04",
+  "next_task": "C05",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C03 verified. Go engine runtime, smoke tests, C03 synthetic fixtures, single-terminal supervisor, and browser workspace wiring implemented. Ready for C04 (define typed versioned domain inputs and results)."
+  "continuation": "Task C04 verified. Typed versioned domain contracts (v1), JSON schemas, Go engine validation with size/cancellation boundaries, and full positive/negative fixture suite implemented. Ready for C05 (prove recoverable local authoritative writes)."
 }

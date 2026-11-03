@@ -1,43 +1,208 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "PolicyHelix result planning draft",
+  "$id": "https://policyhelix.local/schemas/v1/result.schema.json",
+  "title": "PolicyHelix Authorization Decision Result v1",
+  "description": "Strict versioned typed domain result contract for PolicyHelix authorization evaluation.",
   "type": "object",
   "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "request_id",
+    "status",
+    "input_digest",
+    "engine_version",
+    "decision",
+    "error",
+    "metrics",
+    "warnings"
+  ],
   "properties": {
     "schema_version": {
-      "const": "0"
+      "type": "string",
+      "const": "1",
+      "description": "Version of the result contract; must strictly equal '1'."
+    },
+    "request_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 128
     },
     "status": {
+      "type": "string",
       "enum": [
         "complete",
-        "partial",
         "failed",
-        "unverified"
+        "cancelled"
       ]
     },
     "input_digest": {
       "type": "string",
-      "pattern": "^[a-f0-9]{64}$"
+      "pattern": "^sha256:[a-f0-9]{64}$"
     },
     "engine_version": {
-      "type": "string"
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 32
     },
-    "result": {
-      "type": "object"
+    "decision": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject",
+        "resource",
+        "action",
+        "policy_digest",
+        "allow",
+        "reasons",
+        "obligations"
+      ],
+      "properties": {
+        "subject": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 256
+        },
+        "resource": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 512
+        },
+        "action": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 64
+        },
+        "policy_digest": {
+          "type": "string",
+          "pattern": "^(sha256:[a-f0-9]{64})?$"
+        },
+        "allow": {
+          "type": "boolean"
+        },
+        "reasons": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "code",
+              "message"
+            ],
+            "properties": {
+              "code": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "message": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 256
+              }
+            }
+          }
+        },
+        "obligations": {
+          "type": "array",
+          "maxItems": 64,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "id",
+              "type",
+              "parameters"
+            ],
+            "properties": {
+              "id": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "type": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 64
+              },
+              "parameters": {
+                "type": "object"
+              }
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "type": [
+        "object",
+        "null"
+      ],
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "message",
+        "retryable"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "enum": [
+            "INVALID_JSON",
+            "PAYLOAD_TOO_LARGE",
+            "UNSUPPORTED_VERSION",
+            "SCHEMA_VALIDATION_FAILED",
+            "UNAUTHENTICATED_IDENTITY",
+            "PRIVATE_RESOURCE_FAIL_CLOSED",
+            "STALE_OR_UNSIGNED_BUNDLE",
+            "PROVIDER_UNAVAILABLE",
+            "DECISION_TIMEOUT",
+            "REQUEST_CANCELLED"
+          ]
+        },
+        "message": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 512
+        },
+        "retryable": {
+          "type": "boolean"
+        },
+        "field": {
+          "type": "string",
+          "maxLength": 128
+        }
+      }
+    },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "elapsed_ms",
+        "payload_bytes",
+        "within_deadline"
+      ],
+      "properties": {
+        "elapsed_ms": {
+          "type": "number",
+          "minimum": 0
+        },
+        "payload_bytes": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "within_deadline": {
+          "type": "boolean"
+        }
+      }
     },
     "warnings": {
       "type": "array",
+      "maxItems": 64,
       "items": {
-        "type": "string"
+        "type": "string",
+        "maxLength": 256
       }
     }
-  },
-  "required": [
-    "schema_version",
-    "status",
-    "input_digest",
-    "engine_version",
-    "result",
-    "warnings"
-  ]
+  }
 }

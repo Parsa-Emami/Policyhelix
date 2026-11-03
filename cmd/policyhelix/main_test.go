@@ -247,3 +247,94 @@ func TestEngineRepeatAfterRestart(t *testing.T) {
 		t.Errorf("Invariant changed across restart: run1=%+v, run2=%+v", res1, res2)
 	}
 }
+
+func TestEngineEvaluateContractEndpoint(t *testing.T) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("Failed to allocate port: %v", err)
+	}
+	port := listener.Addr().(*net.TCPAddr).Port
+	_ = listener.Close()
+
+	stopCh := make(chan struct{})
+	serverDone := make(chan error, 1)
+	go func() {
+		serverDone <- runServer("127.0.0.1", port, stopCh)
+	}()
+
+	client := &http.Client{Timeout: 2 * time.Second}
+	baseURL := fmt.Sprintf("http://127.0.0.1:%d", port)
+
+	for i := 0; i < 20; i++ {
+		resp, err := client.Get(baseURL + "/healthz")
+		if err == nil && resp.StatusCode == http.StatusOK {
+			_ = resp.Body.Close()
+			break
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	validPayload := `{
+		"schema_version": "1",
+		"request_id": "req-c04-smoke",
+		"subject": {
+			"id": "user_alice",
+			"issuer": "https://idp.local.test/realms/policyhelix",
+			"roles": ["operator"],
+			"authenticated": true,
+			"session_epoch": 1730000000
+		},
+		"resource": {
+			"id": "service:analytics/data/report-2026",
+			"type": "dataset",
+			"classification": "internal"
+		},
+		"action": "read",
+		"context": {
+			"protocol": "loopback",
+			"source_ip": "127.0.0.1",
+			"client_id": "policyhelix-local-web",
+			"timestamp": "2026-11-03T10:00:00Z",
+			"untrusted_headers_stripped": true
+		},
+		"policy_bundle": {
+			"digest": "sha256:4a5c88e5d2639201f99c235b2e912f2cbe6783965b1287f3b89b1424e12e12e8",
+			"revision": 1,
+			"signed_at": "2026-11-03T10:00:00Z",
+			"signature_verified": true,
+			"provider_state": "ready"
+		},
+		"limits": {
+			"max_payload_bytes": 65536,
+			"deadline_ms": 200
+		}
+	}`
+
+	// Positive evaluation via POST /v1/runtime/evaluate-contract
+	resp, err := client.Post(baseURL+"/v1/runtime/evaluate-contract", "application/json", strings.NewReader(validPayload))
+	if err != nil || resp.StatusCode != http.StatusOK {
+		t.Fatalf("POST evaluate-contract failed: %v, status: %v", err, resp.Status)
+	}
+	var res map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&res)
+	_ = resp.Body.Close()
+
+	if res["status"] != "complete" {
+		t.Errorf("Expected status=complete, got %v", res["status"])
+	}
+	dec, _ := res["decision"].(map[string]interface{})
+	if dec["allow"] != true {
+		t.Errorf("Expected allow=true, got %v", dec["allow"])
+	}
+
+	// Unsupported version via POST /v1/runtime/evaluate-contract
+	badVersionPayload := strings.Replace(validPayload, `"schema_version": "1"`, `"schema_version": "99"`, 1)
+	resp, err = client.Post(baseURL+"/v1/runtime/evaluate-contract", "application/json", strings.NewReader(badVersionPayload))
+	if err != nil || resp.StatusCode != http.StatusBadRequest {
+		t.Fatalf("Expected 400 for bad schema version, got status: %v", resp.Status)
+	}
+	_ = resp.Body.Close()
+
+	close(stopCh)
+	<-serverDone
+}

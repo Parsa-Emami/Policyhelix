@@ -33,10 +33,12 @@
     },
     {
       "id": "C04",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C04.json"
+      ],
+      "source_identity": "sha256:4d7ae45fe6398f5b8f0ca43169f44ba44771e9a9307d12f6a707a216c891461a",
+      "notes": "Typed versioned domain inputs and results v1, Go engine contract validation, limits and cancellation, and C04 fixtures verified."
     },
     {
       "id": "C05",
