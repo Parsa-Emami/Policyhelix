@@ -1,0 +1,13 @@
+{
+  "fixture_id": "cli-normalize-clean",
+  "commit_id": "C16",
+  "description": "CLI fixture for clean header normalization on a public resource.",
+  "schema_version": "1",
+  "headers": {
+    "X-Forwarded-Host": "client.local",
+    "Accept": "application/json"
+  },
+  "untrusted_headers_stripped": true,
+  "resource_classification": "public",
+  "evaluation_time": "2026-11-04T12:00:00Z"
+}

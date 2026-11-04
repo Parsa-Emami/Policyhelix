@@ -1,0 +1,25 @@
+{
+  "fixture_id": "negative-provider-unavailable",
+  "commit_id": "C16",
+  "description": "Provider unavailable status fails closed immediately before sensitive side effects.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c16-neg-05",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "client_ip": "10.0.0.9",
+    "user_agent": "PolicyHelix-Client/1.0",
+    "untrusted_headers_stripped": true,
+    "provider_unavailable": true,
+    "provider_state": "unavailable",
+    "resource_classification": "private",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "error_code": "PROVIDER_UNAVAILABLE",
+    "stripped_headers": []
+  }
+}

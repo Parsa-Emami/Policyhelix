@@ -18,6 +18,7 @@ import (
 	"github.com/parsa-emami/policyhelix/internal/auth"
 	"github.com/parsa-emami/policyhelix/internal/bundles"
 	"github.com/parsa-emami/policyhelix/internal/contracts"
+	"github.com/parsa-emami/policyhelix/internal/gateway"
 	"github.com/parsa-emami/policyhelix/internal/policy"
 	"github.com/parsa-emami/policyhelix/internal/storage"
 )
@@ -483,6 +484,59 @@ func setupRouter() *http.ServeMux {
 		_ = json.NewEncoder(w).Encode(report)
 	})
 
+	mux.HandleFunc("/api/v1/gateway/identity/normalize", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", "POST")
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
+		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 1048576))
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"valid":      false,
+				"allow":      false,
+				"error_code": gateway.ErrCodeMalformedHeader,
+				"message":    "Failed to read request body or exceeded 1MB",
+			})
+			return
+		}
+
+		var req gateway.NormalizeIdentityRequest
+		if err := json.Unmarshal(body, &req); err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"valid":      false,
+				"allow":      false,
+				"error_code": gateway.ErrCodeMalformedHeader,
+				"message":    fmt.Sprintf("Malformed normalize identity JSON: %v", err),
+			})
+			return
+		}
+
+		report, err := gateway.NormalizeSubjectContext(r.Context(), req, nil, nil)
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"valid":      false,
+				"allow":      false,
+				"error_code": "INTERNAL_ERROR",
+				"message":    err.Error(),
+			})
+			return
+		}
+		if !report.Valid || !report.Allow {
+			w.WriteHeader(http.StatusForbidden)
+		} else {
+			w.WriteHeader(http.StatusOK)
+		}
+		_ = json.NewEncoder(w).Encode(report)
+	})
+
 	return mux
 }
 
@@ -568,6 +622,7 @@ func main() {
 	validateOIDCFlag := flag.String("validate-oidc", "", "Path to C13 OIDC callback validation fixture JSON")
 	manageSessionFlag := flag.String("manage-session", "", "Path to C14 session management fixture JSON")
 	enforceRevokeFlag := flag.String("enforce-revocation", "", "Path to C15 revocation enforcement workload fixture JSON")
+	normalizeIdentityFlag := flag.String("normalize-identity", "", "Path to C16 gateway identity normalization fixture JSON")
 	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	flag.Parse()
@@ -910,6 +965,41 @@ func main() {
 			return
 		}
 		if !report.Allow || !report.Valid || !report.StoppedWithinBound {
+			os.Exit(1)
+		}
+		return
+	}
+
+	if *normalizeIdentityFlag != "" {
+		raw, err := os.ReadFile(*normalizeIdentityFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Normalize identity fixture read error: %v\n", err)
+			os.Exit(1)
+		}
+		var req gateway.NormalizeIdentityRequest
+		if err := json.Unmarshal(raw, &req); err != nil {
+			fmt.Fprintf(os.Stderr, "Normalize identity fixture JSON error: %v\n", err)
+			os.Exit(1)
+		}
+		var sessStore auth.SessionStore
+		var revStore auth.RevocationStore
+		if strings.TrimSpace(*storageDirFlag) != "" {
+			ad, _, err := storage.Open(*storageDirFlag)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Storage open error: %v\n", err)
+				os.Exit(1)
+			}
+			defer ad.Close()
+			sessStore = auth.NewStorageSessionStore(ad)
+			revStore = auth.NewStorageRevocationStore(ad)
+		}
+		report, err := gateway.NormalizeSubjectContext(context.Background(), req, sessStore, revStore)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Normalize identity evaluation error: %v\n", err)
+			os.Exit(1)
+		}
+		_ = json.NewEncoder(os.Stdout).Encode(report)
+		if !report.Valid || !report.Allow {
 			os.Exit(1)
 		}
 		return

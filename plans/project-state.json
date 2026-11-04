@@ -1,7 +1,7 @@
 {
   "project": "PolicyHelix",
   "reviewed_commit": "d8d4f8b",
-  "readiness": "BOUNDED_REVOCATION_WINDOW_VERIFIED",
+  "readiness": "GATEWAY_IDENTITY_NORMALIZED",
   "core_ready": false,
   "implemented": [
     "responsive web shell",
@@ -19,10 +19,11 @@
     "atomic policy bundle activation and rollback",
     "OIDC authorization code callback validation",
     "revocable server-side session persistence and rotation",
-    "bounded 30-second stale authorization window enforcement"
+    "bounded 30-second stale authorization window enforcement",
+    "client identity header stripping and normalized subject context"
   ],
-  "engine": "bounded 30-second revocation enforcer, revocable server-side sessions, OIDC callback validator, atomic bundle activation & rollback, bundle trust/freshness verifier, deterministic signed bundle builder, offline decision simulator, bounded local policy bundle evaluator, domain route & resource classes, recoverable storage, typed contracts v1 & runtime CI",
-  "next_task": "C16",
+  "engine": "normalized gateway identity & header stripping, bounded 30-second revocation enforcer, revocable server-side sessions, OIDC callback validator, atomic bundle activation & rollback, bundle trust/freshness verifier, deterministic signed bundle builder, offline decision simulator, bounded local policy bundle evaluator, domain route & resource classes, recoverable storage, typed contracts v1 & runtime CI",
+  "next_task": "C17",
   "next_command": "npm run plan -- next",
   "full_product_endpoint": "C30 locally usable; C40 full published OSS v1"
 }

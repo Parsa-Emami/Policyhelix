@@ -1,0 +1,99 @@
+{
+  "commit_id": "C16",
+  "schema_version": "1",
+  "license": "Apache-2.0",
+  "description": "Synthetic licensed fixtures for PolicyHelix C16: normalize trusted subject context and strip client identity headers (Requirement F10).",
+  "fixtures": [
+    {
+      "fixture_id": "cli-normalize-clean",
+      "path": "tests/fixtures/policyhelix/C16/cli-normalize-clean.json",
+      "sha256": "36d0d5a5a10853855dd847a348b529f23730cad81e0aa6ac9102c5ae13addba8",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "cli-normalize-rejected",
+      "path": "tests/fixtures/policyhelix/C16/cli-normalize-rejected.json",
+      "sha256": "4b308fce7083c739a02b0cbab3ea541ca4d718218c675884c5666fa03517677f",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-expired-session",
+      "path": "tests/fixtures/policyhelix/C16/negative-expired-session.json",
+      "sha256": "8fd7aa31f45f11c2828411a8445b8d396436c368cadeb261d59236066da001a4",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-forged-header-unstripped",
+      "path": "tests/fixtures/policyhelix/C16/negative-forged-header-unstripped.json",
+      "sha256": "a0843bc4fd73c015de06f2e89e0d5431fa5c3e553ff07b1c17ed74449dcd61b8",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-malformed-header",
+      "path": "tests/fixtures/policyhelix/C16/negative-malformed-header.json",
+      "sha256": "5465a875499103425d52812f259798a94aaa533cbd34c35cb762bbf8f85c69f9",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-private-resource-fail-closed",
+      "path": "tests/fixtures/policyhelix/C16/negative-private-resource-fail-closed.json",
+      "sha256": "4bd15f849d6542d8804617aa85da1c1ab20e06da858fb0e34a8a79f7b782f37b",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-provider-unavailable",
+      "path": "tests/fixtures/policyhelix/C16/negative-provider-unavailable.json",
+      "sha256": "665662957a7d79b49e51dc5aa52eb4cb7aa723be1865094bc434f0894d56180d",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-revoked-session",
+      "path": "tests/fixtures/policyhelix/C16/negative-revoked-session.json",
+      "sha256": "0c17937adad0dee5b5c9e299c98439765ba707951616d918cc37d5b79499a79a",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-unrelated-owner-scope",
+      "path": "tests/fixtures/policyhelix/C16/negative-unrelated-owner-scope.json",
+      "sha256": "f5e406ad100b0556e093bd798c82372f62d0a75a2c5b7c3877928659ea51905c",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-clean-request-construct-subject",
+      "path": "tests/fixtures/policyhelix/C16/positive-clean-request-construct-subject.json",
+      "sha256": "2e43d97c55dda182b5ddbb5145974cb88defac4743137848d7dda96210329320",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-role-normalization",
+      "path": "tests/fixtures/policyhelix/C16/positive-role-normalization.json",
+      "sha256": "ab0872904ce7b37dd9b9862c9fb5f63dbc7f252fb8d8c8fb8d26561a9ddf2e01",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-strip-client-headers-and-construct-subject",
+      "path": "tests/fixtures/policyhelix/C16/positive-strip-client-headers-and-construct-subject.json",
+      "sha256": "f86b0af7b52d24ef030b1d9d7d696ad60e35922f095373296e4b61250d2ef30e",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-unauthenticated-public-resource",
+      "path": "tests/fixtures/policyhelix/C16/positive-unauthenticated-public-resource.json",
+      "sha256": "fa1a567a0f03c77a5d84677ddb01d16ddc1cf99781045639dbda81cc7ccf2b9c",
+      "type": "positive",
+      "license": "Apache-2.0"
+    }
+  ]
+}

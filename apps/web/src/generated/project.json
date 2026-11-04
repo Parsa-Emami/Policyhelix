@@ -203,7 +203,7 @@
       "id": "C16",
       "title": "feat(identity): normalize trusted subject context",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Client identity headers are stripped before trusted values are constructed."
       ],

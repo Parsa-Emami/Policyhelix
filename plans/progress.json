@@ -141,10 +141,12 @@
     },
     {
       "id": "C16",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C16.json"
+      ],
+      "source_identity": "sha256:acd379b9e77ad5df3b6f56e9366d917eedaedbe60b1abaae2285666a0039963f",
+      "notes": "Gateway identity normalization implemented in internal/gateway/identity.go and cmd/policyhelix/main.go; F10 client identity headers stripped before trusted values are constructed verified."
     },
     {
       "id": "C17",

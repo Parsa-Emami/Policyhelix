@@ -1,0 +1,16 @@
+{
+  "fixture_id": "cli-normalize-rejected",
+  "commit_id": "C16",
+  "description": "CLI fixture for rejected unstripped client identity headers.",
+  "schema_version": "1",
+  "headers": {
+    "X-User-Id": "attacker-spoof",
+    "X-Roles": "admin"
+  },
+  "forged_headers": {
+    "X-User-Id": "attacker-spoof"
+  },
+  "untrusted_headers_stripped": false,
+  "resource_classification": "private",
+  "evaluation_time": "2026-11-04T12:00:00Z"
+}

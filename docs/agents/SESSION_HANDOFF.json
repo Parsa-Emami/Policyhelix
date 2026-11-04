@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-04",
   "base_commit": "d8d4f8b",
-  "scope": "Task C15: enforce bounded stale authorization window; revoked session stops within configured 30-second bound under target workload",
+  "scope": "Task C16: normalize trusted subject context; client identity headers are stripped before trusted values are constructed",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -18,11 +18,12 @@
     "C12",
     "C13",
     "C14",
-    "C15"
+    "C15",
+    "C16"
   ],
   "commands": [
     "npm run validate:plan",
-    "gofmt -w internal/bundles/build.go internal/auth/revoke.go cmd/policyhelix/main.go tests/revoke_test.go",
+    "gofmt -w internal/gateway/identity.go cmd/policyhelix/main.go tests/header_test.go",
     "go vet ./...",
     "go test -v ./...",
     "npm test",
@@ -31,11 +32,11 @@
     "python3 scripts/validate_repo.py",
     "python3 scripts/source_identity.py"
   ],
-  "validation_results": "docs/evidence/C15.json",
-  "final_source_identity": "sha256:af51915fb8febe888e7af30c9327ce333cfcc06a93610e67bb6b6d7319d5697d",
+  "validation_results": "docs/evidence/C16.json",
+  "final_source_identity": "sha256:acd379b9e77ad5df3b6f56e9366d917eedaedbe60b1abaae2285666a0039963f",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C16",
+  "next_task": "C17",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C15 verified. Bounded 30-second stale authorization window enforcer (internal/auth/revoke.go), CLI/HTTP router integration (cmd/policyhelix/main.go), regression tests (tests/revoke_test.go), and fixtures (tests/fixtures/policyhelix/C15/) implemented. Ready for C16 (feat(gateway): strip untrusted headers and inject verified context)."
+  "continuation": "Task C16 verified. Gateway client identity header stripping and trusted subject context normalizer (internal/gateway/identity.go), CLI/HTTP router integration (cmd/policyhelix/main.go), regression tests (tests/header_test.go), and fixtures (tests/fixtures/policyhelix/C16/) implemented. Ready for C17 (feat(gateway): protect one allowlisted upstream)."
 }

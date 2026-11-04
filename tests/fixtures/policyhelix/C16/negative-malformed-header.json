@@ -1,0 +1,23 @@
+{
+  "fixture_id": "negative-malformed-header",
+  "commit_id": "C16",
+  "description": "Malformed headers with CRLF injection or oversized values fail closed before processing.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c16-neg-06",
+    "headers": {
+      "X-Custom-Injection\r\nInjected-Header": "malicious_payload",
+      "Accept": "application/json"
+    },
+    "client_ip": "10.0.0.10",
+    "user_agent": "PolicyHelix-Client/1.0",
+    "untrusted_headers_stripped": true,
+    "resource_classification": "private",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "error_code": "MALFORMED_HEADER"
+  }
+}

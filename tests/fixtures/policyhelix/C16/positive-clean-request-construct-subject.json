@@ -1,0 +1,69 @@
+{
+  "fixture_id": "positive-clean-request-construct-subject",
+  "commit_id": "C16",
+  "description": "Standard clean request without forged headers normalizes verified subject context.",
+  "schema_version": "1",
+  "preload_sessions": [
+    {
+      "session_id": "sess-c16-pos-02",
+      "subject_id": "user-carol",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "roles": [
+        "operator"
+      ],
+      "owner_scope": "tenant-gamma",
+      "fingerprint": {
+        "ip_hash": "2a39f1eedcd9f986327b5e4da842426f4f05b8f16f0ef385639dbec0db70eaae",
+        "user_agent_hash": "3ee881651f4c3e42859f650346c4e95a38294cbc2f1d82efcd256ffcb9811ada",
+        "composite_hash": "51ae932c62518de3afffbc757e4bc08dad229c36d702abb74ff83ab0dd47b7ad"
+      },
+      "credentials": {
+        "upstream_session_id": "keycloak-sid-carol02"
+      },
+      "session_epoch": 1793793600,
+      "created_at": "2026-11-04T11:00:00Z",
+      "expires_at": "2026-11-04T15:00:00Z",
+      "last_seen_at": "2026-11-04T11:00:00Z",
+      "status": "ACTIVE"
+    }
+  ],
+  "request": {
+    "request_id": "req-c16-pos-02",
+    "headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json"
+    },
+    "session_id": "sess-c16-pos-02",
+    "client_ip": "10.0.0.2",
+    "user_agent": "PolicyHelix-Client/1.0",
+    "untrusted_headers_stripped": true,
+    "resource_classification": "private",
+    "target_owner_scope": "tenant-gamma",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "stripped_headers": [],
+    "subject": {
+      "id": "user-carol",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 1793793600
+    },
+    "downstream_headers": {
+      "Accept": "application/json",
+      "Content-Type": "application/json",
+      "X-PolicyHelix-Authenticated": "true",
+      "X-PolicyHelix-Issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "X-PolicyHelix-Roles": "operator",
+      "X-PolicyHelix-Session-Epoch": "1793793600",
+      "X-PolicyHelix-Session-Id": "sess-c16-pos-02",
+      "X-PolicyHelix-Subject": "user-carol",
+      "X-PolicyHelix-Tenant-Id": "tenant-gamma"
+    }
+  }
+}

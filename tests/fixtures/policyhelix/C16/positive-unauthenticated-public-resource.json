@@ -1,0 +1,42 @@
+{
+  "fixture_id": "positive-unauthenticated-public-resource",
+  "commit_id": "C16",
+  "description": "Public unauthenticated request receives sanitized anonymous context with public role.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c16-pos-04",
+    "headers": {
+      "X-User-Id": "forged-anonymous-spoof",
+      "Accept": "text/html"
+    },
+    "client_ip": "10.0.0.4",
+    "user_agent": "PolicyHelix-Client/1.0",
+    "untrusted_headers_stripped": true,
+    "resource_classification": "public",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "stripped_headers": [
+      "X-User-Id"
+    ],
+    "subject": {
+      "id": "anonymous",
+      "issuer": "https://policyhelix.local/auth",
+      "roles": [
+        "public"
+      ],
+      "authenticated": false,
+      "session_epoch": 0
+    },
+    "downstream_headers": {
+      "Accept": "text/html",
+      "X-PolicyHelix-Authenticated": "false",
+      "X-PolicyHelix-Issuer": "https://policyhelix.local/auth",
+      "X-PolicyHelix-Roles": "public",
+      "X-PolicyHelix-Session-Epoch": "0",
+      "X-PolicyHelix-Subject": "anonymous"
+    }
+  }
+}

@@ -1,0 +1,60 @@
+{
+  "fixture_id": "negative-revoked-session",
+  "commit_id": "C16",
+  "description": "Session revoked in authoritative revocation store fails closed.",
+  "schema_version": "1",
+  "preload_sessions": [
+    {
+      "session_id": "sess-c16-revoked-01",
+      "subject_id": "user-eve",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "roles": [
+        "operator"
+      ],
+      "owner_scope": "tenant-eve",
+      "fingerprint": {
+        "ip_hash": "2a39f1eedcd9f986327b5e4da842426f4f05b8f16f0ef385639dbec0db70eaae",
+        "user_agent_hash": "3ee881651f4c3e42859f650346c4e95a38294cbc2f1d82efcd256ffcb9811ada",
+        "composite_hash": "51ae932c62518de3afffbc757e4bc08dad229c36d702abb74ff83ab0dd47b7ad"
+      },
+      "credentials": {
+        "upstream_session_id": "keycloak-sid-eve01"
+      },
+      "session_epoch": 1793793600,
+      "created_at": "2026-11-04T11:00:00Z",
+      "expires_at": "2026-11-04T15:00:00Z",
+      "last_seen_at": "2026-11-04T11:00:00Z",
+      "status": "ACTIVE"
+    }
+  ],
+  "preload_revocations": [
+    {
+      "session_id": "sess-c16-revoked-01",
+      "subject_id": "user-eve",
+      "owner_scope": "tenant-eve",
+      "revoked_at": "2026-11-04T11:30:00Z",
+      "deadline_at": "2026-11-04T11:30:30Z",
+      "reason": "compromised_session_key",
+      "revoked_by": "secops"
+    }
+  ],
+  "request": {
+    "request_id": "req-c16-neg-03",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "session_id": "sess-c16-revoked-01",
+    "client_ip": "10.0.0.7",
+    "user_agent": "PolicyHelix-Client/1.0",
+    "untrusted_headers_stripped": true,
+    "resource_classification": "private",
+    "target_owner_scope": "tenant-eve",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "error_code": "REVOKED_SESSION_DENIED",
+    "stripped_headers": []
+  }
+}

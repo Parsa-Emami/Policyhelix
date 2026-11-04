@@ -1,0 +1,193 @@
+{
+  "schema_version": 1,
+  "commit_id": "C16",
+  "project": "PolicyHelix",
+  "date": "2026-11-04",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: normalize trusted subject context and strip client identity headers",
+  "source_identity": "sha256:acd379b9e77ad5df3b6f56e9366d917eedaedbe60b1abaae2285666a0039963f",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.23.6 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml; local run used Go 1.23.6 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "development host verified against C16 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.23.6 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C16/cli-normalize-clean.json",
+      "sha256": "36d0d5a5a10853855dd847a348b529f23730cad81e0aa6ac9102c5ae13addba8",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C16 CLI clean header normalization on public resource"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C16/cli-normalize-rejected.json",
+      "sha256": "4b308fce7083c739a02b0cbab3ea541ca4d718218c675884c5666fa03517677f",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C16 CLI rejected unstripped client identity headers"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C16/negative-expired-session.json",
+      "sha256": "8fd7aa31f45f11c2828411a8445b8d396436c368cadeb261d59236066da001a4",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C16 expired session timestamp fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C16/negative-forged-header-unstripped.json",
+      "sha256": "a0843bc4fd73c015de06f2e89e0d5431fa5c3e553ff07b1c17ed74449dcd61b8",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C16 unstripped forged headers fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C16/negative-malformed-header.json",
+      "sha256": "5465a875499103425d52812f259798a94aaa533cbd34c35cb762bbf8f85c69f9",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C16 malformed or oversized header fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C16/negative-private-resource-fail-closed.json",
+      "sha256": "4bd15f849d6542d8804617aa85da1c1ab20e06da858fb0e34a8a79f7b782f37b",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C16 unauthenticated private resource fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C16/negative-provider-unavailable.json",
+      "sha256": "665662957a7d79b49e51dc5aa52eb4cb7aa723be1865094bc434f0894d56180d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C16 upstream provider unavailable fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C16/negative-revoked-session.json",
+      "sha256": "0c17937adad0dee5b5c9e299c98439765ba707951616d918cc37d5b79499a79a",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C16 explicitly revoked session fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C16/negative-unrelated-owner-scope.json",
+      "sha256": "252ef5ca663d2319efb507205e4fb0fe98df714856f6fca82d97a9f77f988220",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C16 unrelated owner scope mismatch rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C16/positive-clean-request-construct-subject.json",
+      "sha256": "d4e287e076628c68fb5f0967399a930777e382b6833bfa8669e46a9a0ea1797c",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C16 clean request subject normalization"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C16/positive-role-normalization.json",
+      "sha256": "cfbe73418e906a246830588661644783ecf0391d900693ba28dddb5244be78a2",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C16 role sanitization, deduplication and sorting"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C16/positive-strip-client-headers-and-construct-subject.json",
+      "sha256": "f62eb357f00d2aa6240d12eeb8e86095147ae5db06c00e6dbe1cbffc2dd94294",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C16 client identity header stripping before trusted values are constructed"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C16/positive-unauthenticated-public-resource.json",
+      "sha256": "630327f2f183956c397b25fa6c888a75e0325ff771e846174a7ca33827ecf5ff",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C16 unauthenticated public resource anonymous subject context"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "gofmt -w internal/gateway/identity.go cmd/policyhelix/main.go tests/header_test.go",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go vet ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go test -v ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "ok cmd/policyhelix; ok internal/contracts; ok internal/policy; ok internal/storage; ok tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "pretest build and engine build passed; all node tests passed"
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "vite build completed; dist/web built"
+    },
+    {
+      "command": "npm run build:engine",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "go build -o dist/engine/policyhelix ./cmd/policyhelix; no errors"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "VALIDATION PASSED; Checked JSON files and repository contract invariants."
+    },
+    {
+      "command": "python3 scripts/source_identity.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "sha256:acd379b9e77ad5df3b6f56e9366d917eedaedbe60b1abaae2285666a0039963f"
+    }
+  ],
+  "results": [
+    "Implemented internal/gateway/identity.go with StripUntrustedHeaders, StripHTTPHeader, NormalizeSubjectContext, and GatewayIdentityMiddleware.",
+    "Requirement F10 acceptance verified: client identity headers (X-User-Id, X-Roles, X-Tenant-Id, X-PolicyHelix-*) are stripped before trusted values are constructed strictly from server-held credentials.",
+    "Canonical downstream headers (X-PolicyHelix-Subject, X-PolicyHelix-Roles, X-PolicyHelix-Issuer, X-PolicyHelix-Session-Epoch, X-PolicyHelix-Session-Id, X-PolicyHelix-Authenticated) injected strictly for downstream proxies (C17).",
+    "Required negative security cases verified: unstripped forged headers (FORGED_HEADER_REJECTED), unauthenticated private resources (PRIVATE_RESOURCE_FAIL_CLOSED), expired sessions (EXPIRED_SESSION), revoked sessions (REVOKED_SESSION_DENIED), provider unavailable (PROVIDER_UNAVAILABLE), malformed headers (MALFORMED_HEADER), and unrelated owner scope (UNRELATED_OWNER_SCOPE) all fail closed.",
+    "Added -normalize-identity CLI flag and POST /api/v1/gateway/identity/normalize HTTP route in cmd/policyhelix/main.go.",
+    "Thirteen Apache-2.0 synthetic fixtures generated and SHA-256 verified under tests/fixtures/policyhelix/C16/manifest.json."
+  ],
+  "observed_limitations": [
+    "Gateway identity normalization applies strictly to inbound gateway boundaries; upstream forwarding and proxy path filtering are scheduled for C17 (feat(gateway): protect one allowlisted upstream)."
+  ],
+  "rollback_or_recovery_observation": "Revert internal/gateway/identity.go, tests/header_test.go, tests/fixtures/policyhelix/C16/, and the -normalize-identity CLI / HTTP wiring in cmd/policyhelix/main.go. Existing C01-C15 components remain intact."
+}

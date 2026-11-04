@@ -1,0 +1,24 @@
+{
+  "fixture_id": "negative-private-resource-fail-closed",
+  "commit_id": "C16",
+  "description": "Unauthenticated access attempt to a private resource fails closed.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c16-neg-02",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "client_ip": "10.0.0.6",
+    "user_agent": "PolicyHelix-Client/1.0",
+    "untrusted_headers_stripped": true,
+    "resource_classification": "private",
+    "target_owner_scope": "tenant-vault",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "error_code": "PRIVATE_RESOURCE_FAIL_CLOSED",
+    "stripped_headers": []
+  }
+}

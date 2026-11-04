@@ -1,0 +1,31 @@
+{
+  "fixture_id": "negative-forged-header-unstripped",
+  "commit_id": "C16",
+  "description": "Incoming request with forged headers where untrusted_headers_stripped is false fails closed.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c16-neg-01",
+    "headers": {
+      "X-User-Id": "forged-attacker",
+      "X-Role": "admin"
+    },
+    "forged_headers": {
+      "X-User-Id": "forged-attacker",
+      "X-Role": "admin"
+    },
+    "client_ip": "10.0.0.5",
+    "user_agent": "PolicyHelix-Client/1.0",
+    "untrusted_headers_stripped": false,
+    "resource_classification": "private",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "error_code": "FORGED_HEADER_REJECTED",
+    "stripped_headers": [
+      "X-Role",
+      "X-User-Id"
+    ]
+  }
+}
