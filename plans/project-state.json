@@ -1,7 +1,7 @@
 {
   "project": "PolicyHelix",
   "reviewed_commit": "5a82ea9",
-  "readiness": "OIDC_LOGIN_STATE_NONCE_AND_TOKENS_VERIFIED",
+  "readiness": "REVOCABLE_SERVER_SESSIONS_AND_ANTI_FIXATION_VERIFIED",
   "core_ready": false,
   "implemented": [
     "responsive web shell",
@@ -17,10 +17,11 @@
     "deterministic signed policy bundle builder",
     "bundle trust and freshness verification",
     "atomic durable policy activation and restart recovery",
-    "validated OIDC login state nonce and tokens"
+    "validated OIDC login state nonce and tokens",
+    "persisted revocable server side sessions with anti-fixation rotation"
   ],
-  "engine": "validated OIDC login state/nonce/token boundary, durable atomic policy activation with restart recovery, bundle trust/freshness verification, deterministic signed bundle builder, offline decision simulator, bounded local policy bundle evaluator, domain route & resource classes, recoverable storage, typed contracts v1 & runtime CI",
-  "next_task": "C14",
+  "engine": "persisted revocable server-side sessions with fingerprint binding & anti-fixation cookie rotation, validated OIDC login state/nonce/token boundary, durable atomic policy activation with restart recovery, bundle trust/freshness verification, deterministic signed bundle builder, offline decision simulator, bounded local policy bundle evaluator, domain route & resource classes, recoverable storage, typed contracts v1 & runtime CI",
+  "next_task": "C15",
   "next_command": "npm run plan -- next",
   "full_product_endpoint": "C30 locally usable; C40 full published OSS v1"
 }

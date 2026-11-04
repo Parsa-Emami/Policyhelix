@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-04",
   "base_commit": "5a82ea97683c75e57925440f180e88e2633b8436",
-  "scope": "Task C13: feat(oidc): validate login state nonce and tokens",
+  "scope": "Task C14: feat(sessions): persist revocable server side sessions",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -16,22 +16,23 @@
     "C10",
     "C11",
     "C12",
-    "C13"
+    "C13",
+    "C14"
   ],
   "changed_paths": [
-    "internal/auth/oidc.go",
+    "internal/auth/session.go",
     "cmd/policyhelix/main.go",
-    "tests/oidc_test.go",
-    "tests/fixtures/policyhelix/C13/",
+    "tests/session_test.go",
+    "tests/fixtures/policyhelix/C14/",
     "apps/web/src/generated/project.json",
-    "docs/evidence/C13.json",
+    "docs/evidence/C14.json",
     "plans/progress.json",
     "plans/project-state.json",
     "plans/requirements.json",
     "docs/agents/SESSION_HANDOFF.json"
   ],
   "commands": [
-    "gofmt -w internal/auth/oidc.go cmd/policyhelix/main.go tests/oidc_test.go",
+    "gofmt -w internal/auth/session.go cmd/policyhelix/main.go tests/session_test.go",
     "go vet ./...",
     "go test -v -race ./...",
     "npm run validate:plan",
@@ -41,11 +42,11 @@
     "python3 scripts/validate_repo.py",
     "python3 scripts/source_identity.py"
   ],
-  "validation_results": "docs/evidence/C13.json",
-  "final_source_identity": "sha256:a618acce0c9e31ecf424ab26297fb5324c54051817cbf8685b0a750aeb0aab2f",
+  "validation_results": "docs/evidence/C14.json",
+  "final_source_identity": "sha256:31d417e1a2240ab18502e358cef731772e738704fe6b46274d6b572594d13c5a",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C14",
+  "next_task": "C15",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C13 verified. Implemented internal/auth/oidc.go with OIDCValidator, StateManager, NonceTracker, KeySet supporting RS256/EdDSA/HS256, --validate-oidc CLI flag in cmd/policyhelix/main.go, tests/oidc_test.go, and 13 C13 fixtures under tests/fixtures/policyhelix/C13/. Requirement F07 acceptance and all negative cases pass. Ready for C14 (feat(sessions): persist revocable server side sessions)."
+  "continuation": "Task C14 verified. Implemented internal/auth/session.go with ClientFingerprint, ServerCredentials safe serialization, SessionManager supporting CreateSession, ResumeSession, RotateSession, RevokeSession, RevokeAllForSubject, and MemorySessionStore/StorageSessionStore adapters. Added --manage-session CLI flag in cmd/policyhelix/main.go, tests/session_test.go, and 12 C14 fixtures under tests/fixtures/policyhelix/C14/. Requirement F08 acceptance and all negative cases pass. Ready for C15 (feat(sessions): enforce thirty second revocation bounds)."
 }

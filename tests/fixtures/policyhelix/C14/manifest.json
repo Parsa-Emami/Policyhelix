@@ -1,0 +1,89 @@
+{
+  "commit_id": "C14",
+  "fixtures": [
+    {
+      "fixture_id": "positive-create-and-resume-session",
+      "path": "tests/fixtures/policyhelix/C14/positive-create-and-resume-session.json",
+      "sha256": "56b51fb15811713561b7a96368ca7a73d2551ebf34313f77d78f066369e14310",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-cookie-rotation",
+      "path": "tests/fixtures/policyhelix/C14/positive-cookie-rotation.json",
+      "sha256": "37d5c68140b660ab11fcf49ae5a6d5edce5560a94a7afdf1cda8bdc4135adcbf",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-fingerprint-mismatch",
+      "path": "tests/fixtures/policyhelix/C14/negative-fingerprint-mismatch.json",
+      "sha256": "8140fbe14f2f58c681d396c03af66765aca01d841f613e98e643aa52e48a4c95",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-session-fixation-replayed-cookie",
+      "path": "tests/fixtures/policyhelix/C14/negative-session-fixation-replayed-cookie.json",
+      "sha256": "e63baf730b7c1da2d76cb5173239ce673464a3f0fa75ff3c3745870ddf8c3c46",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-expired-session",
+      "path": "tests/fixtures/policyhelix/C14/negative-expired-session.json",
+      "sha256": "9965857f680facb27e58e19b369fd0615d732094f1ebf2f914cb6115123a10cc",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-revoked-session",
+      "path": "tests/fixtures/policyhelix/C14/negative-revoked-session.json",
+      "sha256": "bc1f1b2de41801c14bdca1a67cb198651e9e5773e52df99e25c06bf6ae73ecd4",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-unauthenticated-missing-cookie",
+      "path": "tests/fixtures/policyhelix/C14/negative-unauthenticated-missing-cookie.json",
+      "sha256": "ddadc80d8dd85bcd415e4f3a015291701b43ba7841f50b29becfdeeab69addb0",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-unrelated-owner-scope",
+      "path": "tests/fixtures/policyhelix/C14/negative-unrelated-owner-scope.json",
+      "sha256": "559d6eb4fed22269abb13315ec66318bf56c3b7c81fe51b87e750a1fa5ce59f6",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-forged-header",
+      "path": "tests/fixtures/policyhelix/C14/negative-forged-header.json",
+      "sha256": "3b517b97ae5e7a1700c78e71aad9be0bb2e79dbcdf66611e1f1149ef6be82b49",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-private-resource-fail-closed",
+      "path": "tests/fixtures/policyhelix/C14/negative-private-resource-fail-closed.json",
+      "sha256": "ad3ebb0f874c8c37d62beaf3099ffd5fa29be7e298ed76348eb1bb5ea628f0c2",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "cli-session-create",
+      "path": "tests/fixtures/policyhelix/C14/cli-session-create.json",
+      "sha256": "2c47ef3d4d0d7b979deac6b8bebaa3eda3655abfb9e743273ba026b844f9f68a",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "cli-session-rotate",
+      "path": "tests/fixtures/policyhelix/C14/cli-session-rotate.json",
+      "sha256": "5f1f7e50cd9613d78e90f6effae8df824765928cea01a7b5b6024952251d1e04",
+      "type": "positive",
+      "license": "Apache-2.0"
+    }
+  ]
+}

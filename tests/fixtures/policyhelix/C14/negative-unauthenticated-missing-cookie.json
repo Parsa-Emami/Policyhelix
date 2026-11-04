@@ -1,0 +1,20 @@
+{
+  "fixture_id": "negative-unauthenticated-missing-cookie",
+  "commit_id": "C14",
+  "description": "Request with missing or empty session identifier is rejected as unauthenticated.",
+  "schema_version": "1",
+  "operation": "resume",
+  "preload_sessions": [],
+  "resume": {
+    "session_id": "",
+    "client_ip": "192.168.1.100",
+    "user_agent": "PolicyHelix-Client/1.0",
+    "untrusted_headers_stripped": true,
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "status": "rejected",
+    "error_code": "UNAUTHENTICATED_IDENTITY"
+  }
+}

@@ -83,6 +83,33 @@ type OIDCValidationFixture struct {
 	Callback      auth.CallbackValidationRequest `json:"callback"`
 }
 
+// SessionOperationFixture is the CLI input for validating and managing session lifecycles.
+type SessionOperationFixture struct {
+	SchemaVersion   string                     `json:"schema_version,omitempty"`
+	FixtureID       string                     `json:"fixture_id,omitempty"`
+	CommitID        string                     `json:"commit_id,omitempty"`
+	Operation       string                     `json:"operation"` // "create", "resume", "rotate", "revoke", "revoke_all"
+	PreloadSessions []auth.SessionRecord       `json:"preload_sessions,omitempty"`
+	Create          *auth.CreateSessionRequest `json:"create,omitempty"`
+	Resume          *auth.ResumeSessionRequest `json:"resume,omitempty"`
+	Rotate          *auth.RotateSessionRequest `json:"rotate,omitempty"`
+	RevokeSessionID string                     `json:"revoke_session_id,omitempty"`
+	RevokeSubjectID string                     `json:"revoke_subject_id,omitempty"`
+	MinEpoch        int64                      `json:"min_epoch,omitempty"`
+}
+
+type SessionOperationResult struct {
+	Status             string              `json:"status"` // "ok" or "rejected"
+	Valid              bool                `json:"valid"`
+	Operation          string              `json:"operation"`
+	Session            *auth.SessionRecord `json:"session,omitempty"`
+	Cookie             string              `json:"cookie,omitempty"`
+	SetCookieHeader    string              `json:"set_cookie_header,omitempty"`
+	ErrorCode          string              `json:"error_code,omitempty"`
+	ErrorMessage       string              `json:"error_message,omitempty"`
+	AuthorizedForScope bool                `json:"authorized_for_scope"`
+}
+
 type EvaluationResult struct {
 	Allow                      *bool    `json:"allow,omitempty"`
 	Status                     string   `json:"status,omitempty"`
@@ -533,6 +560,7 @@ func main() {
 	activationStateFlag := flag.String("activation-state", "", "Path to a JSON envelope with trusted_keys; restores and prints the durable activation state (requires -storage-dir)")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	validateOIDCFlag := flag.String("validate-oidc", "", "Path to OIDC validation request JSON fixture to validate state, nonce and tokens")
+	manageSessionFlag := flag.String("manage-session", "", "Path to session operation fixture JSON to execute session create, resume, rotate or revoke")
 	flag.Parse()
 
 	if *versionFlag {
@@ -766,6 +794,156 @@ func main() {
 
 		_ = json.NewEncoder(os.Stdout).Encode(result)
 		if !result.Valid {
+			os.Exit(1)
+		}
+		return
+	}
+
+	if *manageSessionFlag != "" {
+		raw, err := os.ReadFile(*manageSessionFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Session fixture read error: %v\n", err)
+			os.Exit(1)
+		}
+		var fix SessionOperationFixture
+		if err := json.Unmarshal(raw, &fix); err != nil {
+			fmt.Fprintf(os.Stderr, "Session fixture JSON error: %v\n", err)
+			os.Exit(1)
+		}
+
+		var store auth.SessionStore
+		var storageAdapter *storage.Adapter
+		if *storageDirFlag != "" {
+			ad, _, err := storage.Open(*storageDirFlag)
+			if err != nil {
+				_ = json.NewEncoder(os.Stdout).Encode(SessionOperationResult{
+					Status:       "rejected",
+					Valid:        false,
+					Operation:    fix.Operation,
+					ErrorCode:    "STORAGE_ERROR",
+					ErrorMessage: err.Error(),
+				})
+				os.Exit(1)
+			}
+			storageAdapter = ad
+			defer storageAdapter.Close()
+			store = auth.NewStorageSessionStore(storageAdapter)
+		} else {
+			store = auth.NewMemorySessionStore()
+		}
+
+		ctx := context.Background()
+		for _, s := range fix.PreloadSessions {
+			_ = store.SaveSession(ctx, s)
+		}
+
+		mgr := auth.NewSessionManager(store, auth.SessionConfig{})
+		var opResult SessionOperationResult
+		opResult.Operation = fix.Operation
+
+		switch fix.Operation {
+		case "create":
+			if fix.Create == nil {
+				opResult.Status = "rejected"
+				opResult.ErrorCode = auth.ErrCodeInvalidSessionRequest
+				opResult.ErrorMessage = "create request missing in fixture"
+			} else {
+				res, err := mgr.CreateSession(ctx, *fix.Create)
+				if err != nil {
+					opResult.Status = "rejected"
+					opResult.ErrorCode = "CREATE_SESSION_FAILED"
+					opResult.ErrorMessage = err.Error()
+				} else {
+					opResult.Status = "ok"
+					opResult.Valid = res.Valid
+					opResult.Session = res.Session
+					if res.Cookie != nil {
+						opResult.Cookie = res.Cookie.Value
+					}
+					opResult.SetCookieHeader = res.SetCookieHeader
+					opResult.AuthorizedForScope = res.AuthorizedForScope
+				}
+			}
+		case "resume":
+			if fix.Resume == nil {
+				opResult.Status = "rejected"
+				opResult.ErrorCode = auth.ErrCodeInvalidSessionRequest
+				opResult.ErrorMessage = "resume request missing in fixture"
+			} else {
+				res, err := mgr.ResumeSession(ctx, *fix.Resume)
+				if err != nil {
+					opResult.Status = "rejected"
+					opResult.ErrorCode = "RESUME_SESSION_FAILED"
+					opResult.ErrorMessage = err.Error()
+				} else {
+					opResult.Valid = res.Valid
+					if res.Valid {
+						opResult.Status = "ok"
+					} else {
+						opResult.Status = "rejected"
+					}
+					opResult.Session = res.Session
+					opResult.ErrorCode = res.ErrorCode
+					opResult.ErrorMessage = res.ErrorMessage
+					opResult.AuthorizedForScope = res.AuthorizedForScope
+				}
+			}
+		case "rotate":
+			if fix.Rotate == nil {
+				opResult.Status = "rejected"
+				opResult.ErrorCode = auth.ErrCodeInvalidSessionRequest
+				opResult.ErrorMessage = "rotate request missing in fixture"
+			} else {
+				res, err := mgr.RotateSession(ctx, *fix.Rotate)
+				if err != nil {
+					opResult.Status = "rejected"
+					opResult.ErrorCode = "ROTATE_SESSION_FAILED"
+					opResult.ErrorMessage = err.Error()
+				} else {
+					opResult.Valid = res.Valid
+					if res.Valid {
+						opResult.Status = "ok"
+					} else {
+						opResult.Status = "rejected"
+					}
+					opResult.Session = res.Session
+					if res.Cookie != nil {
+						opResult.Cookie = res.Cookie.Value
+					}
+					opResult.SetCookieHeader = res.SetCookieHeader
+					opResult.ErrorCode = res.ErrorCode
+					opResult.ErrorMessage = res.ErrorMessage
+					opResult.AuthorizedForScope = res.AuthorizedForScope
+				}
+			}
+		case "revoke":
+			err := mgr.RevokeSession(ctx, fix.RevokeSessionID)
+			if err != nil {
+				opResult.Status = "rejected"
+				opResult.ErrorCode = "REVOKE_SESSION_FAILED"
+				opResult.ErrorMessage = err.Error()
+			} else {
+				opResult.Status = "ok"
+				opResult.Valid = true
+			}
+		case "revoke_all":
+			err := mgr.RevokeAllForSubject(ctx, fix.RevokeSubjectID, fix.MinEpoch)
+			if err != nil {
+				opResult.Status = "rejected"
+				opResult.ErrorCode = "REVOKE_ALL_FAILED"
+				opResult.ErrorMessage = err.Error()
+			} else {
+				opResult.Status = "ok"
+				opResult.Valid = true
+			}
+		default:
+			opResult.Status = "rejected"
+			opResult.ErrorCode = "UNKNOWN_OPERATION"
+			opResult.ErrorMessage = fmt.Sprintf("unsupported session operation: %s", fix.Operation)
+		}
+
+		_ = json.NewEncoder(os.Stdout).Encode(opResult)
+		if !opResult.Valid {
 			os.Exit(1)
 		}
 		return

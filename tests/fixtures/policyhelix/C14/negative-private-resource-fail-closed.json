@@ -1,0 +1,21 @@
+{
+  "fixture_id": "negative-private-resource-fail-closed",
+  "commit_id": "C14",
+  "description": "Private resource access attempted with invalid or nonexistent session fails closed.",
+  "schema_version": "1",
+  "operation": "resume",
+  "preload_sessions": [],
+  "resume": {
+    "session_id": "nonexistent-private-sess",
+    "client_ip": "192.168.1.100",
+    "user_agent": "PolicyHelix-Client/1.0",
+    "untrusted_headers_stripped": true,
+    "resource_classification": "private",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "status": "rejected",
+    "error_code": "PRIVATE_RESOURCE_FAIL_CLOSED"
+  }
+}

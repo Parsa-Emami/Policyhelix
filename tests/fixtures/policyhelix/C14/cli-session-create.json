@@ -1,0 +1,31 @@
+{
+  "fixture_id": "cli-session-create",
+  "commit_id": "C14",
+  "description": "CLI command execution creates a server-side session with client fingerprint.",
+  "schema_version": "1",
+  "operation": "create",
+  "create": {
+    "subject_id": "user-bob",
+    "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+    "roles": [
+      "auditor"
+    ],
+    "owner_scope": "tenant-gamma",
+    "client_ip": "10.0.0.42",
+    "user_agent": "PolicyHelix-CLI/1.0",
+    "server_credentials": {
+      "custom": {
+        "cli_env": "production"
+      }
+    },
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": true,
+    "status": "ok",
+    "error_code": "",
+    "subject_id": "user-bob",
+    "owner_scope": "tenant-gamma",
+    "authorized_for_scope": true
+  }
+}

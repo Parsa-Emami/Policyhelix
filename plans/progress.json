@@ -123,10 +123,12 @@
     },
     {
       "id": "C14",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C14.json"
+      ],
+      "source_identity": "sha256:31d417e1a2240ab18502e358cef731772e738704fe6b46274d6b572594d13c5a",
+      "notes": "Server-side session management in internal/auth/session.go persists revocable sessions bound to client IP/UA fingerprints, safely holds server credentials while redacting tokens from serialization, prevents session fixation via atomic cookie rotation with superseded invalidation, and integrates with durable storage."
     },
     {
       "id": "C15",

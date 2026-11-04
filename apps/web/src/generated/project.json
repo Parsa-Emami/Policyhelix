@@ -179,7 +179,7 @@
       "id": "C14",
       "title": "feat(sessions): persist revocable server side sessions",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Session stores fingerprints and safe server-held credentials; cookie rotation prevents fixation."
       ],

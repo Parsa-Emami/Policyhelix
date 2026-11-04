@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "commit_id": "C14",
+  "project": "PolicyHelix",
+  "date": "2026-11-04",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: persist revocable server side sessions",
+  "source_identity": "sha256:31d417e1a2240ab18502e358cef731772e738704fe6b46274d6b572594d13c5a",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux 7.0.0-42-generic x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node in .github/workflows/runtime.yml; local run used the installed Go 1.26.2 toolchain",
+    "hardware": {
+      "vcpu": 16,
+      "ram_mib": 31341,
+      "free_disk_mib": 94512,
+      "status": "development host measured; C28 must verify or reduce the 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C14/positive-create-and-resume-session.json",
+      "sha256": "56b51fb15811713561b7a96368ca7a73d2551ebf34313f77d78f066369e14310",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C14 session creation and resumption with matching fingerprint"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C14/positive-cookie-rotation.json",
+      "sha256": "37d5c68140b660ab11fcf49ae5a6d5edce5560a94a7afdf1cda8bdc4135adcbf",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C14 anti-fixation cookie rotation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C14/negative-fingerprint-mismatch.json",
+      "sha256": "8140fbe14f2f58c681d396c03af66765aca01d841f613e98e643aa52e48a4c95",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C14 client fingerprint mismatch hijacking rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C14/negative-session-fixation-replayed-cookie.json",
+      "sha256": "e63baf730b7c1da2d76cb5173239ce673464a3f0fa75ff3c3745870ddf8c3c46",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C14 session fixation replayed superseded cookie rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C14/negative-expired-session.json",
+      "sha256": "9965857f680facb27e58e19b369fd0615d732094f1ebf2f914cb6115123a10cc",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C14 expired session rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C14/negative-revoked-session.json",
+      "sha256": "bc1f1b2de41801c14bdca1a67cb198651e9e5773e52df99e25c06bf6ae73ecd4",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C14 explicitly revoked session rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C14/negative-unauthenticated-missing-cookie.json",
+      "sha256": "ddadc80d8dd85bcd415e4f3a015291701b43ba7841f50b29becfdeeab69addb0",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C14 missing unauthenticated session cookie rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C14/negative-unrelated-owner-scope.json",
+      "sha256": "559d6eb4fed22269abb13315ec66318bf56c3b7c81fe51b87e750a1fa5ce59f6",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C14 cross-tenant unrelated owner scope rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C14/negative-forged-header.json",
+      "sha256": "3b517b97ae5e7a1700c78e71aad9be0bb2e79dbcdf66611e1f1149ef6be82b49",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C14 unstripped forged header rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C14/negative-private-resource-fail-closed.json",
+      "sha256": "ad3ebb0f874c8c37d62beaf3099ffd5fa29be7e298ed76348eb1bb5ea628f0c2",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C14 private resource fail-closed rejection on invalid session"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C14/cli-session-create.json",
+      "sha256": "2c47ef3d4d0d7b979deac6b8bebaa3eda3655abfb9e743273ba026b844f9f68a",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C14 CLI session creation execution"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C14/cli-session-rotate.json",
+      "sha256": "5f1f7e50cd9613d78e90f6effae8df824765928cea01a7b5b6024952251d1e04",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C14 CLI session rotation execution"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "gofmt -w internal/auth/session.go cmd/policyhelix/main.go tests/session_test.go",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go vet ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go test -v -race ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "114 --- PASS, 0 --- FAIL; ok cmd/policyhelix 1.467s; ok internal/contracts (cached); ok internal/policy (cached); ok internal/storage (cached); ok tests 3.437s"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "pretest build and engine build passed; tests 16, pass 16, fail 0, duration 670.912365ms"
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "vite build completed; dist/web/assets/index-B3_Kgi6k.js 241.86 kB; built in 122ms"
+    },
+    {
+      "command": "npm run build:engine",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "go build -o dist/engine/policyhelix ./cmd/policyhelix; no errors"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "VALIDATION PASSED; Checked 195 JSON files and repository contract invariants."
+    },
+    {
+      "command": "python3 scripts/source_identity.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "sha256:31d417e1a2240ab18502e358cef731772e738704fe6b46274d6b572594d13c5a"
+    }
+  ],
+  "results": [
+    "Implemented internal/auth/session.go with SessionManager, ClientFingerprint binding (SHA-256 composite hash of IP and User-Agent), ServerCredentials confidential storage with token serialization redaction, and cookie configuration enforcing __Host- prefix, HttpOnly, Secure, and SameSite=Strict.",
+    "Requirement F08 acceptance verified: session persistence stores fingerprints and safe server-held credentials, and atomic cookie rotation prevents fixation attacks.",
+    "Replaying old superseded session cookies is strictly blocked with SESSION_FIXATION_ATTEMPT / SUPERSEDED_SESSION.",
+    "Required negative security cases verified: missing/unauthenticated identity, expired sessions, explicitly revoked sessions, epoch boundary invalidations, cross-scope tenant access without admin role, and unstripped gateway headers fail closed before sensitive actions.",
+    "Private resources fail closed with PRIVATE_RESOURCE_FAIL_CLOSED on unauthenticated, missing, or invalid sessions.",
+    "Durable session persistence implemented via StorageSessionStore adapting storage.Adapter; tested across crash/restart boundaries.",
+    "Added --manage-session CLI flag in cmd/policyhelix/main.go supporting create, resume, rotate, and revoke operations from JSON fixtures.",
+    "tests/session_test.go covers the entire fixture manifest, F08 acceptance criteria, durable storage crash/restart resilience, negative invariants, and CLI execution.",
+    "Twelve Apache-2.0 synthetic fixtures generated and hash-verified under tests/fixtures/policyhelix/C14/manifest.json."
+  ],
+  "observed_limitations": [
+    "Session identifiers use 256 bits of cryptographically secure random entropy generated via crypto/rand.",
+    "Server-held credentials redact access and refresh tokens from JSON output to prevent token leakage in logs or client responses.",
+    "Revocation SLA enforcement within 30-second bounded target workload is scheduled for C15 (feat(sessions): enforce thirty second revocation bounds)."
+  ],
+  "rollback_or_recovery_observation": "Revert the isolated internal/auth/session.go, tests/session_test.go, and CLI flag in cmd/policyhelix/main.go. Previous storage, activation, and OIDC states remain unaffected."
+}
