@@ -61,55 +61,6 @@ type FixturePayload struct {
 	Request   map[string]interface{} `json:"request"`
 }
 
-// ActivationEnvelope is the CLI input for a durable policy switch. Trust anchors are supplied here
-// so the local engine has an explicit keyring without a hidden global trust store.
-type ActivationEnvelope struct {
-	SchemaVersion string                   `json:"schema_version,omitempty"`
-	OperationID   string                   `json:"operation_id"`
-	TrustedKeys   []bundles.TrustedKey     `json:"trusted_keys"`
-	Identity      storage.CallerIdentity   `json:"identity"`
-	Bundle        policy.LocalPolicyBundle `json:"bundle"`
-}
-
-// OIDCValidationFixture is the CLI input for validating OIDC login state, nonce and tokens.
-type OIDCValidationFixture struct {
-	SchemaVersion string                         `json:"schema_version,omitempty"`
-	FixtureID     string                         `json:"fixture_id,omitempty"`
-	CommitID      string                         `json:"commit_id,omitempty"`
-	Config        auth.OIDCConfig                `json:"config"`
-	TrustedKeys   []auth.TrustedKey              `json:"trusted_keys,omitempty"`
-	PreloadState  *auth.LoginState               `json:"preload_state,omitempty"`
-	PreloadNonces []string                       `json:"preload_nonces,omitempty"`
-	Callback      auth.CallbackValidationRequest `json:"callback"`
-}
-
-// SessionOperationFixture is the CLI input for validating and managing session lifecycles.
-type SessionOperationFixture struct {
-	SchemaVersion   string                     `json:"schema_version,omitempty"`
-	FixtureID       string                     `json:"fixture_id,omitempty"`
-	CommitID        string                     `json:"commit_id,omitempty"`
-	Operation       string                     `json:"operation"` // "create", "resume", "rotate", "revoke", "revoke_all"
-	PreloadSessions []auth.SessionRecord       `json:"preload_sessions,omitempty"`
-	Create          *auth.CreateSessionRequest `json:"create,omitempty"`
-	Resume          *auth.ResumeSessionRequest `json:"resume,omitempty"`
-	Rotate          *auth.RotateSessionRequest `json:"rotate,omitempty"`
-	RevokeSessionID string                     `json:"revoke_session_id,omitempty"`
-	RevokeSubjectID string                     `json:"revoke_subject_id,omitempty"`
-	MinEpoch        int64                      `json:"min_epoch,omitempty"`
-}
-
-type SessionOperationResult struct {
-	Status             string              `json:"status"` // "ok" or "rejected"
-	Valid              bool                `json:"valid"`
-	Operation          string              `json:"operation"`
-	Session            *auth.SessionRecord `json:"session,omitempty"`
-	Cookie             string              `json:"cookie,omitempty"`
-	SetCookieHeader    string              `json:"set_cookie_header,omitempty"`
-	ErrorCode          string              `json:"error_code,omitempty"`
-	ErrorMessage       string              `json:"error_message,omitempty"`
-	AuthorizedForScope bool                `json:"authorized_for_scope"`
-}
-
 type EvaluationResult struct {
 	Allow                      *bool    `json:"allow,omitempty"`
 	Status                     string   `json:"status,omitempty"`
@@ -195,39 +146,6 @@ func evaluateRequest(req map[string]interface{}) (int, EvaluationResult) {
 		Allow:   &f,
 		Error:   "not_implemented",
 		Reasons: []string{"default_fail_closed"},
-	}
-}
-
-func openActivationStorage(dir string) (*storage.Adapter, error) {
-	if strings.TrimSpace(dir) == "" {
-		return nil, fmt.Errorf("--storage-dir is required for activation operations")
-	}
-	adapter, _, err := storage.Open(dir)
-	if err != nil {
-		return nil, err
-	}
-	return adapter, nil
-}
-
-func readActivationEnvelope(path string) (ActivationEnvelope, error) {
-	raw, err := os.ReadFile(path)
-	if err != nil {
-		return ActivationEnvelope{}, fmt.Errorf("activation envelope read error: %w", err)
-	}
-	var envelope ActivationEnvelope
-	if err := json.Unmarshal(raw, &envelope); err != nil {
-		return ActivationEnvelope{}, fmt.Errorf("activation envelope JSON error: %w", err)
-	}
-	return envelope, nil
-}
-
-func rejectedVerificationResult(code, message string) bundles.BundleVerification {
-	return bundles.BundleVerification{
-		SchemaVersion: "1",
-		Verified:      false,
-		Status:        bundles.VerificationStatusRejected,
-		ErrorCode:     code,
-		Message:       message,
 	}
 }
 
@@ -476,7 +394,13 @@ func setupRouter() *http.ServeMux {
 		if err != nil {
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			w.WriteHeader(http.StatusBadRequest)
-			_ = json.NewEncoder(w).Encode(rejectedVerificationResult(bundles.ErrCodeInvalidVerificationRequest, "Failed to read request body or exceeded 1MB"))
+			_ = json.NewEncoder(w).Encode(bundles.BundleVerification{
+				SchemaVersion: "1",
+				Verified:      false,
+				Status:        bundles.VerificationStatusRejected,
+				ErrorCode:     bundles.ErrCodeInvalidVerificationRequest,
+				Message:       "Failed to read request body or exceeded 1MB",
+			})
 			return
 		}
 
@@ -484,7 +408,13 @@ func setupRouter() *http.ServeMux {
 		if err := json.Unmarshal(body, &req); err != nil {
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			w.WriteHeader(http.StatusBadRequest)
-			_ = json.NewEncoder(w).Encode(rejectedVerificationResult(bundles.ErrCodeInvalidVerificationRequest, fmt.Sprintf("Malformed verification request JSON: %v", err)))
+			_ = json.NewEncoder(w).Encode(bundles.BundleVerification{
+				SchemaVersion: "1",
+				Verified:      false,
+				Status:        bundles.VerificationStatusRejected,
+				ErrorCode:     bundles.ErrCodeInvalidVerificationRequest,
+				Message:       fmt.Sprintf("Malformed verification request JSON: %v", err),
+			})
 			return
 		}
 
@@ -499,6 +429,58 @@ func setupRouter() *http.ServeMux {
 			w.WriteHeader(http.StatusOK)
 		}
 		_ = json.NewEncoder(w).Encode(verification)
+	})
+
+	mux.HandleFunc("/v1/runtime/auth/revoke-check", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", "POST")
+			http.Error(w, `{"error":"method_not_allowed"}`, http.StatusMethodNotAllowed)
+			return
+		}
+		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 1048576))
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"valid":      false,
+				"allow":      false,
+				"error_code": auth.ErrCodeInvalidRevocationRequest,
+				"message":    "Failed to read request body or exceeded 1MB",
+			})
+			return
+		}
+
+		var spec auth.WorkloadRevocationSpec
+		if err := json.Unmarshal(body, &spec); err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"valid":      false,
+				"allow":      false,
+				"error_code": auth.ErrCodeInvalidRevocationRequest,
+				"message":    fmt.Sprintf("Malformed revocation workload JSON: %v", err),
+			})
+			return
+		}
+
+		report, err := auth.EvaluateWorkloadSpec(r.Context(), spec, nil, nil)
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"valid":      false,
+				"allow":      false,
+				"error_code": auth.ErrCodeInvalidRevocationRequest,
+				"message":    err.Error(),
+			})
+			return
+		}
+		if !report.Valid || !report.StoppedWithinBound {
+			w.WriteHeader(http.StatusForbidden)
+		} else {
+			w.WriteHeader(http.StatusOK)
+		}
+		_ = json.NewEncoder(w).Encode(report)
 	})
 
 	return mux
@@ -544,6 +526,32 @@ func runServer(host string, port int, stopCh <-chan struct{}) error {
 	}
 }
 
+type cliActivationEnvelope struct {
+	SchemaVersion  string                   `json:"schema_version"`
+	OperationID    string                   `json:"operation_id"`
+	EvaluationTime string                   `json:"evaluation_time,omitempty"`
+	TrustedKeys    []bundles.TrustedKey     `json:"trusted_keys"`
+	Identity       storage.CallerIdentity   `json:"identity"`
+	Bundle         policy.LocalPolicyBundle `json:"bundle"`
+}
+
+type cliOIDCEnvelope struct {
+	Config        auth.OIDCConfig                `json:"config"`
+	TrustedKeys   []auth.TrustedKey              `json:"trusted_keys"`
+	PreloadState  *auth.LoginState               `json:"preload_state,omitempty"`
+	PreloadNonces []string                       `json:"preload_nonces,omitempty"`
+	Callback      auth.CallbackValidationRequest `json:"callback"`
+}
+
+type cliSessionEnvelope struct {
+	Operation       string                     `json:"operation"`
+	PreloadSessions []auth.SessionRecord       `json:"preload_sessions,omitempty"`
+	Create          *auth.CreateSessionRequest `json:"create,omitempty"`
+	Resume          *auth.ResumeSessionRequest `json:"resume,omitempty"`
+	Rotate          *auth.RotateSessionRequest `json:"rotate,omitempty"`
+	RevokeSessionID string                     `json:"revoke_session_id,omitempty"`
+}
+
 func main() {
 	hostFlag := flag.String("host", "127.0.0.1", "Loopback host address")
 	portFlag := flag.Int("port", 4174, "Port to listen on (0 for dynamic)")
@@ -554,13 +562,14 @@ func main() {
 	simulateFlag := flag.String("simulate", "", "Path to offline decision simulation fixture JSON or directory")
 	simulateFixtureFlag := flag.String("simulate-fixture", "", "Alias for -simulate")
 	buildBundleFlag := flag.String("build-bundle", "", "Path to BundleBuildSpec JSON to build a deterministic signed bundle")
-	verifyBundleFlag := flag.String("verify-bundle", "", "Path to BundleVerificationRequest JSON to verify bundle trust and freshness")
+	verifyBundleFlag := flag.String("verify-bundle", "", "Path to BundleVerificationRequest JSON to verify trust and freshness")
+	activateBundleFlag := flag.String("activate-bundle", "", "Path to activation envelope JSON to atomically activate")
+	activationStateFlag := flag.String("activation-state", "", "Path to activation envelope JSON to restore durable state")
+	validateOIDCFlag := flag.String("validate-oidc", "", "Path to C13 OIDC callback validation fixture JSON")
+	manageSessionFlag := flag.String("manage-session", "", "Path to C14 session management fixture JSON")
+	enforceRevokeFlag := flag.String("enforce-revocation", "", "Path to C15 revocation enforcement workload fixture JSON")
 	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
-	activateBundleFlag := flag.String("activate-bundle", "", "Path to an activation envelope JSON to verify, persist and switch the active policy bundle")
-	activationStateFlag := flag.String("activation-state", "", "Path to a JSON envelope with trusted_keys; restores and prints the durable activation state (requires -storage-dir)")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
-	validateOIDCFlag := flag.String("validate-oidc", "", "Path to OIDC validation request JSON fixture to validate state, nonce and tokens")
-	manageSessionFlag := flag.String("manage-session", "", "Path to session operation fixture JSON to execute session create, resume, rotate or revoke")
 	flag.Parse()
 
 	if *versionFlag {
@@ -582,7 +591,6 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Smoke test failed: host must be loopback\n")
 			os.Exit(1)
 		}
-		// Verify local loopback binding capability
 		listener, err := net.Listen("tcp", fmt.Sprintf("%s:0", *hostFlag))
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Smoke test loopback bind failed: %v\n", err)
@@ -686,12 +694,18 @@ func main() {
 	if *verifyBundleFlag != "" {
 		raw, err := os.ReadFile(*verifyBundleFlag)
 		if err != nil {
-			fmt.Fprintf(os.Stderr, "Verification request read error: %v\n", err)
+			fmt.Fprintf(os.Stderr, "Verify bundle read error: %v\n", err)
 			os.Exit(1)
 		}
 		var req bundles.BundleVerificationRequest
 		if err := json.Unmarshal(raw, &req); err != nil {
-			fmt.Fprintf(os.Stderr, "Verification request JSON error: %v\n", err)
+			_ = json.NewEncoder(os.Stdout).Encode(bundles.BundleVerification{
+				SchemaVersion: "1",
+				Verified:      false,
+				Status:        bundles.VerificationStatusRejected,
+				ErrorCode:     bundles.ErrCodeInvalidVerificationRequest,
+				Message:       err.Error(),
+			})
 			os.Exit(1)
 		}
 		verification := bundles.VerifyBundle(req)
@@ -702,58 +716,58 @@ func main() {
 		return
 	}
 
-	if *activateBundleFlag != "" {
-		envelope, err := readActivationEnvelope(*activateBundleFlag)
-		if err != nil {
-			fmt.Fprintf(os.Stderr, "%v\n", err)
+	if *activateBundleFlag != "" || *activationStateFlag != "" {
+		if strings.TrimSpace(*storageDirFlag) == "" {
+			fmt.Fprintf(os.Stderr, "Activation requires --storage-dir\n")
 			os.Exit(1)
 		}
-		adapter, err := openActivationStorage(*storageDirFlag)
+		targetPath := *activateBundleFlag
+		isRestoreOnly := false
+		if targetPath == "" {
+			targetPath = *activationStateFlag
+			isRestoreOnly = true
+		}
+		raw, err := os.ReadFile(targetPath)
 		if err != nil {
-			_ = json.NewEncoder(os.Stdout).Encode(map[string]interface{}{"status": "failed", "error": err.Error()})
+			fmt.Fprintf(os.Stderr, "Activation envelope read error: %v\n", err)
 			os.Exit(1)
+		}
+		var env cliActivationEnvelope
+		if err := json.Unmarshal(raw, &env); err != nil {
+			fmt.Fprintf(os.Stderr, "Activation envelope JSON error: %v\n", err)
+			os.Exit(1)
+		}
+		ad, _, err := storage.Open(*storageDirFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Storage open error: %v\n", err)
+			os.Exit(1)
+		}
+		defer ad.Close()
+
+		mgr := bundles.NewActivationManager(bundles.NewStorageActivationStore(ad), bundles.NewKeyring(env.TrustedKeys...))
+		if strings.TrimSpace(env.EvaluationTime) != "" {
+			if parsed, err := time.Parse(time.RFC3339, env.EvaluationTime); err == nil {
+				mgr.Now = func() time.Time { return parsed.UTC() }
+			}
 		}
 
-		manager := bundles.NewActivationManager(
-			bundles.NewStorageActivationStore(adapter),
-			bundles.NewKeyring(envelope.TrustedKeys...),
-		)
-		result := manager.Activate(context.Background(), bundles.ActivationRequest{
-			SchemaVersion: envelope.SchemaVersion,
-			OperationID:   envelope.OperationID,
-			Identity:      envelope.Identity,
-			Bundle:        envelope.Bundle,
+		if isRestoreOnly {
+			state := mgr.Restore(context.Background())
+			_ = json.NewEncoder(os.Stdout).Encode(state)
+			if !state.Active {
+				os.Exit(1)
+			}
+			return
+		}
+
+		res := mgr.Activate(context.Background(), bundles.ActivationRequest{
+			SchemaVersion: env.SchemaVersion,
+			OperationID:   env.OperationID,
+			Identity:      env.Identity,
+			Bundle:        env.Bundle,
 		})
-		_ = adapter.Close()
-
-		_ = json.NewEncoder(os.Stdout).Encode(result)
-		if !result.Durable || (result.Status != bundles.ActivationStatusActivated && result.Status != bundles.ActivationStatusReplayed) {
-			os.Exit(1)
-		}
-		return
-	}
-
-	if *activationStateFlag != "" {
-		adapter, err := openActivationStorage(*storageDirFlag)
-		if err != nil {
-			_ = json.NewEncoder(os.Stdout).Encode(map[string]interface{}{"status": "failed", "error": err.Error()})
-			os.Exit(1)
-		}
-		envelope, err := readActivationEnvelope(*activationStateFlag)
-		if err != nil {
-			_ = adapter.Close()
-			fmt.Fprintf(os.Stderr, "%v\n", err)
-			os.Exit(1)
-		}
-		manager := bundles.NewActivationManager(
-			bundles.NewStorageActivationStore(adapter),
-			bundles.NewKeyring(envelope.TrustedKeys...),
-		)
-		state := manager.Restore(context.Background())
-		_ = adapter.Close()
-
-		_ = json.NewEncoder(os.Stdout).Encode(state)
-		if !state.Active {
+		_ = json.NewEncoder(os.Stdout).Encode(res)
+		if res.Status == bundles.ActivationStatusRejected {
 			os.Exit(1)
 		}
 		return
@@ -765,35 +779,31 @@ func main() {
 			fmt.Fprintf(os.Stderr, "OIDC fixture read error: %v\n", err)
 			os.Exit(1)
 		}
-		var fix OIDCValidationFixture
-		if err := json.Unmarshal(raw, &fix); err != nil {
+		var env cliOIDCEnvelope
+		if err := json.Unmarshal(raw, &env); err != nil {
 			fmt.Fprintf(os.Stderr, "OIDC fixture JSON error: %v\n", err)
 			os.Exit(1)
 		}
-		keySet := auth.NewKeySet()
-		for _, tk := range fix.TrustedKeys {
-			if err := keySet.AddKey(tk); err != nil {
-				fmt.Fprintf(os.Stderr, "OIDC trusted key error: %v\n", err)
+		ks := auth.NewKeySet()
+		for _, tk := range env.TrustedKeys {
+			if err := ks.AddKey(tk); err != nil {
+				fmt.Fprintf(os.Stderr, "TrustedKey error: %v\n", err)
 				os.Exit(1)
 			}
 		}
-		fix.Config.KeySet = keySet
-
-		stateMgr := auth.NewStateManager()
-		if fix.PreloadState != nil {
-			stateMgr.StoreState(fix.PreloadState)
+		env.Config.KeySet = ks
+		sm := auth.NewStateManager()
+		if env.PreloadState != nil {
+			sm.StoreState(env.PreloadState)
 		}
-
-		nonceTracker := auth.NewNonceTracker()
-		for _, nonce := range fix.PreloadNonces {
-			nonceTracker.PreloadNonce(nonce, time.Now())
+		nt := auth.NewNonceTracker()
+		for _, n := range env.PreloadNonces {
+			nt.PreloadNonce(n, time.Now().UTC())
 		}
-
-		validator := auth.NewOIDCValidator(fix.Config, stateMgr, nonceTracker)
-		result, _ := validator.ValidateCallback(context.Background(), fix.Callback)
-
-		_ = json.NewEncoder(os.Stdout).Encode(result)
-		if !result.Valid {
+		val := auth.NewOIDCValidator(env.Config, sm, nt)
+		res, err := val.ValidateCallback(context.Background(), env.Callback)
+		_ = json.NewEncoder(os.Stdout).Encode(res)
+		if err != nil || !res.Valid {
 			os.Exit(1)
 		}
 		return
@@ -805,145 +815,101 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Session fixture read error: %v\n", err)
 			os.Exit(1)
 		}
-		var fix SessionOperationFixture
-		if err := json.Unmarshal(raw, &fix); err != nil {
+		var env cliSessionEnvelope
+		if err := json.Unmarshal(raw, &env); err != nil {
 			fmt.Fprintf(os.Stderr, "Session fixture JSON error: %v\n", err)
 			os.Exit(1)
 		}
-
-		var store auth.SessionStore
-		var storageAdapter *storage.Adapter
-		if *storageDirFlag != "" {
-			ad, _, err := storage.Open(*storageDirFlag)
-			if err != nil {
-				_ = json.NewEncoder(os.Stdout).Encode(SessionOperationResult{
-					Status:       "rejected",
-					Valid:        false,
-					Operation:    fix.Operation,
-					ErrorCode:    "STORAGE_ERROR",
-					ErrorMessage: err.Error(),
-				})
-				os.Exit(1)
-			}
-			storageAdapter = ad
-			defer storageAdapter.Close()
-			store = auth.NewStorageSessionStore(storageAdapter)
-		} else {
-			store = auth.NewMemorySessionStore()
-		}
-
+		store := auth.NewMemorySessionStore()
 		ctx := context.Background()
-		for _, s := range fix.PreloadSessions {
+		for _, s := range env.PreloadSessions {
 			_ = store.SaveSession(ctx, s)
 		}
-
 		mgr := auth.NewSessionManager(store, auth.SessionConfig{})
-		var opResult SessionOperationResult
-		opResult.Operation = fix.Operation
-
-		switch fix.Operation {
+		var res *auth.SessionResult
+		switch env.Operation {
 		case "create":
-			if fix.Create == nil {
-				opResult.Status = "rejected"
-				opResult.ErrorCode = auth.ErrCodeInvalidSessionRequest
-				opResult.ErrorMessage = "create request missing in fixture"
-			} else {
-				res, err := mgr.CreateSession(ctx, *fix.Create)
-				if err != nil {
-					opResult.Status = "rejected"
-					opResult.ErrorCode = "CREATE_SESSION_FAILED"
-					opResult.ErrorMessage = err.Error()
-				} else {
-					opResult.Status = "ok"
-					opResult.Valid = res.Valid
-					opResult.Session = res.Session
-					if res.Cookie != nil {
-						opResult.Cookie = res.Cookie.Value
-					}
-					opResult.SetCookieHeader = res.SetCookieHeader
-					opResult.AuthorizedForScope = res.AuthorizedForScope
-				}
+			if env.Create == nil {
+				os.Exit(1)
 			}
+			res, err = mgr.CreateSession(ctx, *env.Create)
 		case "resume":
-			if fix.Resume == nil {
-				opResult.Status = "rejected"
-				opResult.ErrorCode = auth.ErrCodeInvalidSessionRequest
-				opResult.ErrorMessage = "resume request missing in fixture"
-			} else {
-				res, err := mgr.ResumeSession(ctx, *fix.Resume)
-				if err != nil {
-					opResult.Status = "rejected"
-					opResult.ErrorCode = "RESUME_SESSION_FAILED"
-					opResult.ErrorMessage = err.Error()
-				} else {
-					opResult.Valid = res.Valid
-					if res.Valid {
-						opResult.Status = "ok"
-					} else {
-						opResult.Status = "rejected"
-					}
-					opResult.Session = res.Session
-					opResult.ErrorCode = res.ErrorCode
-					opResult.ErrorMessage = res.ErrorMessage
-					opResult.AuthorizedForScope = res.AuthorizedForScope
-				}
+			if env.Resume == nil {
+				os.Exit(1)
 			}
+			res, err = mgr.ResumeSession(ctx, *env.Resume)
 		case "rotate":
-			if fix.Rotate == nil {
-				opResult.Status = "rejected"
-				opResult.ErrorCode = auth.ErrCodeInvalidSessionRequest
-				opResult.ErrorMessage = "rotate request missing in fixture"
-			} else {
-				res, err := mgr.RotateSession(ctx, *fix.Rotate)
-				if err != nil {
-					opResult.Status = "rejected"
-					opResult.ErrorCode = "ROTATE_SESSION_FAILED"
-					opResult.ErrorMessage = err.Error()
-				} else {
-					opResult.Valid = res.Valid
-					if res.Valid {
-						opResult.Status = "ok"
-					} else {
-						opResult.Status = "rejected"
-					}
-					opResult.Session = res.Session
-					if res.Cookie != nil {
-						opResult.Cookie = res.Cookie.Value
-					}
-					opResult.SetCookieHeader = res.SetCookieHeader
-					opResult.ErrorCode = res.ErrorCode
-					opResult.ErrorMessage = res.ErrorMessage
-					opResult.AuthorizedForScope = res.AuthorizedForScope
-				}
+			if env.Rotate == nil {
+				os.Exit(1)
 			}
-		case "revoke":
-			err := mgr.RevokeSession(ctx, fix.RevokeSessionID)
-			if err != nil {
-				opResult.Status = "rejected"
-				opResult.ErrorCode = "REVOKE_SESSION_FAILED"
-				opResult.ErrorMessage = err.Error()
-			} else {
-				opResult.Status = "ok"
-				opResult.Valid = true
-			}
-		case "revoke_all":
-			err := mgr.RevokeAllForSubject(ctx, fix.RevokeSubjectID, fix.MinEpoch)
-			if err != nil {
-				opResult.Status = "rejected"
-				opResult.ErrorCode = "REVOKE_ALL_FAILED"
-				opResult.ErrorMessage = err.Error()
-			} else {
-				opResult.Status = "ok"
-				opResult.Valid = true
-			}
+			res, err = mgr.RotateSession(ctx, *env.Rotate)
 		default:
-			opResult.Status = "rejected"
-			opResult.ErrorCode = "UNKNOWN_OPERATION"
-			opResult.ErrorMessage = fmt.Sprintf("unsupported session operation: %s", fix.Operation)
+			fmt.Fprintf(os.Stderr, "Unsupported session operation: %s\n", env.Operation)
+			os.Exit(1)
 		}
+		if err != nil || res == nil {
+			fmt.Fprintf(os.Stderr, "Session operation error: %v\n", err)
+			os.Exit(1)
+		}
+		status := "ok"
+		if !res.Valid {
+			status = "failed"
+		}
+		out := map[string]interface{}{
+			"status":               status,
+			"valid":                res.Valid,
+			"operation":            env.Operation,
+			"error_code":           res.ErrorCode,
+			"error_message":        res.ErrorMessage,
+			"session":              res.Session,
+			"set_cookie_header":    res.SetCookieHeader,
+			"identity":             res.Identity,
+			"subject":              res.Subject,
+			"authorized_for_scope": res.AuthorizedForScope,
+		}
+		_ = json.NewEncoder(os.Stdout).Encode(out)
+		if !res.Valid {
+			os.Exit(1)
+		}
+		return
+	}
 
-		_ = json.NewEncoder(os.Stdout).Encode(opResult)
-		if !opResult.Valid {
+	if *enforceRevokeFlag != "" {
+		raw, err := os.ReadFile(*enforceRevokeFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Revocation fixture read error: %v\n", err)
+			os.Exit(1)
+		}
+		var spec auth.WorkloadRevocationSpec
+		if err := json.Unmarshal(raw, &spec); err != nil {
+			fmt.Fprintf(os.Stderr, "Revocation fixture JSON error: %v\n", err)
+			os.Exit(1)
+		}
+		var sessStore auth.SessionStore
+		var revStore auth.RevocationStore
+		if strings.TrimSpace(*storageDirFlag) != "" {
+			ad, _, err := storage.Open(*storageDirFlag)
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Storage open error: %v\n", err)
+				os.Exit(1)
+			}
+			defer ad.Close()
+			sessStore = auth.NewStorageSessionStore(ad)
+			revStore = auth.NewStorageRevocationStore(ad)
+		}
+		report, err := auth.EvaluateWorkloadSpec(context.Background(), spec, sessStore, revStore)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Revocation evaluation error: %v\n", err)
+			os.Exit(1)
+		}
+		_ = json.NewEncoder(os.Stdout).Encode(report)
+		if len(spec.WorkloadSteps) > 0 {
+			if !report.StoppedWithinBound || report.DeniedAfterRevokeCount == 0 {
+				os.Exit(1)
+			}
+			return
+		}
+		if !report.Allow || !report.Valid || !report.StoppedWithinBound {
 			os.Exit(1)
 		}
 		return

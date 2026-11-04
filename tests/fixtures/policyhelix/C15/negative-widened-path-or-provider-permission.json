@@ -1,0 +1,63 @@
+{
+  "fixture_id": "negative-widened-path-or-provider-permission",
+  "commit_id": "C15",
+  "description": "Widened path or provider permission outside the session grant is denied before sensitive side effects.",
+  "schema_version": "1",
+  "config": {
+    "stale_window_seconds": 30,
+    "allowed_paths": [
+      "/api/v1/analytics"
+    ],
+    "allowed_providers": [
+      "owned_synthetic_upstream"
+    ]
+  },
+  "preload_sessions": [
+    {
+      "session_id": "sess-c15-widened-01",
+      "subject_id": "user-alice",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "roles": [
+        "operator"
+      ],
+      "owner_scope": "tenant-alpha",
+      "fingerprint": {
+        "ip_hash": "2a39f1eedcd9f986327b5e4da842426f4f05b8f16f0ef385639dbec0db70eaae",
+        "user_agent_hash": "3ee881651f4c3e42859f650346c4e95a38294cbc2f1d82efcd256ffcb9811ada",
+        "composite_hash": "51ae932c62518de3afffbc757e4bc08dad229c36d702abb74ff83ab0dd47b7ad"
+      },
+      "credentials": {
+        "upstream_session_id": "keycloak-sid-widened01",
+        "custom": {
+          "allowed_path_prefix": "/api/v1/analytics",
+          "allowed_provider": "owned_synthetic_upstream"
+        }
+      },
+      "session_epoch": 1793793600,
+      "created_at": "2026-11-04T11:00:00Z",
+      "expires_at": "2026-11-04T13:00:00Z",
+      "last_seen_at": "2026-11-04T11:00:00Z",
+      "status": "ACTIVE"
+    }
+  ],
+  "check": {
+    "session_id": "sess-c15-widened-01",
+    "client_ip": "192.168.1.100",
+    "user_agent": "PolicyHelix-Client/1.0",
+    "untrusted_headers_stripped": true,
+    "target_owner_scope": "tenant-alpha",
+    "requested_path": "/v1/admin/trust-keys/rotate",
+    "requested_provider": "untrusted_external_upstream",
+    "resource_classification": "private",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "allow": false,
+    "valid": false,
+    "status": "denied",
+    "error_code": "WIDENED_PERMISSION_DENIED",
+    "side_effects_executed": false,
+    "revoked": false,
+    "stopped_within_bound": true
+  }
+}

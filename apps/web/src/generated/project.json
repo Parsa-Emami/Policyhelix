@@ -191,7 +191,7 @@
       "id": "C15",
       "title": "feat(revoke): enforce bounded stale authorization window",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Revoked session stops within configured 30-second bound under target workload."
       ],

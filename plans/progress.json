@@ -101,7 +101,7 @@
         "docs/evidence/C11.json"
       ],
       "source_identity": "sha256:ccefab0f26e7908f6bf466cc68d870a7d3a0084ace8d9537afabcac728f7cca0",
-      "notes": "Bundle trust and freshness verification implemented in internal/bundles/verify.go; ingestion, CLI and loopback HTTP share one gate; missing signature, wrong key, stale revision and expired validity rejections verified."
+      "notes": "Bundle trust and freshness verification implemented in internal/bundles/verify.go and cmd/policyhelix/main.go; F05 unsigned, tampered, expired, or replayed bundles rejected before activation verified."
     },
     {
       "id": "C12",
@@ -110,7 +110,7 @@
         "docs/evidence/C12.json"
       ],
       "source_identity": "sha256:689c09a6e00c86ffa1992f5b34761723bbdb743aa73800f2ff0ac23697f2b240",
-      "notes": "Atomic activation in internal/bundles/activate.go persists a verified bundle through the C05 storage port, restores it after restart, replays idempotently and retains the prior bundle and highest accepted revision across staged-byte, manifest, disk-full, oversized-payload and corrupt-state rejections."
+      "notes": "Atomic bundle activation and rollback implemented in internal/bundles/activate.go and cmd/policyhelix/main.go; F06 active bundle switches atomically and failed activation retains prior bundle verified."
     },
     {
       "id": "C13",
@@ -119,7 +119,7 @@
         "docs/evidence/C13.json"
       ],
       "source_identity": "sha256:a618acce0c9e31ecf424ab26297fb5324c54051817cbf8685b0a750aeb0aab2f",
-      "notes": "OIDC callback validation in internal/auth/oidc.go validates login state, nonce replay, expired tokens, wrong issuer/audience, untrusted alg none, provider outages and cross-scope access, emitting normalized CallerIdentity and SubjectIdentity."
+      "notes": "OIDC callback validation implemented in internal/auth/oidc.go and cmd/policyhelix/main.go; F07 wrong issuer, wrong audience, replayed nonce, and expired tokens rejected verified."
     },
     {
       "id": "C14",
@@ -128,14 +128,16 @@
         "docs/evidence/C14.json"
       ],
       "source_identity": "sha256:31d417e1a2240ab18502e358cef731772e738704fe6b46274d6b572594d13c5a",
-      "notes": "Server-side session management in internal/auth/session.go persists revocable sessions bound to client IP/UA fingerprints, safely holds server credentials while redacting tokens from serialization, prevents session fixation via atomic cookie rotation with superseded invalidation, and integrates with durable storage."
+      "notes": "Revocable server-side session persistence implemented in internal/auth/session.go and cmd/policyhelix/main.go; F08 session fingerprints, redacted server-held credentials, and cookie rotation against fixation verified."
     },
     {
       "id": "C15",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C15.json"
+      ],
+      "source_identity": "sha256:af51915fb8febe888e7af30c9327ce333cfcc06a93610e67bb6b6d7319d5697d",
+      "notes": "Bounded 30-second stale authorization window enforcer implemented in internal/auth/revoke.go and cmd/policyhelix/main.go; F09 revoked session stops within configured 30-second bound under target workload verified."
     },
     {
       "id": "C16",

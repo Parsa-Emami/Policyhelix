@@ -1,0 +1,28 @@
+{
+  "fixture_id": "negative-private-resource-fail-closed",
+  "commit_id": "C15",
+  "description": "Private resources fail closed when session is missing or unknown.",
+  "schema_version": "1",
+  "config": {
+    "stale_window_seconds": 30
+  },
+  "check": {
+    "session_id": "sess-unknown-nonexistent-999",
+    "client_ip": "192.168.1.100",
+    "user_agent": "PolicyHelix-Client/1.0",
+    "untrusted_headers_stripped": true,
+    "target_owner_scope": "tenant-alpha",
+    "requested_path": "/api/v1/analytics/private-ledger",
+    "resource_classification": "private",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "allow": false,
+    "valid": false,
+    "status": "denied",
+    "error_code": "PRIVATE_RESOURCE_FAIL_CLOSED",
+    "side_effects_executed": false,
+    "revoked": false,
+    "stopped_within_bound": true
+  }
+}

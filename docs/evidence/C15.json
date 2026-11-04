@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "commit_id": "C15",
+  "project": "PolicyHelix",
+  "date": "2026-11-04",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: enforce bounded stale authorization window",
+  "source_identity": "sha256:af51915fb8febe888e7af30c9327ce333cfcc06a93610e67bb6b6d7319d5697d",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.23.6 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml; local run used Go 1.23.6 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "development host verified against C15 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.23.6 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C15/positive-revoke-within-30s-bound.json",
+      "sha256": "68d8723ccf38a1dee8dae581929dd8e80944af45c37bda28a0a72c14bd5e4f69",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C15 revoked session stopping within configured 30-second bound under target workload"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C15/positive-subject-epoch-revocation.json",
+      "sha256": "befe70c5ac0d613d882debe69ec1e4358aff582a004cfbc1f5854c3499dfb756",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C15 subject-wide monotonic epoch revocation within 30-second bound"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C15/negative-revoked-session-denied.json",
+      "sha256": "3bf683d583a754e6a03b13f9d62c8e7dd13a6a9c5cc72ba5dce0c52336b47f34",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C15 explicitly revoked session denial before sensitive side effects"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C15/negative-unauthenticated-missing-identity.json",
+      "sha256": "9cec017f9930ee55a725c4406d3b83af7c681db0651c18124e1dea9f9ef62535",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C15 missing session identity fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C15/negative-expired-session.json",
+      "sha256": "7f2b6aed8eb7c70a6abd5611cd087b5b9243ba1385b46b15b291a1399eb2279f",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C15 expired session fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C15/negative-replayed-identity.json",
+      "sha256": "1c518f3c5af733eced839cca7d3efa91ac8df6bf5e6adb62b9a284000452e1bc",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C15 replayed superseded session cookie rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C15/negative-unrelated-owner-scope.json",
+      "sha256": "22990766b97321fb4c8b0034233e0abbe160257bf9ba42bef63711c02976747c",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C15 unrelated tenant owner/object scope rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C15/negative-forged-header.json",
+      "sha256": "d88cb4a4bac11a4d2edc94892c0eb6977e11c5d09df956dbdd3ce8d92ecdf5bb",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C15 unstripped or forged client header rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C15/negative-widened-path-or-provider-permission.json",
+      "sha256": "b093549c259abb7168fab423f2fcfee097fc029648e6253e245fe888a2bc68ce",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C15 widened path or provider permission rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C15/negative-provider-unavailable.json",
+      "sha256": "deb4576fb953987c4396d3cc36b41d9d23220f790fa6c5b967aaeefb7bfeb029",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C15 unavailable identity/revocation provider fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C15/negative-private-resource-fail-closed.json",
+      "sha256": "71328bcc009871cac54e4be350d2a7290ca2654677f7a8c824f9157633a8413b",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C15 private resource fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C15/cli-revoke-workload.json",
+      "sha256": "357a20b617b64d80be31519a24c8250caaf6dc2d2995e9f7e4622131572d1bf8",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C15 CLI bounded workload revocation verification"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C15/cli-revoke-rejected.json",
+      "sha256": "93275f232fe1f74e7f1179a842da0e8f903009d9fed190d348043e1809bce882",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C15 CLI rejected revoked session non-zero exit verification"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "gofmt -w internal/bundles/build.go internal/auth/revoke.go cmd/policyhelix/main.go tests/revoke_test.go",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go vet ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go test -v ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "ok cmd/policyhelix 1.215s; ok internal/contracts 0.038s; ok internal/policy 0.005s; ok internal/storage 0.005s; ok tests 9.018s"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "pretest build and engine build passed; all node tests passed"
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "vite build completed; dist/web built"
+    },
+    {
+      "command": "npm run build:engine",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "go build -o dist/engine/policyhelix ./cmd/policyhelix; no errors"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "VALIDATION PASSED; Checked JSON files and repository contract invariants."
+    },
+    {
+      "command": "python3 scripts/source_identity.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "sha256:af51915fb8febe888e7af30c9327ce333cfcc06a93610e67bb6b6d7319d5697d"
+    }
+  ],
+  "results": [
+    "Implemented internal/auth/revoke.go with RevocationEnforcer, MemoryRevocationStore, StorageRevocationStore (adapting C05 storage.Adapter), and EvaluateWorkloadSpec.",
+    "Requirement F09 acceptance verified: revoked sessions, subject epochs, and scope epochs stop within the configured <=30-second bound (MaxRevocationStaleWindow = 30s) under concurrent target workloads; configurations >30s are rejected with STALE_AUTHORIZATION_WINDOW_EXCEEDED.",
+    "Required negative security cases verified: missing identity (UNAUTHENTICATED_IDENTITY), expired session (EXPIRED_SESSION), replayed superseded session / single-use request ID (SESSION_FIXATION_ATTEMPT / REPLAYED_IDENTITY_REJECTED), unrelated owner/object scope (SCOPE_VIOLATION), forged/unstripped headers (FORGED_HEADER_REJECTED), widened path or provider permissions (WIDENED_PERMISSION_DENIED), unavailable identity/revocation provider (PROVIDER_UNAVAILABLE), and private resource access on missing session (PRIVATE_RESOURCE_FAIL_CLOSED) all fail closed with SideEffectsExecuted=false.",
+    "Durable revocation and monotonic epoch persistence across storage close/reopen verified in TestC15_DurableStoragePersistence.",
+    "Added -enforce-revocation CLI flag and POST /v1/runtime/auth/revoke-check loopback route in cmd/policyhelix/main.go.",
+    "Thirteen Apache-2.0 synthetic fixtures generated and SHA-256 verified under tests/fixtures/policyhelix/C15/manifest.json."
+  ],
+  "observed_limitations": [
+    "Worker authorization leases are strictly bounded to <=30 seconds and immediately invalidated upon explicit session, subject-epoch, or scope-epoch revocation.",
+    "Edge gateway header stripping and verified context injection across upstream proxy routes are scheduled for C16 (feat(gateway): strip untrusted headers and inject verified context)."
+  ],
+  "rollback_or_recovery_observation": "Revert internal/auth/revoke.go, tests/revoke_test.go, tests/fixtures/policyhelix/C15/, and the -enforce-revocation CLI / HTTP wiring in cmd/policyhelix/main.go. Existing C01-C14 storage, bundle, OIDC, and session components remain intact."
+}

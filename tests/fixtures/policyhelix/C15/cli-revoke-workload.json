@@ -1,0 +1,85 @@
+{
+  "fixture_id": "cli-revoke-workload",
+  "commit_id": "C15",
+  "description": "CLI execution envelope verifying a revoked session stops within the 30-second bound under target workload.",
+  "schema_version": "1",
+  "config": {
+    "stale_window_seconds": 30
+  },
+  "preload_sessions": [
+    {
+      "session_id": "sess-cli-c15-01",
+      "subject_id": "user-bob",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "roles": [
+        "auditor"
+      ],
+      "owner_scope": "tenant-gamma",
+      "fingerprint": {
+        "ip_hash": "1305dd3154b9eb8dfdea27a901e8b79d579c4359ae265922d0d91af6e4e89074",
+        "user_agent_hash": "d146e461dcda843f97d0342a2b681676d96166bf949520711f7680ba81ed5133",
+        "composite_hash": "b33e4566541ca9bca9d25cd9a194cd43cb47ac785c5e08bd0f6c489d3dcf427e"
+      },
+      "credentials": {
+        "custom": {
+          "cli_env": "production"
+        }
+      },
+      "session_epoch": 1793793600,
+      "created_at": "2026-11-04T11:00:00Z",
+      "expires_at": "2026-11-04T13:00:00Z",
+      "last_seen_at": "2026-11-04T11:00:00Z",
+      "status": "ACTIVE"
+    }
+  ],
+  "workload_steps": [
+    {
+      "step_id": "cli-step-1-allow",
+      "step_type": "access",
+      "timestamp": "2026-11-04T11:59:55Z",
+      "access": {
+        "session_id": "sess-cli-c15-01",
+        "client_ip": "10.0.0.42",
+        "user_agent": "PolicyHelix-CLI/1.0",
+        "untrusted_headers_stripped": true,
+        "target_owner_scope": "tenant-gamma",
+        "requested_path": "/api/v1/analytics/audit",
+        "resource_classification": "private"
+      }
+    },
+    {
+      "step_id": "cli-step-2-revoke",
+      "step_type": "revoke_session",
+      "timestamp": "2026-11-04T12:00:00Z",
+      "revoke_target": "sess-cli-c15-01",
+      "reason": "cli_operator_revoke"
+    },
+    {
+      "step_id": "cli-step-3-denied-within-30s",
+      "step_type": "access",
+      "timestamp": "2026-11-04T12:00:15Z",
+      "access": {
+        "session_id": "sess-cli-c15-01",
+        "client_ip": "10.0.0.42",
+        "user_agent": "PolicyHelix-CLI/1.0",
+        "untrusted_headers_stripped": true,
+        "target_owner_scope": "tenant-gamma",
+        "requested_path": "/api/v1/analytics/audit",
+        "resource_classification": "private"
+      }
+    }
+  ],
+  "expected": {
+    "allow": false,
+    "valid": false,
+    "status": "denied",
+    "error_code": "REVOKED_SESSION",
+    "side_effects_executed": false,
+    "revoked": true,
+    "stopped_within_bound": true,
+    "max_stale_seconds": 30,
+    "total_checks": 2,
+    "allowed_before_revoke_count": 1,
+    "denied_after_revoke_count": 1
+  }
+}

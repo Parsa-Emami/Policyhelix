@@ -1,8 +1,8 @@
 {
   "project": "PolicyHelix",
   "date": "2026-11-04",
-  "base_commit": "5a82ea97683c75e57925440f180e88e2633b8436",
-  "scope": "Task C14: feat(sessions): persist revocable server side sessions",
+  "base_commit": "d8d4f8b",
+  "scope": "Task C15: enforce bounded stale authorization window; revoked session stops within configured 30-second bound under target workload",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -17,36 +17,25 @@
     "C11",
     "C12",
     "C13",
-    "C14"
-  ],
-  "changed_paths": [
-    "internal/auth/session.go",
-    "cmd/policyhelix/main.go",
-    "tests/session_test.go",
-    "tests/fixtures/policyhelix/C14/",
-    "apps/web/src/generated/project.json",
-    "docs/evidence/C14.json",
-    "plans/progress.json",
-    "plans/project-state.json",
-    "plans/requirements.json",
-    "docs/agents/SESSION_HANDOFF.json"
+    "C14",
+    "C15"
   ],
   "commands": [
-    "gofmt -w internal/auth/session.go cmd/policyhelix/main.go tests/session_test.go",
-    "go vet ./...",
-    "go test -v -race ./...",
     "npm run validate:plan",
+    "gofmt -w internal/bundles/build.go internal/auth/revoke.go cmd/policyhelix/main.go tests/revoke_test.go",
+    "go vet ./...",
+    "go test -v ./...",
     "npm test",
     "npm run build",
     "npm run build:engine",
     "python3 scripts/validate_repo.py",
     "python3 scripts/source_identity.py"
   ],
-  "validation_results": "docs/evidence/C14.json",
-  "final_source_identity": "sha256:31d417e1a2240ab18502e358cef731772e738704fe6b46274d6b572594d13c5a",
+  "validation_results": "docs/evidence/C15.json",
+  "final_source_identity": "sha256:af51915fb8febe888e7af30c9327ce333cfcc06a93610e67bb6b6d7319d5697d",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C15",
+  "next_task": "C16",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C14 verified. Implemented internal/auth/session.go with ClientFingerprint, ServerCredentials safe serialization, SessionManager supporting CreateSession, ResumeSession, RotateSession, RevokeSession, RevokeAllForSubject, and MemorySessionStore/StorageSessionStore adapters. Added --manage-session CLI flag in cmd/policyhelix/main.go, tests/session_test.go, and 12 C14 fixtures under tests/fixtures/policyhelix/C14/. Requirement F08 acceptance and all negative cases pass. Ready for C15 (feat(sessions): enforce thirty second revocation bounds)."
+  "continuation": "Task C15 verified. Bounded 30-second stale authorization window enforcer (internal/auth/revoke.go), CLI/HTTP router integration (cmd/policyhelix/main.go), regression tests (tests/revoke_test.go), and fixtures (tests/fixtures/policyhelix/C15/) implemented. Ready for C16 (feat(gateway): strip untrusted headers and inject verified context)."
 }

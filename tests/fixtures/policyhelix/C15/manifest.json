@@ -1,0 +1,99 @@
+{
+  "commit_id": "C15",
+  "schema_version": "1",
+  "license": "Apache-2.0",
+  "description": "Synthetic licensed fixtures for PolicyHelix C15: enforce bounded 30-second stale authorization window and fail-closed revocation invariants (Requirement F09).",
+  "fixtures": [
+    {
+      "fixture_id": "positive-revoke-within-30s-bound",
+      "path": "tests/fixtures/policyhelix/C15/positive-revoke-within-30s-bound.json",
+      "sha256": "68d8723ccf38a1dee8dae581929dd8e80944af45c37bda28a0a72c14bd5e4f69",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-subject-epoch-revocation",
+      "path": "tests/fixtures/policyhelix/C15/positive-subject-epoch-revocation.json",
+      "sha256": "befe70c5ac0d613d882debe69ec1e4358aff582a004cfbc1f5854c3499dfb756",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-revoked-session-denied",
+      "path": "tests/fixtures/policyhelix/C15/negative-revoked-session-denied.json",
+      "sha256": "3bf683d583a754e6a03b13f9d62c8e7dd13a6a9c5cc72ba5dce0c52336b47f34",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-unauthenticated-missing-identity",
+      "path": "tests/fixtures/policyhelix/C15/negative-unauthenticated-missing-identity.json",
+      "sha256": "9cec017f9930ee55a725c4406d3b83af7c681db0651c18124e1dea9f9ef62535",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-expired-session",
+      "path": "tests/fixtures/policyhelix/C15/negative-expired-session.json",
+      "sha256": "7f2b6aed8eb7c70a6abd5611cd087b5b9243ba1385b46b15b291a1399eb2279f",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-replayed-identity",
+      "path": "tests/fixtures/policyhelix/C15/negative-replayed-identity.json",
+      "sha256": "1c518f3c5af733eced839cca7d3efa91ac8df6bf5e6adb62b9a284000452e1bc",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-unrelated-owner-scope",
+      "path": "tests/fixtures/policyhelix/C15/negative-unrelated-owner-scope.json",
+      "sha256": "22990766b97321fb4c8b0034233e0abbe160257bf9ba42bef63711c02976747c",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-forged-header",
+      "path": "tests/fixtures/policyhelix/C15/negative-forged-header.json",
+      "sha256": "d88cb4a4bac11a4d2edc94892c0eb6977e11c5d09df956dbdd3ce8d92ecdf5bb",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-widened-path-or-provider-permission",
+      "path": "tests/fixtures/policyhelix/C15/negative-widened-path-or-provider-permission.json",
+      "sha256": "b093549c259abb7168fab423f2fcfee097fc029648e6253e245fe888a2bc68ce",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-provider-unavailable",
+      "path": "tests/fixtures/policyhelix/C15/negative-provider-unavailable.json",
+      "sha256": "deb4576fb953987c4396d3cc36b41d9d23220f790fa6c5b967aaeefb7bfeb029",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-private-resource-fail-closed",
+      "path": "tests/fixtures/policyhelix/C15/negative-private-resource-fail-closed.json",
+      "sha256": "71328bcc009871cac54e4be350d2a7290ca2654677f7a8c824f9157633a8413b",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "cli-revoke-workload",
+      "path": "tests/fixtures/policyhelix/C15/cli-revoke-workload.json",
+      "sha256": "357a20b617b64d80be31519a24c8250caaf6dc2d2995e9f7e4622131572d1bf8",
+      "type": "cli",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "cli-revoke-rejected",
+      "path": "tests/fixtures/policyhelix/C15/cli-revoke-rejected.json",
+      "sha256": "93275f232fe1f74e7f1179a842da0e8f903009d9fed190d348043e1809bce882",
+      "type": "cli",
+      "license": "Apache-2.0"
+    }
+  ]
+}

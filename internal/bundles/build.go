@@ -159,9 +159,6 @@ type BundleAuthorityManager struct {
 
 // NewBundleAuthorityManager creates an authority manager with a trusted keyring.
 func NewBundleAuthorityManager(keyring *Keyring) *BundleAuthorityManager {
-	if keyring == nil {
-		keyring = NewKeyring()
-	}
 	return &BundleAuthorityManager{
 		keyring:   keyring,
 		evaluator: keyring.NewEvaluator(),
@@ -175,14 +172,14 @@ func (bam *BundleAuthorityManager) IngestBundle(b policy.LocalPolicyBundle, eval
 		evalTime = time.Now().UTC()
 	}
 
-	// 1. Enforce cryptographic trust evidence and freshness (validity window + monotonic revision)
-	// before the candidate can become authoritative.
-	verification := verifyAt(b, bam.keyring, evalTime, bam.highestRevision, BundleVerification{})
+	verification := verifyAt(b, bam.keyring, evalTime, bam.highestRevision, BundleVerification{
+		SchemaVersion: "1",
+		Status:        VerificationStatusRejected,
+	})
 	if !verification.Verified {
 		return fmt.Errorf("%s: %s", verification.ErrorCode, verification.Message)
 	}
 
-	// 2. Load into evaluator (validates policy syntax, routes and rules)
 	bErr := bam.evaluator.LoadBundle(b, evalTime)
 	if bErr != nil {
 		return fmt.Errorf("%s: %s", bErr.Code, bErr.Message)

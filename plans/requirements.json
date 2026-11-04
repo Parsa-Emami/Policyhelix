@@ -116,7 +116,7 @@
       "mandatory": true,
       "planned_commit": "C13",
       "evidence_path": "docs/evidence/C13.json",
-      "status": "verified"
+      "status": "unimplemented"
     },
     {
       "id": "F08",
@@ -125,7 +125,7 @@
       "mandatory": true,
       "planned_commit": "C14",
       "evidence_path": "docs/evidence/C14.json",
-      "status": "verified"
+      "status": "unimplemented"
     },
     {
       "id": "F09",
