@@ -15,6 +15,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/parsa-emami/policyhelix/internal/auth"
 	"github.com/parsa-emami/policyhelix/internal/bundles"
 	"github.com/parsa-emami/policyhelix/internal/contracts"
 	"github.com/parsa-emami/policyhelix/internal/policy"
@@ -68,6 +69,18 @@ type ActivationEnvelope struct {
 	TrustedKeys   []bundles.TrustedKey     `json:"trusted_keys"`
 	Identity      storage.CallerIdentity   `json:"identity"`
 	Bundle        policy.LocalPolicyBundle `json:"bundle"`
+}
+
+// OIDCValidationFixture is the CLI input for validating OIDC login state, nonce and tokens.
+type OIDCValidationFixture struct {
+	SchemaVersion string                         `json:"schema_version,omitempty"`
+	FixtureID     string                         `json:"fixture_id,omitempty"`
+	CommitID      string                         `json:"commit_id,omitempty"`
+	Config        auth.OIDCConfig                `json:"config"`
+	TrustedKeys   []auth.TrustedKey              `json:"trusted_keys,omitempty"`
+	PreloadState  *auth.LoginState               `json:"preload_state,omitempty"`
+	PreloadNonces []string                       `json:"preload_nonces,omitempty"`
+	Callback      auth.CallbackValidationRequest `json:"callback"`
 }
 
 type EvaluationResult struct {
@@ -519,6 +532,7 @@ func main() {
 	activateBundleFlag := flag.String("activate-bundle", "", "Path to an activation envelope JSON to verify, persist and switch the active policy bundle")
 	activationStateFlag := flag.String("activation-state", "", "Path to a JSON envelope with trusted_keys; restores and prints the durable activation state (requires -storage-dir)")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
+	validateOIDCFlag := flag.String("validate-oidc", "", "Path to OIDC validation request JSON fixture to validate state, nonce and tokens")
 	flag.Parse()
 
 	if *versionFlag {
@@ -712,6 +726,46 @@ func main() {
 
 		_ = json.NewEncoder(os.Stdout).Encode(state)
 		if !state.Active {
+			os.Exit(1)
+		}
+		return
+	}
+
+	if *validateOIDCFlag != "" {
+		raw, err := os.ReadFile(*validateOIDCFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "OIDC fixture read error: %v\n", err)
+			os.Exit(1)
+		}
+		var fix OIDCValidationFixture
+		if err := json.Unmarshal(raw, &fix); err != nil {
+			fmt.Fprintf(os.Stderr, "OIDC fixture JSON error: %v\n", err)
+			os.Exit(1)
+		}
+		keySet := auth.NewKeySet()
+		for _, tk := range fix.TrustedKeys {
+			if err := keySet.AddKey(tk); err != nil {
+				fmt.Fprintf(os.Stderr, "OIDC trusted key error: %v\n", err)
+				os.Exit(1)
+			}
+		}
+		fix.Config.KeySet = keySet
+
+		stateMgr := auth.NewStateManager()
+		if fix.PreloadState != nil {
+			stateMgr.StoreState(fix.PreloadState)
+		}
+
+		nonceTracker := auth.NewNonceTracker()
+		for _, nonce := range fix.PreloadNonces {
+			nonceTracker.PreloadNonce(nonce, time.Now())
+		}
+
+		validator := auth.NewOIDCValidator(fix.Config, stateMgr, nonceTracker)
+		result, _ := validator.ValidateCallback(context.Background(), fix.Callback)
+
+		_ = json.NewEncoder(os.Stdout).Encode(result)
+		if !result.Valid {
 			os.Exit(1)
 		}
 		return

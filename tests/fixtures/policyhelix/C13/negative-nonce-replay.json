@@ -1,0 +1,61 @@
+{
+  "fixture_id": "negative-nonce-replay",
+  "commit_id": "C13",
+  "description": "Replayed nonce previously marked consumed fails with NONCE_REPLAY.",
+  "schema_version": "1",
+  "config": {
+    "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+    "client_id": "policyhelix-web",
+    "allowed_algorithms": [
+      "RS256",
+      "EdDSA",
+      "HS256"
+    ],
+    "require_nonce": true
+  },
+  "trusted_keys": [
+    {
+      "kid": "rsa-keycloak-2026",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "alg": "RS256",
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqjiyJ7IE4Wg3ENU0HS3A\nrKMWowvHeuOM6YxrprvpQR8DBsBtrSdqjzmICE/p33yCSlTNvYS9CpWuvpfBvtYY\nFSmaRvWNOGtuj8FRoPfqR+zi4mvT2pBuK5AAKKyD6k4mtNy9XNbftQhpfvFscTSN\nwgGWLmfd2Rh16WNB6k30ejg5sJRMcE4CH/ufRFn3OKz7eBVPCneqm8lJ9CpjDtW9\nr91ywOKZZ6x6IpJqHYOaWDBHoY6xFodxPJ7MW1tnw9++TBT8OuHCUebQxhfEhQTO\ntpGuhms+SRCwKA01TTjKm0uLqGvcN03b5BS63C18dW+uk1Mw+ahriW58yg3uRdwy\nZwIDAQAB\n-----END PUBLIC KEY-----"
+    },
+    {
+      "kid": "ed25519-oidc-2026",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "alg": "EdDSA",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    },
+    {
+      "kid": "hmac-oidc-2026",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "alg": "HS256",
+      "secret_hex": "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"
+    }
+  ],
+  "preload_state": {
+    "state_token": "state-nonce-replay-1004",
+    "nonce": "nonce-replayed-2004",
+    "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+    "client_id": "policyhelix-web",
+    "redirect_uri": "https://app.policyhelix.local/auth/callback",
+    "created_at": "2026-11-04T11:50:00Z",
+    "expires_at": "2026-11-04T12:10:00Z",
+    "consumed": false
+  },
+  "preload_nonces": [
+    "nonce-replayed-2004"
+  ],
+  "callback": {
+    "state_token": "state-nonce-replay-1004",
+    "raw_id_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJzYS1rZXljbG9hay0yMDI2In0.eyJpc3MiOiJodHRwczovL2F1dGgucG9saWN5aGVsaXgubG9jYWwvcmVhbG1zL3BvbGljeWhlbGl4Iiwic3ViIjoidXNlci1ib2IiLCJhdWQiOiJwb2xpY3loZWxpeC13ZWIiLCJleHAiOjE3OTM3OTcyMDAsImlhdCI6MTc5Mzc5MzAwMCwibm9uY2UiOiJub25jZS1yZXBsYXllZC0yMDA0In0.PFARq6aSL1WIu70uph3W-Iqfnngs3syEy9IEa-6H9cae1NR52vU9WwZDR4ClOY7rGqqFE4SLFoRh-GFt8MYvXvbvzBnJI1-8EESR_DqAqAEGEfwwhMhfWz4A4_Rx3tQdyKNYMGxXjtb9_yK2uUue-QYn0BIKmUhL7aG-J_PiHQzCXMLN7FeKLKW9tc1DAjeMhY4kdBw3yb2RwT_a-BY83LNByrRKta6yWkxlInyz5qg2Re0o60t_CU_ISHJlZOCUGMBXUIsJjijyQ8cuCz2mnwtBAyR2SG1KP2dn9294FGBWPNvQmdPkXI4tJaIQlhI9MbWNfMC8spvOtz9IXUtg6w",
+    "evaluation_time": "2026-11-04T12:00:00Z",
+    "untrusted_headers_stripped": true
+  },
+  "expected": {
+    "valid": false,
+    "authenticated": false,
+    "error_code": "NONCE_REPLAY",
+    "authorized_for_scope": false
+  }
+}

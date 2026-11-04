@@ -1,0 +1,58 @@
+{
+  "fixture_id": "cli-rejected-callback",
+  "commit_id": "C13",
+  "description": "CLI validation envelope that fails due to wrong issuer.",
+  "schema_version": "1",
+  "config": {
+    "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+    "client_id": "policyhelix-web",
+    "allowed_algorithms": [
+      "RS256",
+      "EdDSA",
+      "HS256"
+    ],
+    "require_nonce": true
+  },
+  "trusted_keys": [
+    {
+      "kid": "rsa-keycloak-2026",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "alg": "RS256",
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqjiyJ7IE4Wg3ENU0HS3A\nrKMWowvHeuOM6YxrprvpQR8DBsBtrSdqjzmICE/p33yCSlTNvYS9CpWuvpfBvtYY\nFSmaRvWNOGtuj8FRoPfqR+zi4mvT2pBuK5AAKKyD6k4mtNy9XNbftQhpfvFscTSN\nwgGWLmfd2Rh16WNB6k30ejg5sJRMcE4CH/ufRFn3OKz7eBVPCneqm8lJ9CpjDtW9\nr91ywOKZZ6x6IpJqHYOaWDBHoY6xFodxPJ7MW1tnw9++TBT8OuHCUebQxhfEhQTO\ntpGuhms+SRCwKA01TTjKm0uLqGvcN03b5BS63C18dW+uk1Mw+ahriW58yg3uRdwy\nZwIDAQAB\n-----END PUBLIC KEY-----"
+    },
+    {
+      "kid": "ed25519-oidc-2026",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "alg": "EdDSA",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    },
+    {
+      "kid": "hmac-oidc-2026",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "alg": "HS256",
+      "secret_hex": "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"
+    }
+  ],
+  "preload_state": {
+    "state_token": "state-cli-rej-1013",
+    "nonce": "nonce-cli-rej-2013",
+    "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+    "client_id": "policyhelix-web",
+    "redirect_uri": "https://app.policyhelix.local/auth/callback",
+    "created_at": "2026-11-04T10:00:00Z",
+    "expires_at": "2030-01-01T00:00:00Z",
+    "consumed": false
+  },
+  "callback": {
+    "state_token": "state-cli-rej-1013",
+    "raw_id_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJzYS1rZXljbG9hay0yMDI2In0.eyJpc3MiOiJodHRwczovL3dyb25nLmlkcC5sb2NhbCIsInN1YiI6InVzZXItY2xpLW9wZXJhdG9yIiwiYXVkIjoicG9saWN5aGVsaXgtd2ViIiwiZXhwIjoxODkzNDU2MDAwLCJpYXQiOjE3OTM3OTMwMDAsIm5vbmNlIjoibm9uY2UtY2xpLXJlai0yMDEzIn0.GMhGhuWGKYrQdDEWCpXLL5HmXGsMddA1t-MF8M_iBhXdrvVIr_Zu2JGoJNkVm7FG4LLBDBoelZVs6fpBL4e8ADPr4dDztJq0SkmVJNhfgwos_EmNXxULL3WvPj8eP28kUn3lWRsNbllw6vXVh3-s-y0bfdOFQAbbnw9QMcL9x9VORk49ATjh8kbiBmsMNZ_yqzaV6bFnxCvUiCJLx7r3jvPx9mokXilXSFyyCzl6ZMePKsmgXpdZlFQwy2dNq5QPUk8cUKu7vA8aSx1opOtmyWWQaq-WdoL-ZmNgBLE4ykGa-SzrxhJhBd9bZvLVa0rOt95GueaAEMdAQqEQcMLNrg",
+    "evaluation_time": "2026-11-04T12:00:00Z",
+    "untrusted_headers_stripped": true
+  },
+  "expected": {
+    "valid": false,
+    "authenticated": false,
+    "error_code": "WRONG_ISSUER",
+    "authorized_for_scope": false
+  }
+}

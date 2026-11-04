@@ -167,7 +167,7 @@
       "id": "C13",
       "title": "feat(oidc): validate login state nonce and tokens",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Wrong issuer/audience, nonce replay, invalid callback state and expired token fail."
       ],

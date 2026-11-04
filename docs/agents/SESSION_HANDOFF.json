@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-04",
   "base_commit": "5a82ea97683c75e57925440f180e88e2633b8436",
-  "scope": "Task C12: atomically persist and switch the active policy bundle, retaining the previous bundle and highest accepted revision across interrupted switches",
+  "scope": "Task C13: feat(oidc): validate login state nonce and tokens",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -15,23 +15,23 @@
     "C09",
     "C10",
     "C11",
-    "C12"
+    "C12",
+    "C13"
   ],
   "changed_paths": [
-    "internal/bundles/activate.go",
-    "internal/bundles/verify.go",
-    "internal/bundles/build.go",
+    "internal/auth/oidc.go",
     "cmd/policyhelix/main.go",
-    "tests/activation_test.go",
-    "tests/fixtures/policyhelix/C12/",
+    "tests/oidc_test.go",
+    "tests/fixtures/policyhelix/C13/",
     "apps/web/src/generated/project.json",
-    "docs/evidence/C12.json",
+    "docs/evidence/C13.json",
     "plans/progress.json",
     "plans/project-state.json",
+    "plans/requirements.json",
     "docs/agents/SESSION_HANDOFF.json"
   ],
   "commands": [
-    "gofmt -w internal/bundles/activate.go internal/bundles/verify.go internal/bundles/build.go cmd/policyhelix/main.go tests/activation_test.go",
+    "gofmt -w internal/auth/oidc.go cmd/policyhelix/main.go tests/oidc_test.go",
     "go vet ./...",
     "go test -v -race ./...",
     "npm run validate:plan",
@@ -41,11 +41,11 @@
     "python3 scripts/validate_repo.py",
     "python3 scripts/source_identity.py"
   ],
-  "validation_results": "docs/evidence/C12.json",
-  "final_source_identity": "sha256:689c09a6e00c86ffa1992f5b34761723bbdb743aa73800f2ff0ac23697f2b240",
+  "validation_results": "docs/evidence/C13.json",
+  "final_source_identity": "sha256:a618acce0c9e31ecf424ab26297fb5324c54051817cbf8685b0a750aeb0aab2f",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C13",
+  "next_task": "C14",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C12 verified. Added internal/bundles/activate.go with ActivationManager, the ActivationStore port, StorageActivationStore over the C05 atomic storage adapter, typed activate/restore outcomes, CLI --activate-bundle and --activation-state, tests/activation_test.go and ten C12 fixtures. Ready for C13 (feat(oidc): validate login state nonce and tokens)."
+  "continuation": "Task C13 verified. Implemented internal/auth/oidc.go with OIDCValidator, StateManager, NonceTracker, KeySet supporting RS256/EdDSA/HS256, --validate-oidc CLI flag in cmd/policyhelix/main.go, tests/oidc_test.go, and 13 C13 fixtures under tests/fixtures/policyhelix/C13/. Requirement F07 acceptance and all negative cases pass. Ready for C14 (feat(sessions): persist revocable server side sessions)."
 }

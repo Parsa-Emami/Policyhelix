@@ -1,0 +1,64 @@
+{
+  "fixture_id": "cli-valid-callback",
+  "commit_id": "C13",
+  "description": "CLI validation envelope with long-lived validity for automated CLI test invocation.",
+  "schema_version": "1",
+  "config": {
+    "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+    "client_id": "policyhelix-web",
+    "allowed_algorithms": [
+      "RS256",
+      "EdDSA",
+      "HS256"
+    ],
+    "require_nonce": true
+  },
+  "trusted_keys": [
+    {
+      "kid": "rsa-keycloak-2026",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "alg": "RS256",
+      "public_key_pem": "-----BEGIN PUBLIC KEY-----\nMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqjiyJ7IE4Wg3ENU0HS3A\nrKMWowvHeuOM6YxrprvpQR8DBsBtrSdqjzmICE/p33yCSlTNvYS9CpWuvpfBvtYY\nFSmaRvWNOGtuj8FRoPfqR+zi4mvT2pBuK5AAKKyD6k4mtNy9XNbftQhpfvFscTSN\nwgGWLmfd2Rh16WNB6k30ejg5sJRMcE4CH/ufRFn3OKz7eBVPCneqm8lJ9CpjDtW9\nr91ywOKZZ6x6IpJqHYOaWDBHoY6xFodxPJ7MW1tnw9++TBT8OuHCUebQxhfEhQTO\ntpGuhms+SRCwKA01TTjKm0uLqGvcN03b5BS63C18dW+uk1Mw+ahriW58yg3uRdwy\nZwIDAQAB\n-----END PUBLIC KEY-----"
+    },
+    {
+      "kid": "ed25519-oidc-2026",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "alg": "EdDSA",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    },
+    {
+      "kid": "hmac-oidc-2026",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "alg": "HS256",
+      "secret_hex": "00112233445566778899aabbccddeeff00112233445566778899aabbccddeeff"
+    }
+  ],
+  "preload_state": {
+    "state_token": "state-cli-valid-1012",
+    "nonce": "nonce-cli-valid-2012",
+    "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+    "client_id": "policyhelix-web",
+    "redirect_uri": "https://app.policyhelix.local/auth/callback",
+    "owner_scope": "tenant-alpha",
+    "created_at": "2026-11-04T10:00:00Z",
+    "expires_at": "2030-01-01T00:00:00Z",
+    "consumed": false
+  },
+  "callback": {
+    "state_token": "state-cli-valid-1012",
+    "raw_id_token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6InJzYS1rZXljbG9hay0yMDI2In0.eyJpc3MiOiJodHRwczovL2F1dGgucG9saWN5aGVsaXgubG9jYWwvcmVhbG1zL3BvbGljeWhlbGl4Iiwic3ViIjoidXNlci1jbGktb3BlcmF0b3IiLCJhdWQiOiJwb2xpY3loZWxpeC13ZWIiLCJleHAiOjE4OTM0NTYwMDAsImlhdCI6MTc5Mzc5MzAwMCwibm9uY2UiOiJub25jZS1jbGktdmFsaWQtMjAxMiIsInJvbGVzIjpbIm9wZXJhdG9yIl0sIm93bmVyX3Njb3BlIjoidGVuYW50LWFscGhhIn0.mtOb5Loa1fVirZv6P-xv5uggxemHNJhYbvqD8SiBcLz9qgVYySGJsQK5lY8ctUAQn9-M2yaEVhgVoZTt56n-DxzmxnOaCebr1zWvqc14cipkWTdkHueK6b-xWKmPZtgs28N_6oskAb0SIlVO0yvYS-EGorFrEFR8HbRbalHW6moAKzB5HF8suQhGy_Ffz_b_zKUXI7wI_3IV_onaBwRKomR7npXMvcR8apUZ1PEKJGdlmCQYa-KKPsG9nVC9_JprNNZrBK8czG7YGx4Wr1Va-YoUXvoVUPcRFBhFJQ_eLRQ-IoM5nWZtYH7fGiFDho6xzc3-G-ZcfRC7uwwPWhmnHA",
+    "evaluation_time": "2026-11-04T12:00:00Z",
+    "untrusted_headers_stripped": true,
+    "target_owner_scope": "tenant-alpha"
+  },
+  "expected": {
+    "valid": true,
+    "authenticated": true,
+    "subject_id": "user-cli-operator",
+    "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+    "roles": [
+      "operator"
+    ],
+    "authorized_for_scope": true
+  }
+}
