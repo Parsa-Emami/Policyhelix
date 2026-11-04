@@ -1,0 +1,65 @@
+{
+  "fixture_id": "negative-stale-revision",
+  "commit_id": "C11",
+  "description": "A replayed revision cannot replace a higher accepted revision.",
+  "schema_version": "1",
+  "trusted_keys": [
+    {
+      "signer_key_id": "ed25519-primary-2026",
+      "issuer": "https://issuer.policyhelix.local",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    }
+  ],
+  "evaluation_time": "2026-11-03T12:00:00Z",
+  "minimum_revision": 3,
+  "bundle": {
+    "schema_version": "1",
+    "bundle_id": "bundle-analytics-v2",
+    "package": "policyhelix.authz",
+    "issuer": "https://issuer.policyhelix.local",
+    "signer_key_id": "ed25519-primary-2026",
+    "signature": "ed25519:a1d6f2c5f92a9604abfe668ce6a5f32351a8beb00409a7f24e8582df7efcd5156fe87d945331ce4e1284ff7fff7e1630fcd77f7165275c1a119db6bbd4458f0f",
+    "signature_verified": true,
+    "revision": 2,
+    "issued_at": "2026-11-03T10:00:00Z",
+    "expires_at": "2026-11-04T10:00:00Z",
+    "digest": "sha256:4c45391731af8e38fe841beabd286b812aa8da3ea9601e023413be09dd879045",
+    "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+    "routes": [
+      {
+        "pattern": "/api/v1/analytics/reports",
+        "action": "read",
+        "classification": "private",
+        "allow_unauthenticated": false,
+        "required_roles": [
+          "operator",
+          "admin"
+        ],
+        "description": "Private analytics reports endpoint"
+      }
+    ],
+    "rules": [
+      {
+        "id": "rule-operator-analytics-read",
+        "effect": "allow",
+        "path_pattern": "/api/v1/analytics/reports",
+        "actions": [
+          "read"
+        ],
+        "roles": [
+          "operator",
+          "admin"
+        ],
+        "resource_class": "private",
+        "reason_code": "policy_allow_role_operator",
+        "reason_message": "Operator granted read access to analytics reports"
+      }
+    ]
+  },
+  "expected": {
+    "verified": false,
+    "error_code": "STALE_OR_REPLAYED_REVISION",
+    "revision": 2,
+    "retained_revision": 3
+  }
+}

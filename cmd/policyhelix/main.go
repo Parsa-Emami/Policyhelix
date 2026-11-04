@@ -33,14 +33,14 @@ var Invariants = []string{
 }
 
 type VersionResponse struct {
-	Project                    string   `json:"project"`
-	Engine                     string   `json:"engine"`
-	Version                    string   `json:"version"`
-	Status                     string   `json:"status"`
-	Loopback                   bool     `json:"loopback"`
-	CoreReady                  bool     `json:"coreReady"`
-	BusinessFeaturesCompleted  bool     `json:"businessFeaturesCompleted"`
-	Invariants                 []string `json:"invariants"`
+	Project                   string   `json:"project"`
+	Engine                    string   `json:"engine"`
+	Version                   string   `json:"version"`
+	Status                    string   `json:"status"`
+	Loopback                  bool     `json:"loopback"`
+	CoreReady                 bool     `json:"coreReady"`
+	BusinessFeaturesCompleted bool     `json:"businessFeaturesCompleted"`
+	Invariants                []string `json:"invariants"`
 }
 
 type StatusResponse struct {
@@ -61,14 +61,14 @@ type FixturePayload struct {
 }
 
 type EvaluationResult struct {
-	Allow                     *bool    `json:"allow,omitempty"`
-	Status                    string   `json:"status,omitempty"`
-	Engine                    string   `json:"engine,omitempty"`
-	Version                   string   `json:"version,omitempty"`
-	BusinessFeaturesCompleted *bool    `json:"businessFeaturesCompleted,omitempty"`
-	PrivateResourcesFailClosed *bool   `json:"private_resources_fail_closed,omitempty"`
-	Error                     string   `json:"error,omitempty"`
-	Reasons                   []string `json:"reasons,omitempty"`
+	Allow                      *bool    `json:"allow,omitempty"`
+	Status                     string   `json:"status,omitempty"`
+	Engine                     string   `json:"engine,omitempty"`
+	Version                    string   `json:"version,omitempty"`
+	BusinessFeaturesCompleted  *bool    `json:"businessFeaturesCompleted,omitempty"`
+	PrivateResourcesFailClosed *bool    `json:"private_resources_fail_closed,omitempty"`
+	Error                      string   `json:"error,omitempty"`
+	Reasons                    []string `json:"reasons,omitempty"`
 }
 
 func isLoopback(host string) bool {
@@ -145,6 +145,16 @@ func evaluateRequest(req map[string]interface{}) (int, EvaluationResult) {
 		Allow:   &f,
 		Error:   "not_implemented",
 		Reasons: []string{"default_fail_closed"},
+	}
+}
+
+func rejectedVerificationResult(code, message string) bundles.BundleVerification {
+	return bundles.BundleVerification{
+		SchemaVersion: "1",
+		Verified:      false,
+		Status:        bundles.VerificationStatusRejected,
+		ErrorCode:     code,
+		Message:       message,
 	}
 }
 
@@ -383,6 +393,41 @@ func setupRouter() *http.ServeMux {
 		_ = json.NewEncoder(w).Encode(bundle)
 	})
 
+	mux.HandleFunc("/v1/runtime/bundles/verify", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", "POST")
+			http.Error(w, `{"error":"method_not_allowed"}`, http.StatusMethodNotAllowed)
+			return
+		}
+		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 1048576))
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(rejectedVerificationResult(bundles.ErrCodeInvalidVerificationRequest, "Failed to read request body or exceeded 1MB"))
+			return
+		}
+
+		var req bundles.BundleVerificationRequest
+		if err := json.Unmarshal(body, &req); err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(rejectedVerificationResult(bundles.ErrCodeInvalidVerificationRequest, fmt.Sprintf("Malformed verification request JSON: %v", err)))
+			return
+		}
+
+		verification := bundles.VerifyBundle(req)
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		switch {
+		case verification.ErrorCode == bundles.ErrCodeInvalidVerificationRequest:
+			w.WriteHeader(http.StatusBadRequest)
+		case !verification.Verified:
+			w.WriteHeader(http.StatusUnprocessableEntity)
+		default:
+			w.WriteHeader(http.StatusOK)
+		}
+		_ = json.NewEncoder(w).Encode(verification)
+	})
+
 	return mux
 }
 
@@ -436,20 +481,21 @@ func main() {
 	simulateFlag := flag.String("simulate", "", "Path to offline decision simulation fixture JSON or directory")
 	simulateFixtureFlag := flag.String("simulate-fixture", "", "Alias for -simulate")
 	buildBundleFlag := flag.String("build-bundle", "", "Path to BundleBuildSpec JSON to build a deterministic signed bundle")
+	verifyBundleFlag := flag.String("verify-bundle", "", "Path to BundleVerificationRequest JSON to verify bundle trust and freshness")
 	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	flag.Parse()
 
 	if *versionFlag {
 		_ = json.NewEncoder(os.Stdout).Encode(VersionResponse{
-			Project:                    "PolicyHelix",
-			Engine:                     EngineName,
-			Version:                    EngineVersion,
-			Status:                     "ok",
-			Loopback:                   true,
-			CoreReady:                  false,
-			BusinessFeaturesCompleted:  false,
-			Invariants:                 Invariants,
+			Project:                   "PolicyHelix",
+			Engine:                    EngineName,
+			Version:                   EngineVersion,
+			Status:                    "ok",
+			Loopback:                  true,
+			CoreReady:                 false,
+			BusinessFeaturesCompleted: false,
+			Invariants:                Invariants,
 		})
 		return
 	}
@@ -557,6 +603,25 @@ func main() {
 			os.Exit(1)
 		}
 		_ = json.NewEncoder(os.Stdout).Encode(bundle)
+		return
+	}
+
+	if *verifyBundleFlag != "" {
+		raw, err := os.ReadFile(*verifyBundleFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Verification request read error: %v\n", err)
+			os.Exit(1)
+		}
+		var req bundles.BundleVerificationRequest
+		if err := json.Unmarshal(raw, &req); err != nil {
+			fmt.Fprintf(os.Stderr, "Verification request JSON error: %v\n", err)
+			os.Exit(1)
+		}
+		verification := bundles.VerifyBundle(req)
+		_ = json.NewEncoder(os.Stdout).Encode(verification)
+		if !verification.Verified {
+			os.Exit(1)
+		}
 		return
 	}
 

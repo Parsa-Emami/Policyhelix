@@ -14,55 +14,32 @@ import (
 
 // Typed error codes for bundle building, signing, and verification (Requirement F04).
 const (
-	ErrCodeInvalidBundleSpec     = "INVALID_BUNDLE_SPEC"
-	ErrCodeSigningFailed         = "BUNDLE_SIGNING_FAILED"
-	ErrCodeVerificationFailed    = "BUNDLE_VERIFICATION_FAILED"
-	ErrCodeUntrustedSigner       = "UNTRUSTED_OR_MISSING_SIGNER"
-	ErrCodeTamperedBundle        = "TAMPERED_BUNDLE_DIGEST"
-	ErrCodeStaleOrReplayedRev    = "STALE_OR_REPLAYED_REVISION"
-	ErrCodeExpiredBundle         = "EXPIRED_POLICY_BUNDLE"
-	ErrCodePrivateFailClosed     = "PRIVATE_RESOURCE_FAIL_CLOSED"
-	ErrCodeMalformedFixture      = "MALFORMED_FIXTURE"
+	ErrCodeInvalidBundleSpec  = "INVALID_BUNDLE_SPEC"
+	ErrCodeSigningFailed      = "BUNDLE_SIGNING_FAILED"
+	ErrCodeVerificationFailed = "BUNDLE_VERIFICATION_FAILED"
+	ErrCodeUntrustedSigner    = "UNTRUSTED_OR_MISSING_SIGNER"
+	ErrCodeTamperedBundle     = "TAMPERED_BUNDLE_DIGEST"
+	ErrCodeStaleOrReplayedRev = "STALE_OR_REPLAYED_REVISION"
+	ErrCodeExpiredBundle      = "EXPIRED_POLICY_BUNDLE"
+	ErrCodePrivateFailClosed  = "PRIVATE_RESOURCE_FAIL_CLOSED"
+	ErrCodeMalformedFixture   = "MALFORMED_FIXTURE"
 )
 
 // BundleBuildSpec contains the declarative specification for generating a signed deterministic policy bundle.
 type BundleBuildSpec struct {
-	SchemaVersion string               `json:"schema_version"`
-	BundleID      string               `json:"bundle_id"`
-	Package       string               `json:"package"`
-	Issuer        string               `json:"issuer"`
-	SignerKeyID   string               `json:"signer_key_id"`
-	PrivateKeyHex string               `json:"private_key_hex,omitempty"` // 64-byte Ed25519 private key (or 32-byte seed)
-	SeedHex       string               `json:"seed_hex,omitempty"`        // 32-byte seed for deterministic key derivation
-	Revision      int64                `json:"revision"`
-	IssuedAt      string               `json:"issued_at"`
-	ExpiresAt     string               `json:"expires_at"`
-	RegoModule    string               `json:"rego_module"`
-	Routes        []policy.RouteRule   `json:"routes"`
-	Rules         []policy.PolicyRule  `json:"rules"`
-}
-
-// TrustedKey describes a trusted Ed25519 public key and its authorized issuer.
-type TrustedKey struct {
-	SignerKeyID  string `json:"signer_key_id"`
-	Issuer       string `json:"issuer"`
-	PublicKeyHex string `json:"public_key_hex"`
-}
-
-// Keyring manages trusted Ed25519 verification keys.
-type Keyring struct {
-	keys map[string]TrustedKey // key: signerKeyID
-}
-
-// NewKeyring constructs a Keyring from a list of TrustedKeys.
-func NewKeyring(keys ...TrustedKey) *Keyring {
-	kr := &Keyring{
-		keys: make(map[string]TrustedKey, len(keys)),
-	}
-	for _, k := range keys {
-		kr.keys[k.SignerKeyID] = k
-	}
-	return kr
+	SchemaVersion string              `json:"schema_version"`
+	BundleID      string              `json:"bundle_id"`
+	Package       string              `json:"package"`
+	Issuer        string              `json:"issuer"`
+	SignerKeyID   string              `json:"signer_key_id"`
+	PrivateKeyHex string              `json:"private_key_hex,omitempty"` // 64-byte Ed25519 private key (or 32-byte seed)
+	SeedHex       string              `json:"seed_hex,omitempty"`        // 32-byte seed for deterministic key derivation
+	Revision      int64               `json:"revision"`
+	IssuedAt      string              `json:"issued_at"`
+	ExpiresAt     string              `json:"expires_at"`
+	RegoModule    string              `json:"rego_module"`
+	Routes        []policy.RouteRule  `json:"routes"`
+	Rules         []policy.PolicyRule `json:"rules"`
 }
 
 // DeriveKeyPairFromSeed deterministically derives an Ed25519 keypair from a 32-byte seed.
@@ -82,20 +59,6 @@ func DeriveKeyPairFromSeedHex(seedHex string) (ed25519.PublicKey, ed25519.Privat
 		return nil, nil, fmt.Errorf("invalid hex seed: %w", err)
 	}
 	return DeriveKeyPairFromSeed(raw)
-}
-
-// CanonicalSigningPayload returns the exact deterministic byte sequence that is cryptographically signed.
-// Format: "policyhelix:bundle:v1\n<canonical-digest>\n<issuer>\n<signer_key_id>\n<revision>\n<issued_at>\n<expires_at>"
-func CanonicalSigningPayload(canonicalDigest, issuer, signerKeyID string, revision int64, issuedAt, expiresAt string) []byte {
-	msg := fmt.Sprintf("policyhelix:bundle:v1\n%s\n%s\n%s\n%d\n%s\n%s",
-		canonicalDigest,
-		strings.TrimSpace(issuer),
-		strings.TrimSpace(signerKeyID),
-		revision,
-		strings.TrimSpace(issuedAt),
-		strings.TrimSpace(expiresAt),
-	)
-	return []byte(msg)
 }
 
 // BuildDeterministicBundle creates an Ed25519-signed LocalPolicyBundle according to the specification.
@@ -185,51 +148,6 @@ func BuildDeterministicBundle(spec BundleBuildSpec) (policy.LocalPolicyBundle, e
 	return bundle, nil
 }
 
-// VerifyBundleSignature checks the cryptographic Ed25519 signature of the bundle against trusted keys.
-func VerifyBundleSignature(bundle policy.LocalPolicyBundle, keyring *Keyring) error {
-	if keyring == nil || len(keyring.keys) == 0 {
-		return fmt.Errorf("%s: no trusted keys configured in keyring", ErrCodeUntrustedSigner)
-	}
-
-	trustedKey, ok := keyring.keys[bundle.SignerKeyID]
-	if !ok {
-		return fmt.Errorf("%s: signer_key_id '%s' is not in trusted keyring", ErrCodeUntrustedSigner, bundle.SignerKeyID)
-	}
-
-	if trustedKey.Issuer != "" && trustedKey.Issuer != bundle.Issuer {
-		return fmt.Errorf("%s: bundle issuer '%s' does not match trusted key issuer '%s'", ErrCodeUntrustedSigner, bundle.Issuer, trustedKey.Issuer)
-	}
-
-	pubBytes, err := hex.DecodeString(strings.TrimSpace(trustedKey.PublicKeyHex))
-	if err != nil || len(pubBytes) != ed25519.PublicKeySize {
-		return fmt.Errorf("%s: malformed trusted public key for '%s'", ErrCodeUntrustedSigner, bundle.SignerKeyID)
-	}
-	pubKey := ed25519.PublicKey(pubBytes)
-
-	if !strings.HasPrefix(bundle.Signature, "ed25519:") {
-		return fmt.Errorf("%s: unsupported or missing signature algorithm prefix in '%s'", ErrCodeVerificationFailed, bundle.Signature)
-	}
-
-	sigHex := strings.TrimPrefix(bundle.Signature, "ed25519:")
-	sigBytes, err := hex.DecodeString(sigHex)
-	if err != nil || len(sigBytes) != ed25519.SignatureSize {
-		return fmt.Errorf("%s: malformed signature bytes in bundle", ErrCodeVerificationFailed)
-	}
-
-	// Verify content digest integrity first (detects single-byte changes)
-	computedDigest := policy.ComputeCanonicalBundleDigest(bundle)
-	if computedDigest != bundle.Digest {
-		return fmt.Errorf("%s: declared digest %s does not match canonical %s", ErrCodeTamperedBundle, bundle.Digest, computedDigest)
-	}
-
-	signingPayload := CanonicalSigningPayload(bundle.Digest, bundle.Issuer, bundle.SignerKeyID, bundle.Revision, bundle.IssuedAt, bundle.ExpiresAt)
-	if !ed25519.Verify(pubKey, signingPayload, sigBytes) {
-		return fmt.Errorf("%s: cryptographic signature verification failed for signer '%s'", ErrCodeVerificationFailed, bundle.SignerKeyID)
-	}
-
-	return nil
-}
-
 // BundleAuthorityManager oversees bundle acceptance, monotonic revision progression,
 // and fail-closed evaluation integration.
 type BundleAuthorityManager struct {
@@ -241,6 +159,9 @@ type BundleAuthorityManager struct {
 
 // NewBundleAuthorityManager creates an authority manager with a trusted keyring.
 func NewBundleAuthorityManager(keyring *Keyring) *BundleAuthorityManager {
+	if keyring == nil {
+		keyring = NewKeyring()
+	}
 	trustedIssuers := make([]string, 0, len(keyring.keys))
 	trustedSigners := make([]string, 0, len(keyring.keys))
 	for signerID, tk := range keyring.keys {
@@ -263,18 +184,14 @@ func (bam *BundleAuthorityManager) IngestBundle(b policy.LocalPolicyBundle, eval
 		evalTime = time.Now().UTC()
 	}
 
-	// 1. Verify cryptographic signature & digest integrity
-	if err := VerifyBundleSignature(b, bam.keyring); err != nil {
-		return err
+	// 1. Enforce cryptographic trust evidence and freshness (validity window + monotonic revision)
+	// before the candidate can become authoritative.
+	verification := verifyAt(b, bam.keyring, evalTime, bam.highestRevision, BundleVerification{})
+	if !verification.Verified {
+		return fmt.Errorf("%s: %s", verification.ErrorCode, verification.Message)
 	}
 
-	// 2. Enforce monotonic revision: strictly greater than highest accepted revision
-	if bam.highestRevision > 0 && b.Revision <= bam.highestRevision {
-		return fmt.Errorf("%s: candidate revision %d is not strictly greater than active accepted revision %d",
-			ErrCodeStaleOrReplayedRev, b.Revision, bam.highestRevision)
-	}
-
-	// 3. Load into evaluator (validates syntax, routes, rules, validity window)
+	// 2. Load into evaluator (validates policy syntax, routes and rules)
 	bErr := bam.evaluator.LoadBundle(b, evalTime)
 	if bErr != nil {
 		return fmt.Errorf("%s: %s", bErr.Code, bErr.Message)
@@ -306,26 +223,26 @@ func (bam *BundleAuthorityManager) Evaluate(ctx context.Context, input policy.Bu
 
 // BundleFixture defines a test fixture structure for C10 bundle verification scenarios.
 type BundleFixture struct {
-	FixtureID       string                  `json:"fixture_id"`
-	CommitID        string                  `json:"commit_id,omitempty"`
-	Description     string                  `json:"description,omitempty"`
-	TrustedKeys     []TrustedKey            `json:"trusted_keys"`
-	BuildSpec       *BundleBuildSpec        `json:"build_spec,omitempty"`
+	FixtureID       string                    `json:"fixture_id"`
+	CommitID        string                    `json:"commit_id,omitempty"`
+	Description     string                    `json:"description,omitempty"`
+	TrustedKeys     []TrustedKey              `json:"trusted_keys"`
+	BuildSpec       *BundleBuildSpec          `json:"build_spec,omitempty"`
 	PreloadBundle   *policy.LocalPolicyBundle `json:"preload_bundle,omitempty"`
 	CandidateBundle *policy.LocalPolicyBundle `json:"candidate_bundle,omitempty"`
-	TamperAction    string                  `json:"tamper_action,omitempty"` // e.g. "modify_rego_byte", "modify_signature_byte"
-	Input           policy.BundleEvalInput  `json:"input"`
+	TamperAction    string                    `json:"tamper_action,omitempty"` // e.g. "modify_rego_byte", "modify_signature_byte"
+	Input           policy.BundleEvalInput    `json:"input"`
 	Expected        struct {
-		BuildSuccess      bool   `json:"build_success"`
-		IngestSuccess     bool   `json:"ingest_success"`
-		ErrorCode         string `json:"error_code,omitempty"`
-		Allow             bool   `json:"allow"`
-		ReasonCode        string `json:"reason_code,omitempty"`
-		RetainedRevision  int64  `json:"retained_revision,omitempty"`
-		Issuer            string `json:"issuer,omitempty"`
-		Revision          int64  `json:"revision,omitempty"`
-		DigestNotEmpty    bool   `json:"digest_not_empty,omitempty"`
-		ValidityWindowOk  bool   `json:"validity_window_ok,omitempty"`
+		BuildSuccess     bool   `json:"build_success"`
+		IngestSuccess    bool   `json:"ingest_success"`
+		ErrorCode        string `json:"error_code,omitempty"`
+		Allow            bool   `json:"allow"`
+		ReasonCode       string `json:"reason_code,omitempty"`
+		RetainedRevision int64  `json:"retained_revision,omitempty"`
+		Issuer           string `json:"issuer,omitempty"`
+		Revision         int64  `json:"revision,omitempty"`
+		DigestNotEmpty   bool   `json:"digest_not_empty,omitempty"`
+		ValidityWindowOk bool   `json:"validity_window_ok,omitempty"`
 	} `json:"expected"`
 }
 

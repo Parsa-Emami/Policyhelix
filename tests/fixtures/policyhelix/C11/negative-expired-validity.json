@@ -1,0 +1,64 @@
+{
+  "fixture_id": "negative-expired-validity",
+  "commit_id": "C11",
+  "description": "A bundle outside its validity window is rejected.",
+  "schema_version": "1",
+  "trusted_keys": [
+    {
+      "signer_key_id": "ed25519-primary-2026",
+      "issuer": "https://issuer.policyhelix.local",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    }
+  ],
+  "evaluation_time": "2026-11-03T12:00:00Z",
+  "minimum_revision": 2,
+  "bundle": {
+    "schema_version": "1",
+    "bundle_id": "bundle-analytics-v3-expired",
+    "package": "policyhelix.authz",
+    "issuer": "https://issuer.policyhelix.local",
+    "signer_key_id": "ed25519-primary-2026",
+    "signature": "ed25519:804fe25f53b5ccc133a2a35904fd7dc2941cfd00fcd7d5a5ed50e5a936932877bd6956baaaf08a7681242e43ef269f6955ef2a257e0a6fd2a3ed4a8083c9b802",
+    "signature_verified": true,
+    "revision": 3,
+    "issued_at": "2026-11-01T10:00:00Z",
+    "expires_at": "2026-11-02T10:00:00Z",
+    "digest": "sha256:6120c5ed484a4cdf30ce89bacc80f230c08eb87ddb5eef241f64dc650afac0af",
+    "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+    "routes": [
+      {
+        "pattern": "/api/v1/analytics/reports",
+        "action": "read",
+        "classification": "private",
+        "allow_unauthenticated": false,
+        "required_roles": [
+          "operator",
+          "admin"
+        ],
+        "description": "Private analytics reports endpoint"
+      }
+    ],
+    "rules": [
+      {
+        "id": "rule-operator-analytics-read",
+        "effect": "allow",
+        "path_pattern": "/api/v1/analytics/reports",
+        "actions": [
+          "read"
+        ],
+        "roles": [
+          "operator",
+          "admin"
+        ],
+        "resource_class": "private",
+        "reason_code": "policy_allow_role_operator",
+        "reason_message": "Operator granted read access to analytics reports"
+      }
+    ]
+  },
+  "expected": {
+    "verified": false,
+    "error_code": "EXPIRED_POLICY_BUNDLE",
+    "revision": 3
+  }
+}

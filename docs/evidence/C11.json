@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "commit_id": "C11",
+  "project": "PolicyHelix",
+  "date": "2026-11-04",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: require bundle trust and freshness",
+  "source_identity": "sha256:ccefab0f26e7908f6bf466cc68d870a7d3a0084ace8d9537afabcac728f7cca0",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, immediately before recording the self-referential source_identity fields in progress and handoff.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux 7.0.0-42-generic x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node in .github/workflows/runtime.yml; local run used the installed Go 1.26.2 toolchain",
+    "hardware": {
+      "vcpu": 16,
+      "ram_mib": 31341,
+      "free_disk_mib": 94935,
+      "status": "development host measured; C28 must verify or reduce the 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C11/positive-trusted-fresh-bundle.json",
+      "sha256": "50b7be51d53b682b91d3686d85a69196b05e90deffc7d4041104b40908619264",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C11 trusted fresh bundle acceptance"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C11/negative-missing-signature.json",
+      "sha256": "aceb43fac8b0154decfcaec7beb931c26a67f853333fbb0603a20ed385a7dfe6",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C11 missing signature evidence rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C11/negative-wrong-key.json",
+      "sha256": "534c436d6395743a749be330526e4d96283b173189caf2023b146cd966209ea5",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C11 wrong signer key rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C11/negative-tampered-byte.json",
+      "sha256": "8983546234364dabdd7182bcab53a4eb42d1a6fe3af9d626920248eff52242fa",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C11 single modified byte rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C11/negative-stale-revision.json",
+      "sha256": "341631733421fbc3dd1b197d318d97df33f8e7c294f02e4121dada6645c7211f",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C11 stale or replayed revision rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C11/negative-expired-validity.json",
+      "sha256": "a5e17660aed4e2817ebf0491532266e416ec8ecb39da66e5ac3b8366a0dc3a0c",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C11 expired validity window rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C11/negative-private-resource-fail-closed.json",
+      "sha256": "a76f7411b7b656e750beeec24fe304b8594510bcac82618d110489e066df3ff4",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C11 rejected authority private resource fail-closed"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "gofmt -w internal/bundles/verify.go internal/bundles/build.go cmd/policyhelix/main.go tests/freshness_test.go",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go vet ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go test -v -race ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "69 --- PASS, 0 --- FAIL; ok github.com/parsa-emami/policyhelix/cmd/policyhelix 1.440s; ok internal/contracts (cached); ok internal/policy 1.013s; ok internal/storage (cached); ok tests 2.081s"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "pretest build and engine build passed; tests 16, pass 16, fail 0"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "VALIDATION PASSED; Checked 154 JSON files and repository contract invariants."
+    },
+    {
+      "command": "python3 scripts/source_identity.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "sha256:ccefab0f26e7908f6bf466cc68d870a7d3a0084ace8d9537afabcac728f7cca0"
+    }
+  ],
+  "results": [
+    "Added internal/bundles/verify.go with the single trust and freshness gate (VerifyBundle, BundleVerificationRequest, BundleVerification, verifyAt, verifyTrustEvidence, verifyFreshness, Keyring.TrustedKeys).",
+    "Missing signature evidence, unverified signature evidence, unknown or mismatched signer issuer, wrong key, modified byte, expired and not-yet-valid validity windows, and stale/replayed revisions all reject with typed error codes and never set verified=true.",
+    "BundleAuthorityManager.IngestBundle now verifies trust and freshness before policy validation; on every rejection it preserves the previously accepted bundle and highest revision.",
+    "Exposed the typed outcome through CLI --verify-bundle and loopback POST /v1/runtime/bundles/verify (200 verified, 422 rejected, 400 malformed request).",
+    "tests/freshness_test.go covers the acceptance criterion, all three required negative cases, fixture manifest hashes, CLI exit behavior and the loopback HTTP endpoint.",
+    "Seven Apache-2.0 synthetic C11 fixtures were generated with the deterministic C10 bundle builder and verified against their manifest SHA-256 digests."
+  ],
+  "observed_limitations": [
+    "The loopback verification endpoint is stateless and verifies against the trust anchors supplied in the request; persistent trust-anchor configuration and activation are C12 scope.",
+    "The browser workspace does not yet surface verification outcomes; C11 is the engine/domain slice.",
+    "gofmt -l tests reports the pre-existing formatting drift in tests/opa_test.go, which this task did not modify.",
+    "The local run used Go 1.26.2 while CI pins Go 1.23.6; the engine code and tests are unchanged in their language-version requirements."
+  ],
+  "rollback_or_recovery_observation": "Revert the isolated C11 verification commit; accepted in-memory authority is not persisted by C11, so no incompatible durable data is created. Keep the C10 signed-bundle builder and evaluator behavior intact."
+}

@@ -96,10 +96,12 @@
     },
     {
       "id": "C11",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C11.json"
+      ],
+      "source_identity": "sha256:ccefab0f26e7908f6bf466cc68d870a7d3a0084ace8d9537afabcac728f7cca0",
+      "notes": "Bundle trust and freshness verification implemented in internal/bundles/verify.go; ingestion, CLI and loopback HTTP share one gate; missing signature, wrong key, stale revision and expired validity rejections verified."
     },
     {
       "id": "C12",

@@ -1,8 +1,8 @@
 {
   "project": "PolicyHelix",
-  "date": "2026-11-03",
-  "base_commit": "d8d4f8b",
-  "scope": "Task C10: build deterministic signed policy bundle, recording issuer, digest, revision and validity period",
+  "date": "2026-11-04",
+  "base_commit": "4070d99e2607a3f1a059a5c4309b134a034e0c1d",
+  "scope": "Task C11: require bundle trust and freshness, rejecting missing signature, wrong key, stale revision and expired validity",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -13,20 +13,37 @@
     "C07",
     "C08",
     "C09",
-    "C10"
+    "C10",
+    "C11"
+  ],
+  "changed_paths": [
+    "internal/bundles/verify.go",
+    "internal/bundles/build.go",
+    "cmd/policyhelix/main.go",
+    "tests/freshness_test.go",
+    "tests/fixtures/policyhelix/C11/",
+    "apps/web/src/generated/project.json",
+    "docs/evidence/C11.json",
+    "plans/progress.json",
+    "plans/project-state.json",
+    "docs/agents/SESSION_HANDOFF.json"
   ],
   "commands": [
+    "gofmt -w internal/bundles/verify.go internal/bundles/build.go cmd/policyhelix/main.go tests/freshness_test.go",
+    "go vet ./...",
+    "go test -v -race ./...",
     "npm run validate:plan",
-    "go test -v ./...",
     "npm test",
     "npm run build",
-    "python3 scripts/validate_repo.py"
+    "npm run build:engine",
+    "python3 scripts/validate_repo.py",
+    "python3 scripts/source_identity.py"
   ],
-  "validation_results": "docs/evidence/C10.json",
-  "final_source_identity": "sha256:5330d32f5d71825c1deffe9862b88541b7800107f4ef7e2335eeae9c5da074ee",
+  "validation_results": "docs/evidence/C11.json",
+  "final_source_identity": "sha256:ccefab0f26e7908f6bf466cc68d870a7d3a0084ace8d9537afabcac728f7cca0",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C11",
+  "next_task": "C12",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C10 verified. Deterministic signed bundle builder (internal/bundles/build.go), CLI/HTTP router integration (cmd/policyhelix/main.go), regression tests (tests/bundle_test.go), and fixtures (tests/fixtures/policyhelix/C10/) implemented. Ready for C11 (feat(verification): require bundle trust and freshness)."
+  "continuation": "Task C11 verified. Added the shared trust/freshness gate in internal/bundles/verify.go (VerifyBundle, BundleVerificationRequest, BundleVerification, Keyring.TrustedKeys), routed BundleAuthorityManager ingestion through it, exposed --verify-bundle and POST /v1/runtime/bundles/verify, added tests/freshness_test.go and seven C11 fixtures. Ready for C12 (feat(activation): atomically persist and switch active policy)."
 }

@@ -1,0 +1,54 @@
+{
+  "commit_id": "C11",
+  "fixtures": [
+    {
+      "fixture_id": "positive-trusted-fresh-bundle",
+      "path": "tests/fixtures/policyhelix/C11/positive-trusted-fresh-bundle.json",
+      "sha256": "50b7be51d53b682b91d3686d85a69196b05e90deffc7d4041104b40908619264",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-missing-signature",
+      "path": "tests/fixtures/policyhelix/C11/negative-missing-signature.json",
+      "sha256": "aceb43fac8b0154decfcaec7beb931c26a67f853333fbb0603a20ed385a7dfe6",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-wrong-key",
+      "path": "tests/fixtures/policyhelix/C11/negative-wrong-key.json",
+      "sha256": "534c436d6395743a749be330526e4d96283b173189caf2023b146cd966209ea5",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-tampered-byte",
+      "path": "tests/fixtures/policyhelix/C11/negative-tampered-byte.json",
+      "sha256": "8983546234364dabdd7182bcab53a4eb42d1a6fe3af9d626920248eff52242fa",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-stale-revision",
+      "path": "tests/fixtures/policyhelix/C11/negative-stale-revision.json",
+      "sha256": "341631733421fbc3dd1b197d318d97df33f8e7c294f02e4121dada6645c7211f",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-expired-validity",
+      "path": "tests/fixtures/policyhelix/C11/negative-expired-validity.json",
+      "sha256": "a5e17660aed4e2817ebf0491532266e416ec8ecb39da66e5ac3b8366a0dc3a0c",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-private-resource-fail-closed",
+      "path": "tests/fixtures/policyhelix/C11/negative-private-resource-fail-closed.json",
+      "sha256": "a76f7411b7b656e750beeec24fe304b8594510bcac82618d110489e066df3ff4",
+      "type": "negative",
+      "license": "Apache-2.0"
+    }
+  ]
+}

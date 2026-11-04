@@ -1,0 +1,65 @@
+{
+  "fixture_id": "negative-tampered-byte",
+  "commit_id": "C11",
+  "description": "A single modified byte in signed policy content is rejected.",
+  "schema_version": "1",
+  "trusted_keys": [
+    {
+      "signer_key_id": "ed25519-primary-2026",
+      "issuer": "https://issuer.policyhelix.local",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    }
+  ],
+  "evaluation_time": "2026-11-03T12:00:00Z",
+  "minimum_revision": 2,
+  "bundle": {
+    "schema_version": "1",
+    "bundle_id": "bundle-analytics-v3-tampered",
+    "package": "policyhelix.authz",
+    "issuer": "https://issuer.policyhelix.local",
+    "signer_key_id": "ed25519-primary-2026",
+    "signature": "ed25519:0ac7da7f28bec2a567092b594e3a799423c00da0872ec0511f8209e3232b6906a786737be83947c609e67368914ccf7610fbffd58fe3001e6fbd7dfc9254d80c",
+    "signature_verified": true,
+    "revision": 3,
+    "issued_at": "2026-11-03T10:00:00Z",
+    "expires_at": "2026-11-04T10:00:00Z",
+    "digest": "sha256:4ed2100d066655b90505ebb24223fd1963fed82c49496bba5705194a0e5853d2",
+    "rego_module": "package policyhelix.authz\ndefault allow = falsf\nallow { input.subject.authenticated == true }",
+    "routes": [
+      {
+        "pattern": "/api/v1/analytics/reports",
+        "action": "read",
+        "classification": "private",
+        "allow_unauthenticated": false,
+        "required_roles": [
+          "operator",
+          "admin"
+        ],
+        "description": "Private analytics reports endpoint"
+      }
+    ],
+    "rules": [
+      {
+        "id": "rule-operator-analytics-read",
+        "effect": "allow",
+        "path_pattern": "/api/v1/analytics/reports",
+        "actions": [
+          "read"
+        ],
+        "roles": [
+          "operator",
+          "admin"
+        ],
+        "resource_class": "private",
+        "reason_code": "policy_allow_role_operator",
+        "reason_message": "Operator granted read access to analytics reports"
+      }
+    ]
+  },
+  "expected": {
+    "verified": false,
+    "error_code": "TAMPERED_BUNDLE_DIGEST",
+    "revision": 3,
+    "digest": "sha256:4ed2100d066655b90505ebb24223fd1963fed82c49496bba5705194a0e5853d2"
+  }
+}

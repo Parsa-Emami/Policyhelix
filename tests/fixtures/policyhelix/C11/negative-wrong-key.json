@@ -1,0 +1,65 @@
+{
+  "fixture_id": "negative-wrong-key",
+  "commit_id": "C11",
+  "description": "A bundle signed by an untrusted key while claiming the trusted key id is rejected.",
+  "schema_version": "1",
+  "trusted_keys": [
+    {
+      "signer_key_id": "ed25519-primary-2026",
+      "issuer": "https://issuer.policyhelix.local",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    }
+  ],
+  "evaluation_time": "2026-11-03T12:00:00Z",
+  "minimum_revision": 2,
+  "bundle": {
+    "schema_version": "1",
+    "bundle_id": "bundle-analytics-v3-wrong-key",
+    "package": "policyhelix.authz",
+    "issuer": "https://issuer.policyhelix.local",
+    "signer_key_id": "ed25519-primary-2026",
+    "signature": "ed25519:ad765e01969acd606bacd199c9a09dc888213fbfd4529868099cd5b3f27198097d6d94dec4d7ef0f67bda2d71701bbad4982760667e8498b78033b0fb977e40a",
+    "signature_verified": true,
+    "revision": 3,
+    "issued_at": "2026-11-03T10:00:00Z",
+    "expires_at": "2026-11-04T10:00:00Z",
+    "digest": "sha256:17f24680501061c91002e954ccaa252dbe181862e71ebd69eea6a89abc55902f",
+    "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+    "routes": [
+      {
+        "pattern": "/api/v1/analytics/reports",
+        "action": "read",
+        "classification": "private",
+        "allow_unauthenticated": false,
+        "required_roles": [
+          "operator",
+          "admin"
+        ],
+        "description": "Private analytics reports endpoint"
+      }
+    ],
+    "rules": [
+      {
+        "id": "rule-operator-analytics-read",
+        "effect": "allow",
+        "path_pattern": "/api/v1/analytics/reports",
+        "actions": [
+          "read"
+        ],
+        "roles": [
+          "operator",
+          "admin"
+        ],
+        "resource_class": "private",
+        "reason_code": "policy_allow_role_operator",
+        "reason_message": "Operator granted read access to analytics reports"
+      }
+    ]
+  },
+  "expected": {
+    "verified": false,
+    "error_code": "BUNDLE_VERIFICATION_FAILED",
+    "revision": 3,
+    "digest": "sha256:17f24680501061c91002e954ccaa252dbe181862e71ebd69eea6a89abc55902f"
+  }
+}

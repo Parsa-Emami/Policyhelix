@@ -131,7 +131,7 @@
       "id": "C10",
       "title": "feat(bundles): build deterministic signed policy bundle",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Bundle records issuer, digest, revision and validity period."
       ],
@@ -143,7 +143,7 @@
       "id": "C11",
       "title": "feat(verification): require bundle trust and freshness",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Missing signature, wrong key, stale revision and expired validity are rejected."
       ],
