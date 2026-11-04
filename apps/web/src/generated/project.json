@@ -155,7 +155,7 @@
       "id": "C12",
       "title": "feat(activation): atomically persist and switch active policy",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Crash during switch retains valid previous bundle and highest accepted revision."
       ],

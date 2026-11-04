@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "commit_id": "C12",
+  "project": "PolicyHelix",
+  "date": "2026-11-04",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: atomically persist and switch active policy",
+  "source_identity": "sha256:689c09a6e00c86ffa1992f5b34761723bbdb743aa73800f2ff0ac23697f2b240",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux 7.0.0-42-generic x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node in .github/workflows/runtime.yml; local run used the installed Go 1.26.2 toolchain",
+    "hardware": {
+      "vcpu": 16,
+      "ram_mib": 31341,
+      "free_disk_mib": 94728,
+      "status": "development host measured; C28 must verify or reduce the 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C12/positive-activate-restore.json",
+      "sha256": "7b6827dec927ffdddf4981079e4f1f2c3bb34f68d13b2ad581bd57c08d47100f",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C12 durable activation and restart restore acceptance"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C12/positive-replay-after-lost-ack.json",
+      "sha256": "af12f6388accaed729ba4227caebd63ce3236021f5d0ee6f3b14e47fe85541fd",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C12 idempotent replay after a lost acknowledgement"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C12/positive-switch-monotonic-revision.json",
+      "sha256": "473bfaa0c16679b0ad901bd1b93a4e7e48e9c337f45c15d85c1d1a292f4ed58a",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C12 atomic monotonic activation switch"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C12/negative-stale-revision.json",
+      "sha256": "70c0fa90c10f93fff348dd7e55856e3583e8ff88e011112f4843a0f59655c863",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C12 stale revision rejection retaining prior authority"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C12/negative-expired-bundle.json",
+      "sha256": "3171b0bd2a43253d3f204a242e89edd96c48c639960b62b07550c1ff16a97b03",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C12 expired candidate rejection retaining prior authority"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C12/negative-unauthenticated-identity.json",
+      "sha256": "ba8069aa048db4b69ddd3ff3b9ad71ece066258d08640c036ce5496eb5ed8e22",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C12 unauthenticated activation rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C12/negative-operation-conflict.json",
+      "sha256": "7dbc47154a6d5b646d6343734254d50cb687faef8cf450aa7c134f2ed875e200",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C12 reused operation id conflict rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C12/negative-private-resource-fail-closed.json",
+      "sha256": "c1d55f99603621f67ac84714ee78c91f15373f9df337457c3d42b9b04fe70b6b",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C12 private resource fail-closed decision"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C12/cli-activation-envelope.json",
+      "sha256": "62b0aeb1516319ff320a4764ba20e81ec88c531625eaf78ca66d680d2c54f234",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C12 CLI activation envelope with long-lived validity"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C12/cli-activation-expired.json",
+      "sha256": "78b1a094744b6b70f2af84fd52c40d900e8366b18d57447916b4857604e5fa5f",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C12 CLI expired activation rejection"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "gofmt -w internal/bundles/activate.go internal/bundles/verify.go internal/bundles/build.go cmd/policyhelix/main.go tests/activation_test.go",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go vet ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go test -v -race ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "87 --- PASS, 0 --- FAIL; ok cmd/policyhelix 1.439s; ok internal/contracts (cached); ok internal/policy (cached); ok internal/storage (cached); ok tests 2.891s"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "pretest build and engine build passed; tests 16, pass 16, fail 0, duration 679.054342ms"
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "vite build completed; dist/web/assets/index-B4SGml7N.js 241.86 kB; built in 116ms"
+    },
+    {
+      "command": "npm run build:engine",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "go build -o dist/engine/policyhelix ./cmd/policyhelix; no errors"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "VALIDATION PASSED; Checked 166 JSON files and repository contract invariants."
+    },
+    {
+      "command": "python3 scripts/source_identity.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "sha256:689c09a6e00c86ffa1992f5b34761723bbdb743aa73800f2ff0ac23697f2b240"
+    }
+  ],
+  "results": [
+    "Added internal/bundles/activate.go with ActivationManager, ActivationStore, StorageActivationStore, ActivationRecord, ActivationRequest/Result/State and typed lifecycle error codes.",
+    "Activation reuses the C11 verifyAt gate (trust evidence, digest, Ed25519 signature, validity window, monotonic revision) and the policy BundleEvaluator structural validation before any durable write.",
+    "The verified record is committed as one atomic storage.WriteRecord (policyhelix:active-policy-bundle, owner_scope policyhelix, classification private); the manager then reads it back and confirms operation id, digest and highest revision before installing in-memory authority.",
+    "Restore reloads the durable record, revalidates signature, structure and freshness, exposes the previous bundle and highest accepted revision, and blocks activation when the record is corrupt or unreadable.",
+    "Interrupted switches at the staged-byte and manifest boundaries leave the previous bundle and revision 3 active; after storage reopen, Restore exposes only revision 3, evaluation still authorizes the operator, and one retry completes the switch at revision 4 and storage revision 2.",
+    "Retrying an already committed operation after a lost ACK returns status replayed with durable=true and performs no second commit; a delayed old operation is rejected as stale and cannot overwrite newer authority; reusing an operation id with different content is rejected as OPERATION_ID_CONFLICT.",
+    "A simulated read-back failure after the manifest rename returns ACTIVATION_COMMIT_UNCONFIRMED, and a restart exposes the complete new revision 3 while the same operation replays idempotently.",
+    "Disk-full and oversized-payload attempts return typed non-durable rejections, make exactly one commit attempt per call, leave the manifest and highest revision unchanged, and permit exactly one revision advance on a later retry.",
+    "Unauthenticated identities and authenticated subjects without operator/admin roles are rejected before any durable write; evaluation without authority, with unauthenticated private access, or after durable-record tampering denies with NO_ACTIVE_POLICY_BUNDLE or PRIVATE_RESOURCE_FAIL_CLOSED.",
+    "Exposed the typed outcome through engine CLI --activate-bundle and --activation-state with explicit trusted keys and storage directory; no non-loopback or unauthenticated activation surface was added.",
+    "Keyring.NewEvaluator now supplies the trusted issuer/signer sets to both BundleAuthorityManager and ActivationManager, preserving existing ingestion behavior.",
+    "tests/activation_test.go covers both crash boundaries, replay, lost ACK, read-back failure, disk full, bounded payload, private fail-closed, corrupt durable state, all ten fixtures and the CLI workflow; ten Apache-2.0 synthetic C12 fixtures are hash-verified through manifest.json."
+  ],
+  "observed_limitations": [
+    "The activation record is bounded by the C05 64 KiB storage payload limit; a bundle near the policy bundle size bound cannot be persisted because the record wrapper exceeds the limit, and fails closed with PAYLOAD_TOO_LARGE instead of truncating.",
+    "Trust anchors are supplied by the CLI envelope per invocation; persistent trust-anchor configuration and OIDC login are C13/C14 scope.",
+    "If the manifest rename succeeds but the read-back fails, the live process keeps the previously restored authority until an explicit Restore or a same-operation retry; the durable record is already the complete new state and a restart exposes it.",
+    "Activation is exposed through the engine CLI only. The browser workspace and loopback HTTP surface do not display activation until storage lifecycle and configuration ownership are defined.",
+    "Crash coverage uses the deterministic C05 fault injection at the staged-byte and manifest boundaries plus close/reopen, which leaves the identical on-disk state as a killed writer at those boundaries; it does not SIGKILL an OS process mid-syscall.",
+    "gofmt -l tests reports the pre-existing formatting drift in tests/opa_test.go, which this task did not modify.",
+    "The local run used Go 1.26.2 while CI pins Go 1.23.6; the engine code and tests are unchanged in their language-version requirements."
+  ],
+  "rollback_or_recovery_observation": "Revert the isolated activation source and CLI wiring. Durable activation records already written under the C05 storage directory remain valid and digest-verified; a previous engine has no reader for policyhelix:active-policy-bundle but does not overwrite it. Keep the latest valid record and use a compatible reader for forward repair; never overwrite a newer accepted revision with an older backup."
+}

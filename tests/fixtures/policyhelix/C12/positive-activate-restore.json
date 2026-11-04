@@ -1,0 +1,101 @@
+{
+  "fixture_id": "positive-activate-restore",
+  "commit_id": "C12",
+  "description": "A verified bundle is durably persisted, restored after restart and authorizes an operator.",
+  "schema_version": "1",
+  "trusted_keys": [
+    {
+      "signer_key_id": "ed25519-primary-2026",
+      "issuer": "https://issuer.policyhelix.local",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    }
+  ],
+  "evaluation_time": "2026-11-03T12:00:00Z",
+  "activation": {
+    "operation_id": "c12-fixture-activate-3",
+    "identity": {
+      "subject_id": "operator-1",
+      "issuer": "https://issuer.policyhelix.local",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 1720000000,
+      "min_required_epoch": 1710000000,
+      "untrusted_headers_stripped": true,
+      "provider_state": "available"
+    },
+    "bundle": {
+      "schema_version": "1",
+      "bundle_id": "bundle-analytics-v3",
+      "package": "policyhelix.authz",
+      "issuer": "https://issuer.policyhelix.local",
+      "signer_key_id": "ed25519-primary-2026",
+      "signature": "ed25519:0ac7da7f28bec2a567092b594e3a799423c00da0872ec0511f8209e3232b6906a786737be83947c609e67368914ccf7610fbffd58fe3001e6fbd7dfc9254d80c",
+      "signature_verified": true,
+      "revision": 3,
+      "issued_at": "2026-11-03T10:00:00Z",
+      "expires_at": "2026-11-04T10:00:00Z",
+      "digest": "sha256:4ed2100d066655b90505ebb24223fd1963fed82c49496bba5705194a0e5853d2",
+      "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+      "routes": [
+        {
+          "pattern": "/api/v1/analytics/reports",
+          "action": "read",
+          "classification": "private",
+          "allow_unauthenticated": false,
+          "required_roles": [
+            "operator",
+            "admin"
+          ],
+          "description": "Private analytics reports endpoint"
+        }
+      ],
+      "rules": [
+        {
+          "id": "rule-operator-analytics-read",
+          "effect": "allow",
+          "path_pattern": "/api/v1/analytics/reports",
+          "actions": [
+            "read"
+          ],
+          "roles": [
+            "operator",
+            "admin"
+          ],
+          "resource_class": "private",
+          "reason_code": "policy_allow_role_operator",
+          "reason_message": "Operator granted read access to analytics reports"
+        }
+      ]
+    }
+  },
+  "evaluation": {
+    "request_id": "c12-fixture-eval",
+    "path": "/api/v1/analytics/reports",
+    "action": "read",
+    "subject": {
+      "id": "operator-1",
+      "issuer": "https://issuer.policyhelix.local",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 0
+    },
+    "deadline_ms": 50,
+    "eval_time": "2026-11-03T12:00:00Z"
+  },
+  "expected": {
+    "status": "activated",
+    "durable": true,
+    "replayed": false,
+    "revision": 3,
+    "state_revision": 3,
+    "highest_revision": 3,
+    "restore_status": "restored",
+    "active": true,
+    "allow": true,
+    "policy_digest": "sha256:4ed2100d066655b90505ebb24223fd1963fed82c49496bba5705194a0e5853d2"
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "schema_version": "1",
+  "operation_id": "c12-cli-expired-4",
+  "trusted_keys": [
+    {
+      "signer_key_id": "ed25519-primary-2026",
+      "issuer": "https://issuer.policyhelix.local",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    }
+  ],
+  "identity": {
+    "subject_id": "operator-1",
+    "issuer": "https://issuer.policyhelix.local",
+    "roles": [
+      "operator"
+    ],
+    "authenticated": true,
+    "session_epoch": 1720000000,
+    "min_required_epoch": 1710000000,
+    "untrusted_headers_stripped": true,
+    "provider_state": "available"
+  },
+  "bundle": {
+    "schema_version": "1",
+    "bundle_id": "bundle-analytics-v4",
+    "package": "policyhelix.authz",
+    "issuer": "https://issuer.policyhelix.local",
+    "signer_key_id": "ed25519-primary-2026",
+    "signature": "ed25519:2e78ea5d585525f9ef8410ce5444563ebbca991b7c39443ebb9731eeba2989ddd4850d3eaf248e521063b5b501b3e21541cb6dafb15eb1a50321567e2ea8bb05",
+    "signature_verified": true,
+    "revision": 4,
+    "issued_at": "2026-01-01T00:00:00Z",
+    "expires_at": "2026-01-02T00:00:00Z",
+    "digest": "sha256:2b7c50719cf95bac86da6d71f3b2d95e9c45676db6f4bf2cd83cfa916143ae72",
+    "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+    "routes": [
+      {
+        "pattern": "/api/v1/analytics/reports",
+        "action": "read",
+        "classification": "private",
+        "allow_unauthenticated": false,
+        "required_roles": [
+          "operator",
+          "admin"
+        ],
+        "description": "Private analytics reports endpoint"
+      }
+    ],
+    "rules": [
+      {
+        "id": "rule-operator-analytics-read",
+        "effect": "allow",
+        "path_pattern": "/api/v1/analytics/reports",
+        "actions": [
+          "read"
+        ],
+        "roles": [
+          "operator",
+          "admin"
+        ],
+        "resource_class": "private",
+        "reason_code": "policy_allow_role_operator",
+        "reason_message": "Operator granted read access to analytics reports"
+      }
+    ]
+  }
+}

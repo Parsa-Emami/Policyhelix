@@ -60,6 +60,16 @@ type FixturePayload struct {
 	Request   map[string]interface{} `json:"request"`
 }
 
+// ActivationEnvelope is the CLI input for a durable policy switch. Trust anchors are supplied here
+// so the local engine has an explicit keyring without a hidden global trust store.
+type ActivationEnvelope struct {
+	SchemaVersion string                   `json:"schema_version,omitempty"`
+	OperationID   string                   `json:"operation_id"`
+	TrustedKeys   []bundles.TrustedKey     `json:"trusted_keys"`
+	Identity      storage.CallerIdentity   `json:"identity"`
+	Bundle        policy.LocalPolicyBundle `json:"bundle"`
+}
+
 type EvaluationResult struct {
 	Allow                      *bool    `json:"allow,omitempty"`
 	Status                     string   `json:"status,omitempty"`
@@ -146,6 +156,29 @@ func evaluateRequest(req map[string]interface{}) (int, EvaluationResult) {
 		Error:   "not_implemented",
 		Reasons: []string{"default_fail_closed"},
 	}
+}
+
+func openActivationStorage(dir string) (*storage.Adapter, error) {
+	if strings.TrimSpace(dir) == "" {
+		return nil, fmt.Errorf("--storage-dir is required for activation operations")
+	}
+	adapter, _, err := storage.Open(dir)
+	if err != nil {
+		return nil, err
+	}
+	return adapter, nil
+}
+
+func readActivationEnvelope(path string) (ActivationEnvelope, error) {
+	raw, err := os.ReadFile(path)
+	if err != nil {
+		return ActivationEnvelope{}, fmt.Errorf("activation envelope read error: %w", err)
+	}
+	var envelope ActivationEnvelope
+	if err := json.Unmarshal(raw, &envelope); err != nil {
+		return ActivationEnvelope{}, fmt.Errorf("activation envelope JSON error: %w", err)
+	}
+	return envelope, nil
 }
 
 func rejectedVerificationResult(code, message string) bundles.BundleVerification {
@@ -483,6 +516,8 @@ func main() {
 	buildBundleFlag := flag.String("build-bundle", "", "Path to BundleBuildSpec JSON to build a deterministic signed bundle")
 	verifyBundleFlag := flag.String("verify-bundle", "", "Path to BundleVerificationRequest JSON to verify bundle trust and freshness")
 	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
+	activateBundleFlag := flag.String("activate-bundle", "", "Path to an activation envelope JSON to verify, persist and switch the active policy bundle")
+	activationStateFlag := flag.String("activation-state", "", "Path to a JSON envelope with trusted_keys; restores and prints the durable activation state (requires -storage-dir)")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	flag.Parse()
 
@@ -620,6 +655,63 @@ func main() {
 		verification := bundles.VerifyBundle(req)
 		_ = json.NewEncoder(os.Stdout).Encode(verification)
 		if !verification.Verified {
+			os.Exit(1)
+		}
+		return
+	}
+
+	if *activateBundleFlag != "" {
+		envelope, err := readActivationEnvelope(*activateBundleFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			os.Exit(1)
+		}
+		adapter, err := openActivationStorage(*storageDirFlag)
+		if err != nil {
+			_ = json.NewEncoder(os.Stdout).Encode(map[string]interface{}{"status": "failed", "error": err.Error()})
+			os.Exit(1)
+		}
+
+		manager := bundles.NewActivationManager(
+			bundles.NewStorageActivationStore(adapter),
+			bundles.NewKeyring(envelope.TrustedKeys...),
+		)
+		result := manager.Activate(context.Background(), bundles.ActivationRequest{
+			SchemaVersion: envelope.SchemaVersion,
+			OperationID:   envelope.OperationID,
+			Identity:      envelope.Identity,
+			Bundle:        envelope.Bundle,
+		})
+		_ = adapter.Close()
+
+		_ = json.NewEncoder(os.Stdout).Encode(result)
+		if !result.Durable || (result.Status != bundles.ActivationStatusActivated && result.Status != bundles.ActivationStatusReplayed) {
+			os.Exit(1)
+		}
+		return
+	}
+
+	if *activationStateFlag != "" {
+		adapter, err := openActivationStorage(*storageDirFlag)
+		if err != nil {
+			_ = json.NewEncoder(os.Stdout).Encode(map[string]interface{}{"status": "failed", "error": err.Error()})
+			os.Exit(1)
+		}
+		envelope, err := readActivationEnvelope(*activationStateFlag)
+		if err != nil {
+			_ = adapter.Close()
+			fmt.Fprintf(os.Stderr, "%v\n", err)
+			os.Exit(1)
+		}
+		manager := bundles.NewActivationManager(
+			bundles.NewStorageActivationStore(adapter),
+			bundles.NewKeyring(envelope.TrustedKeys...),
+		)
+		state := manager.Restore(context.Background())
+		_ = adapter.Close()
+
+		_ = json.NewEncoder(os.Stdout).Encode(state)
+		if !state.Active {
 			os.Exit(1)
 		}
 		return

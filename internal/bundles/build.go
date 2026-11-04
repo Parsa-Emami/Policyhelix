@@ -162,18 +162,9 @@ func NewBundleAuthorityManager(keyring *Keyring) *BundleAuthorityManager {
 	if keyring == nil {
 		keyring = NewKeyring()
 	}
-	trustedIssuers := make([]string, 0, len(keyring.keys))
-	trustedSigners := make([]string, 0, len(keyring.keys))
-	for signerID, tk := range keyring.keys {
-		trustedSigners = append(trustedSigners, signerID)
-		if tk.Issuer != "" {
-			trustedIssuers = append(trustedIssuers, tk.Issuer)
-		}
-	}
-	evaluator := policy.NewBundleEvaluator(trustedIssuers, trustedSigners)
 	return &BundleAuthorityManager{
 		keyring:   keyring,
-		evaluator: evaluator,
+		evaluator: keyring.NewEvaluator(),
 	}
 }
 

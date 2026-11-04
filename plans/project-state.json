@@ -1,7 +1,7 @@
 {
   "project": "PolicyHelix",
-  "reviewed_commit": "4070d99",
-  "readiness": "BUNDLE_TRUST_AND_FRESHNESS_VERIFIED",
+  "reviewed_commit": "5a82ea9",
+  "readiness": "ATOMIC_POLICY_ACTIVATION_VERIFIED",
   "core_ready": false,
   "implemented": [
     "responsive web shell",
@@ -15,10 +15,11 @@
     "evaluate bounded local policy bundles",
     "offline expected decision fixture simulation",
     "deterministic signed policy bundle builder",
-    "bundle trust and freshness verification"
+    "bundle trust and freshness verification",
+    "atomic durable policy activation and restart recovery"
   ],
-  "engine": "bundle trust/freshness verification, deterministic signed bundle builder, offline decision simulator, bounded local policy bundle evaluator, domain route & resource classes, recoverable storage, typed contracts v1 & runtime CI",
-  "next_task": "C12",
+  "engine": "durable atomic policy activation with restart recovery, bundle trust/freshness verification, deterministic signed bundle builder, offline decision simulator, bounded local policy bundle evaluator, domain route & resource classes, recoverable storage, typed contracts v1 & runtime CI",
+  "next_task": "C13",
   "next_command": "npm run plan -- next",
   "full_product_endpoint": "C30 locally usable; C40 full published OSS v1"
 }

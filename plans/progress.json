@@ -105,10 +105,12 @@
     },
     {
       "id": "C12",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C12.json"
+      ],
+      "source_identity": "sha256:689c09a6e00c86ffa1992f5b34761723bbdb743aa73800f2ff0ac23697f2b240",
+      "notes": "Atomic activation in internal/bundles/activate.go persists a verified bundle through the C05 storage port, restores it after restart, replays idempotently and retains the prior bundle and highest accepted revision across staged-byte, manifest, disk-full, oversized-payload and corrupt-state rejections."
     },
     {
       "id": "C13",

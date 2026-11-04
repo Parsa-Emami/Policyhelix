@@ -1,8 +1,8 @@
 {
   "project": "PolicyHelix",
   "date": "2026-11-04",
-  "base_commit": "4070d99e2607a3f1a059a5c4309b134a034e0c1d",
-  "scope": "Task C11: require bundle trust and freshness, rejecting missing signature, wrong key, stale revision and expired validity",
+  "base_commit": "5a82ea97683c75e57925440f180e88e2633b8436",
+  "scope": "Task C12: atomically persist and switch the active policy bundle, retaining the previous bundle and highest accepted revision across interrupted switches",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -14,22 +14,24 @@
     "C08",
     "C09",
     "C10",
-    "C11"
+    "C11",
+    "C12"
   ],
   "changed_paths": [
+    "internal/bundles/activate.go",
     "internal/bundles/verify.go",
     "internal/bundles/build.go",
     "cmd/policyhelix/main.go",
-    "tests/freshness_test.go",
-    "tests/fixtures/policyhelix/C11/",
+    "tests/activation_test.go",
+    "tests/fixtures/policyhelix/C12/",
     "apps/web/src/generated/project.json",
-    "docs/evidence/C11.json",
+    "docs/evidence/C12.json",
     "plans/progress.json",
     "plans/project-state.json",
     "docs/agents/SESSION_HANDOFF.json"
   ],
   "commands": [
-    "gofmt -w internal/bundles/verify.go internal/bundles/build.go cmd/policyhelix/main.go tests/freshness_test.go",
+    "gofmt -w internal/bundles/activate.go internal/bundles/verify.go internal/bundles/build.go cmd/policyhelix/main.go tests/activation_test.go",
     "go vet ./...",
     "go test -v -race ./...",
     "npm run validate:plan",
@@ -39,11 +41,11 @@
     "python3 scripts/validate_repo.py",
     "python3 scripts/source_identity.py"
   ],
-  "validation_results": "docs/evidence/C11.json",
-  "final_source_identity": "sha256:ccefab0f26e7908f6bf466cc68d870a7d3a0084ace8d9537afabcac728f7cca0",
+  "validation_results": "docs/evidence/C12.json",
+  "final_source_identity": "sha256:689c09a6e00c86ffa1992f5b34761723bbdb743aa73800f2ff0ac23697f2b240",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C12",
+  "next_task": "C13",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C11 verified. Added the shared trust/freshness gate in internal/bundles/verify.go (VerifyBundle, BundleVerificationRequest, BundleVerification, Keyring.TrustedKeys), routed BundleAuthorityManager ingestion through it, exposed --verify-bundle and POST /v1/runtime/bundles/verify, added tests/freshness_test.go and seven C11 fixtures. Ready for C12 (feat(activation): atomically persist and switch active policy)."
+  "continuation": "Task C12 verified. Added internal/bundles/activate.go with ActivationManager, the ActivationStore port, StorageActivationStore over the C05 atomic storage adapter, typed activate/restore outcomes, CLI --activate-bundle and --activation-state, tests/activation_test.go and ten C12 fixtures. Ready for C13 (feat(oidc): validate login state nonce and tokens)."
 }

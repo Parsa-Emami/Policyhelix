@@ -60,6 +60,21 @@ func (k *Keyring) TrustedKeys() []TrustedKey {
 	return out
 }
 
+// NewEvaluator constructs a bounded bundle evaluator whose trusted issuer and signer sets match this keyring.
+func (k *Keyring) NewEvaluator() *policy.BundleEvaluator {
+	trustedIssuers := make([]string, 0, len(k.keys))
+	trustedSigners := make([]string, 0, len(k.keys))
+	if k != nil {
+		for signerID, tk := range k.keys {
+			trustedSigners = append(trustedSigners, signerID)
+			if tk.Issuer != "" {
+				trustedIssuers = append(trustedIssuers, tk.Issuer)
+			}
+		}
+	}
+	return policy.NewBundleEvaluator(trustedIssuers, trustedSigners)
+}
+
 // CanonicalSigningPayload returns the exact deterministic byte sequence that is cryptographically signed.
 // Format: "policyhelix:bundle:v1\n<canonical-digest>\n<issuer>\n<signer_key_id>\n<revision>\n<issued_at>\n<expires_at>"
 func CanonicalSigningPayload(canonicalDigest, issuer, signerKeyID string, revision int64, issuedAt, expiresAt string) []byte {
