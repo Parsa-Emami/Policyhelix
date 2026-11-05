@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-05",
   "base_commit": "3fbc1d1",
-  "scope": "Task C18: enforce supported policy obligations; unknown mandatory obligation denies rather than being ignored (Requirement F12)",
+  "scope": "Task C19: implement per resource outage behavior; decision loss denies sensitive routes; public route bypass remains intentional and testable (Requirement F13)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -21,11 +21,12 @@
     "C15",
     "C16",
     "C17",
-    "C18"
+    "C18",
+    "C19"
   ],
   "commands": [
     "npm run validate:plan",
-    "gofmt -w internal/gateway/obligations.go internal/gateway/proxy.go cmd/policyhelix/main.go tests/obligations_test.go",
+    "gofmt -w internal/gateway/failure.go internal/gateway/proxy.go cmd/policyhelix/main.go tests/failure_test.go",
     "go vet ./...",
     "go test -v ./...",
     "npm test",
@@ -34,11 +35,11 @@
     "python3 scripts/validate_repo.py",
     "python3 scripts/source_identity.py"
   ],
-  "validation_results": "docs/evidence/C18.json",
-  "final_source_identity": "sha256:625ed5354226d59fc2a55510da03c42a80c9a498b967a23a0af509845bfabab2",
+  "validation_results": "docs/evidence/C19.json",
+  "final_source_identity": "sha256:8523ae534e9323a86ad208d2ca6e77e5bf13e478b59e2a476a30b66245d5be67",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C19",
+  "next_task": "C20",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C18 verified. Authoritative obligation model and fail-closed enforcer (internal/gateway/obligations.go), Gate 9 proxy wiring (internal/gateway/proxy.go), CLI/HTTP router integration (cmd/policyhelix/main.go), regression tests (tests/obligations_test.go), and fixtures (tests/fixtures/policyhelix/C18/) implemented. Ready for C19 (feat(failclosed): decision loss denies sensitive routes; public route bypass intentional)."
+  "continuation": "Task C19 verified. Authoritative per-resource outage evaluation (internal/gateway/failure.go), Gate 3.5 proxy wiring (internal/gateway/proxy.go), CLI/HTTP router integration (cmd/policyhelix/main.go), regression tests (tests/failure_test.go), and fixtures (tests/fixtures/policyhelix/C19/) implemented. Ready for C20 (feat(audit): redact bearer tokens and cookies from decision logs)."
 }

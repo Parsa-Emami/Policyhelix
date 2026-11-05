@@ -1,0 +1,23 @@
+{
+  "fixture_id": "negative-sensitive-route-illegal-bypass-config",
+  "commit_id": "C19",
+  "description": "Attempting to enable outage bypass on a private route is rejected as an illegal configuration.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c19-neg-05",
+    "method": "GET",
+    "path": "/api/v1/analytics/financials",
+    "resource_classification": "private",
+    "allow_public_bypass": true,
+    "decision_loss": true,
+    "decision_engine_state": "outage",
+    "evaluation_time": "2026-11-05T14:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "status_code": 403,
+    "error_code": "ILLEGAL_PUBLIC_BYPASS_CONFIG",
+    "disposition": "FAIL_CLOSED_DENY"
+  }
+}

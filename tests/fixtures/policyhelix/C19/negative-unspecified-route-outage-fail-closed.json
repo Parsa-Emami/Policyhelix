@@ -1,0 +1,23 @@
+{
+  "fixture_id": "negative-unspecified-route-outage-fail-closed",
+  "commit_id": "C19",
+  "description": "Unspecified routes strictly default to private and fail closed on decision loss (Requirement F01 & F13).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c19-neg-03",
+    "method": "POST",
+    "path": "/unregistered/endpoint/action",
+    "decision_loss": true,
+    "decision_engine_state": "deadline_exceeded",
+    "evaluation_time": "2026-11-05T14:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "status_code": 503,
+    "error_code": "UNSPECIFIED_ROUTE_OUTAGE_DENY",
+    "disposition": "FAIL_CLOSED_DENY",
+    "forwarded_to_upstream": false,
+    "side_effects_executed": false
+  }
+}

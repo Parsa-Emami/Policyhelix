@@ -168,10 +168,12 @@
     },
     {
       "id": "C19",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C19.json"
+      ],
+      "source_identity": "sha256:8523ae534e9323a86ad208d2ca6e77e5bf13e478b59e2a476a30b66245d5be67",
+      "notes": "Per-resource outage behavior and fail-closed handling implemented in internal/gateway/failure.go, internal/gateway/proxy.go, and cmd/policyhelix/main.go; F13 decision loss denies sensitive routes and public route bypass remains intentional and testable verified."
     },
     {
       "id": "C20",

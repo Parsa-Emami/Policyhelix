@@ -1,0 +1,30 @@
+{
+  "fixture_id": "negative-decision-loss-private-route-deny",
+  "commit_id": "C19",
+  "description": "Decision loss denies access to private sensitive route (Requirement F13).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c19-neg-01",
+    "method": "GET",
+    "path": "/api/v1/analytics/sensitive",
+    "resource_classification": "private",
+    "decision_loss": true,
+    "decision_engine_state": "outage",
+    "subject": {
+      "id": "operator-10",
+      "authenticated": true,
+      "roles": ["operator"],
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix"
+    },
+    "evaluation_time": "2026-11-05T14:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "status_code": 503,
+    "error_code": "DECISION_LOSS_SENSITIVE_DENY",
+    "disposition": "FAIL_CLOSED_DENY",
+    "forwarded_to_upstream": false,
+    "side_effects_executed": false
+  }
+}

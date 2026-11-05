@@ -1,0 +1,28 @@
+{
+  "fixture_id": "cli-failure-sensitive-denied",
+  "commit_id": "C19",
+  "description": "CLI failure evaluation denies sensitive route under decision loss (Requirement F13).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c19-cli-02",
+    "method": "GET",
+    "path": "/api/v1/analytics",
+    "resource_classification": "private",
+    "decision_loss": true,
+    "decision_engine_state": "outage",
+    "subject": {
+      "id": "operator-01",
+      "authenticated": true,
+      "roles": ["operator"],
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix"
+    },
+    "evaluation_time": "2026-11-05T14:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "status_code": 503,
+    "error_code": "DECISION_LOSS_SENSITIVE_DENY",
+    "disposition": "FAIL_CLOSED_DENY"
+  }
+}

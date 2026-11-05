@@ -88,6 +88,10 @@ type ProxyRequest struct {
 	EvaluationTime           time.Time         `json:"evaluation_time,omitempty"`
 	Body                     string            `json:"body,omitempty"`
 	Obligations              []Obligation      `json:"obligations,omitempty"`
+	DecisionLoss             bool              `json:"decision_loss,omitempty"`
+	DecisionEngineState      string            `json:"decision_engine_state,omitempty"`
+	AllowPublicBypass        bool              `json:"allow_public_bypass,omitempty"`
+	ExplicitPublicRoute      bool              `json:"explicit_public_route,omitempty"`
 }
 
 // ProxyResult represents the authoritative outcome of upstream proxy evaluation.
@@ -107,6 +111,9 @@ type ProxyResult struct {
 	DownstreamInjectedHeaders map[string]string         `json:"downstream_injected_headers,omitempty"`
 	ExecutedObligations       []ExecutedObligation      `json:"executed_obligations,omitempty"`
 	AuditRecords              []map[string]interface{}  `json:"audit_records,omitempty"`
+	OutageDisposition         string                    `json:"outage_disposition,omitempty"`
+	PublicBypassUsed          bool                      `json:"public_bypass_used,omitempty"`
+	OutageMetadata            map[string]interface{}    `json:"outage_metadata,omitempty"`
 	UpstreamResponseBody      string                    `json:"upstream_response_body,omitempty"`
 	UpstreamStatusCode        int                       `json:"upstream_status_code,omitempty"`
 }
@@ -303,7 +310,7 @@ func (p *AllowlistedGatewayProxy) EvaluateProxyRequest(ctx context.Context, req 
 		}, nil
 	}
 
-	// Gate 4: Identity Normalization & Client Header Stripping (C16)
+	// Resolve resource classification
 	resClass := req.ResourceClassification
 	if resClass == "" {
 		if reqPath == "/health" || reqPath == "/healthz" {
@@ -312,6 +319,92 @@ func (p *AllowlistedGatewayProxy) EvaluateProxyRequest(ctx context.Context, req 
 			resClass = p.Config.ResourceClassification
 		}
 	}
+
+	// Gate 3.5: Per-Resource Outage Evaluation (C19 / Requirement F13)
+	// Decision loss denies sensitive routes; public route bypass remains intentional and testable.
+	isOutage := req.DecisionLoss ||
+		req.ProviderUnavailable ||
+		strings.EqualFold(strings.TrimSpace(req.ProviderState), "unavailable") ||
+		strings.EqualFold(strings.TrimSpace(req.DecisionEngineState), "outage") ||
+		strings.EqualFold(strings.TrimSpace(req.DecisionEngineState), "timeout") ||
+		strings.EqualFold(strings.TrimSpace(req.DecisionEngineState), "corrupted") ||
+		strings.EqualFold(strings.TrimSpace(req.DecisionEngineState), "deadline_exceeded")
+
+	if isOutage {
+		outageReq := ResourceOutageRequest{
+			RequestID:              req.RequestID,
+			Path:                   reqPath,
+			Method:                 req.Method,
+			Headers:                req.Headers,
+			ResourceClassification: resClass,
+			DecisionLoss:           true,
+			DecisionEngineState:    req.DecisionEngineState,
+			ProviderUnavailable:    req.ProviderUnavailable,
+			ProviderState:          req.ProviderState,
+			ExplicitPublicRoute:    req.ExplicitPublicRoute || (resClass == "public"),
+			AllowPublicBypass:      req.AllowPublicBypass,
+			EvaluationTime:         evalTime,
+		}
+
+		outageRes, err := EvaluateResourceOutage(ctx, outageReq)
+		if err != nil {
+			return nil, fmt.Errorf("resource outage evaluation error: %w", err)
+		}
+		if outageRes != nil && (!outageRes.Valid || !outageRes.Allow) {
+			return &ProxyResult{
+				Valid:               false,
+				Allow:               false,
+				ForwardedToUpstream: false,
+				SideEffectsExecuted: false,
+				StatusCode:          outageRes.StatusCode,
+				ErrorCode:           outageRes.ErrorCode,
+				ErrorMessage:        outageRes.ErrorMessage,
+				OutageDisposition:   outageRes.Disposition,
+				PublicBypassUsed:    false,
+				StrippedHeaders:     outageRes.StrippedHeaders,
+				OutageMetadata:      outageRes.OutageMetadata,
+			}, nil
+		}
+
+		if outageRes != nil && outageRes.PublicBypassUsed {
+			upstreamStatus := http.StatusOK
+			upstreamBody := fmt.Sprintf(`{"service":"%s","status":"ok","path":"%s","bypass":"intentional_public_outage"}`, p.Config.ID, reqPath)
+			if p.Transport != nil {
+				resolvedURL := strings.TrimRight(p.Config.OriginURL, "/") + reqPath
+				httpReq, err := http.NewRequestWithContext(ctx, req.Method, resolvedURL, strings.NewReader(req.Body))
+				if err == nil {
+					for k, v := range outageRes.DownstreamInjectedHeaders {
+						httpReq.Header.Set(k, v)
+					}
+					if resp, err := p.Transport.RoundTrip(httpReq); err == nil {
+						defer resp.Body.Close()
+						bodyBytes, _ := io.ReadAll(resp.Body)
+						upstreamStatus = resp.StatusCode
+						upstreamBody = string(bodyBytes)
+					}
+				}
+			}
+			return &ProxyResult{
+				Valid:                     true,
+				Allow:                     true,
+				ForwardedToUpstream:       true,
+				SideEffectsExecuted:       false,
+				StatusCode:                http.StatusOK,
+				UpstreamID:                p.Config.ID,
+				ResolvedOriginURL:         strings.TrimRight(p.Config.OriginURL, "/") + reqPath,
+				Subject:                   outageRes.Subject,
+				StrippedHeaders:           outageRes.StrippedHeaders,
+				DownstreamInjectedHeaders: outageRes.DownstreamInjectedHeaders,
+				OutageDisposition:         outageRes.Disposition,
+				PublicBypassUsed:          true,
+				OutageMetadata:            outageRes.OutageMetadata,
+				UpstreamResponseBody:      upstreamBody,
+				UpstreamStatusCode:        upstreamStatus,
+			}, nil
+		}
+	}
+
+	// Gate 4: Identity Normalization & Client Header Stripping (C16)
 
 	normReq := NormalizeIdentityRequest{
 		RequestID:                req.RequestID,

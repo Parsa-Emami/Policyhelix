@@ -1,0 +1,92 @@
+{
+  "commit_id": "C19",
+  "schema_version": "1",
+  "license": "Apache-2.0",
+  "description": "Synthetic licensed fixtures for PolicyHelix C19: per-resource outage behavior (Requirement F13).",
+  "fixtures": [
+    {
+      "fixture_id": "cli-failure-public-bypass",
+      "path": "tests/fixtures/policyhelix/C19/cli-failure-public-bypass.json",
+      "sha256": "7edcba8ae516ab3488f7d765630e9e3832cf60724148654b99dd1ecef1e75b83",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "cli-failure-sensitive-denied",
+      "path": "tests/fixtures/policyhelix/C19/cli-failure-sensitive-denied.json",
+      "sha256": "3572759c437896c498d00faec711571462a89ae2c4658eb086c4a26ed9a602fd",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-decision-loss-internal-restricted-deny",
+      "path": "tests/fixtures/policyhelix/C19/negative-decision-loss-internal-restricted-deny.json",
+      "sha256": "f84e38acf765c16287d0febdcd4f80f6e9b3a70037298f712ea823b78efa9200",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-decision-loss-private-route-deny",
+      "path": "tests/fixtures/policyhelix/C19/negative-decision-loss-private-route-deny.json",
+      "sha256": "e543209787bd2a96d82379b84f64d1b23811c5e2c707b6d856713448bcea57f0",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-malformed-failure-request",
+      "path": "tests/fixtures/policyhelix/C19/negative-malformed-failure-request.json",
+      "sha256": "e1ba7e95894196e8a33c89e6221fc0293c225842acff8a550136569ba81b3238",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-provider-unavailable-private-deny",
+      "path": "tests/fixtures/policyhelix/C19/negative-provider-unavailable-private-deny.json",
+      "sha256": "89d4d8affeb18a047319634514836792d97e762bb912561dc6516d1b175f5e94",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-public-route-without-bypass-denied",
+      "path": "tests/fixtures/policyhelix/C19/negative-public-route-without-bypass-denied.json",
+      "sha256": "67923d6c1fb98ad453cf02cac073b0cd94108d12ce7e5435f096ff0caefd3d48",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-sensitive-route-illegal-bypass-config",
+      "path": "tests/fixtures/policyhelix/C19/negative-sensitive-route-illegal-bypass-config.json",
+      "sha256": "811ee5642e44f6c2ed6d051afcfe951ed41d723b2ed361c024c43c98735743c4",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-unspecified-route-outage-fail-closed",
+      "path": "tests/fixtures/policyhelix/C19/negative-unspecified-route-outage-fail-closed.json",
+      "sha256": "cf7b700418bc09ae1beb5a21435e735cad42f0d16d5c696d3b83f367e99a4c00",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-healthy-private-route-allow",
+      "path": "tests/fixtures/policyhelix/C19/positive-healthy-private-route-allow.json",
+      "sha256": "5fc6eb910e88fb06a66ed58af3bf843571cbc2767c37eba05ac329bd6e792523",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-public-route-intentional-bypass",
+      "path": "tests/fixtures/policyhelix/C19/positive-public-route-intentional-bypass.json",
+      "sha256": "479bced6ca1b67eae7d84a40b914788707f5b498b03bd4d7cdf369419c4d4216",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-recovery-after-outage-restored",
+      "path": "tests/fixtures/policyhelix/C19/positive-recovery-after-outage-restored.json",
+      "sha256": "592832a0295db99bf71c5fb0fcc870ddae7ff530d0af4dc9bfd895062a8aaf24",
+      "type": "positive",
+      "license": "Apache-2.0"
+    }
+  ]
+}

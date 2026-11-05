@@ -664,6 +664,75 @@ func setupRouter() *http.ServeMux {
 	mux.HandleFunc("/api/v1/gateway/obligations/enforce", handleGatewayObligations)
 	mux.HandleFunc("/api/v1/gateway/obligations", handleGatewayObligations)
 
+	handleGatewayFailure := func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", "POST")
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
+		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 1048576))
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"valid":      false,
+				"allow":      false,
+				"error_code": gateway.ErrCodeMalformedFailureConfig,
+				"message":    "Failed to read request body or exceeded 1MB",
+			})
+			return
+		}
+
+		type failureEnvelope struct {
+			Request gateway.ResourceOutageRequest `json:"request"`
+		}
+
+		var req gateway.ResourceOutageRequest
+		var env failureEnvelope
+		if err := json.Unmarshal(body, &env); err == nil && (env.Request.Path != "" || env.Request.DecisionLoss || env.Request.DecisionEngineState != "") {
+			req = env.Request
+		} else {
+			if err := json.Unmarshal(body, &req); err != nil {
+				w.Header().Set("Content-Type", "application/json; charset=utf-8")
+				w.WriteHeader(http.StatusBadRequest)
+				_ = json.NewEncoder(w).Encode(map[string]interface{}{
+					"valid":      false,
+					"allow":      false,
+					"error_code": gateway.ErrCodeMalformedFailureConfig,
+					"message":    fmt.Sprintf("Malformed failure request JSON: %v", err),
+				})
+				return
+			}
+		}
+
+		report, err := gateway.EvaluateResourceOutage(r.Context(), req)
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"valid":      false,
+				"allow":      false,
+				"error_code": "INTERNAL_ERROR",
+				"message":    err.Error(),
+			})
+			return
+		}
+		if !report.Valid || !report.Allow {
+			status := http.StatusServiceUnavailable
+			if report.StatusCode != 0 {
+				status = report.StatusCode
+			}
+			w.WriteHeader(status)
+		} else {
+			w.WriteHeader(http.StatusOK)
+		}
+		_ = json.NewEncoder(w).Encode(report)
+	}
+
+	mux.HandleFunc("/api/v1/gateway/failure/evaluate", handleGatewayFailure)
+	mux.HandleFunc("/api/v1/gateway/failure", handleGatewayFailure)
+
 	return mux
 }
 
@@ -752,6 +821,7 @@ func main() {
 	normalizeIdentityFlag := flag.String("normalize-identity", "", "Path to C16 gateway identity normalization fixture JSON")
 	proxyUpstreamFlag := flag.String("proxy-upstream", "", "Path to C17 gateway proxy fixture JSON")
 	enforceObligationsFlag := flag.String("enforce-obligations", "", "Path to C18 obligation enforcement fixture JSON")
+	evaluateFailureFlag := flag.String("evaluate-failure", "", "Path to C19 resource outage fixture JSON")
 	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	flag.Parse()
@@ -1230,6 +1300,40 @@ func main() {
 		report, err := gateway.EnforceObligations(context.Background(), req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Obligations evaluation error: %v\n", err)
+			os.Exit(1)
+		}
+		_ = json.NewEncoder(os.Stdout).Encode(report)
+		if !report.Valid || !report.Allow {
+			os.Exit(1)
+		}
+		return
+	}
+
+	if *evaluateFailureFlag != "" {
+		raw, err := os.ReadFile(*evaluateFailureFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failure fixture read error: %v\n", err)
+			os.Exit(1)
+		}
+
+		type cliFailureEnvelope struct {
+			Request gateway.ResourceOutageRequest `json:"request"`
+		}
+
+		var req gateway.ResourceOutageRequest
+		var env cliFailureEnvelope
+		if err := json.Unmarshal(raw, &env); err == nil && (env.Request.Path != "" || env.Request.DecisionLoss || env.Request.DecisionEngineState != "") {
+			req = env.Request
+		} else {
+			if err := json.Unmarshal(raw, &req); err != nil {
+				fmt.Fprintf(os.Stderr, "Failure fixture JSON error: %v\n", err)
+				os.Exit(1)
+			}
+		}
+
+		report, err := gateway.EvaluateResourceOutage(context.Background(), req)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Failure evaluation error: %v\n", err)
 			os.Exit(1)
 		}
 		_ = json.NewEncoder(os.Stdout).Encode(report)

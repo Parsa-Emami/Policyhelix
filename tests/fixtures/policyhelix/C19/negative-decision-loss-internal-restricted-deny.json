@@ -1,0 +1,30 @@
+{
+  "fixture_id": "negative-decision-loss-internal-restricted-deny",
+  "commit_id": "C19",
+  "description": "Decision loss denies internal and restricted routes without exception (Requirement F13).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c19-neg-02",
+    "method": "GET",
+    "path": "/internal/keys/rotate",
+    "resource_classification": "restricted",
+    "decision_loss": true,
+    "decision_engine_state": "corrupted",
+    "subject": {
+      "id": "admin-01",
+      "authenticated": true,
+      "roles": ["admin"],
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix"
+    },
+    "evaluation_time": "2026-11-05T14:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "status_code": 503,
+    "error_code": "DECISION_LOSS_SENSITIVE_DENY",
+    "disposition": "FAIL_CLOSED_DENY",
+    "forwarded_to_upstream": false,
+    "side_effects_executed": false
+  }
+}

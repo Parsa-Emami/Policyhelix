@@ -239,7 +239,7 @@
       "id": "C19",
       "title": "feat(failures): implement per resource outage behavior",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Decision loss denies sensitive routes; public route bypass remains intentional and testable."
       ],

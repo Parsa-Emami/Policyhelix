@@ -1,0 +1,26 @@
+{
+  "fixture_id": "negative-public-route-without-bypass-denied",
+  "commit_id": "C19",
+  "description": "Public route without explicit allow_public_bypass flag fails closed during decision loss.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c19-neg-04",
+    "method": "GET",
+    "path": "/public/documentation",
+    "resource_classification": "public",
+    "explicit_public_route": true,
+    "allow_public_bypass": false,
+    "decision_loss": true,
+    "decision_engine_state": "outage",
+    "evaluation_time": "2026-11-05T14:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "status_code": 503,
+    "error_code": "DECISION_LOSS_SENSITIVE_DENY",
+    "disposition": "FAIL_CLOSED_DENY",
+    "forwarded_to_upstream": false,
+    "side_effects_executed": false
+  }
+}

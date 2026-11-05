@@ -1,0 +1,30 @@
+{
+  "fixture_id": "positive-healthy-private-route-allow",
+  "commit_id": "C19",
+  "description": "Authenticated private route evaluation succeeds when decision engine is healthy.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c19-pos-02",
+    "method": "GET",
+    "path": "/api/v1/analytics/overview",
+    "resource_classification": "private",
+    "decision_loss": false,
+    "decision_engine_state": "healthy",
+    "subject": {
+      "id": "operator-02",
+      "authenticated": true,
+      "roles": ["operator"],
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "session_epoch": 1
+    },
+    "evaluation_time": "2026-11-05T14:00:00Z"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "status_code": 200,
+    "disposition": "HEALTHY_DECISION_ENFORCED",
+    "forwarded_to_upstream": true,
+    "side_effects_executed": true
+  }
+}

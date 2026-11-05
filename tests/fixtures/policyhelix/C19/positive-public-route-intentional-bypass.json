@@ -1,0 +1,30 @@
+{
+  "fixture_id": "positive-public-route-intentional-bypass",
+  "commit_id": "C19",
+  "description": "Public health probe /healthz intentionally bypasses decision loss with stripped client headers (Requirement F13).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c19-pos-01",
+    "method": "GET",
+    "path": "/healthz",
+    "resource_classification": "public",
+    "explicit_public_route": true,
+    "allow_public_bypass": true,
+    "decision_loss": true,
+    "decision_engine_state": "timeout",
+    "headers": {
+      "X-Forwarded-User": "hacker",
+      "X-PolicyHelix-Subject": "forged-admin"
+    },
+    "evaluation_time": "2026-11-05T14:00:00Z"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "status_code": 200,
+    "disposition": "INTENTIONAL_PUBLIC_BYPASS",
+    "public_bypass_used": true,
+    "forwarded_to_upstream": true,
+    "side_effects_executed": false
+  }
+}

@@ -1,0 +1,189 @@
+{
+  "schema_version": 1,
+  "commit_id": "C19",
+  "project": "PolicyHelix",
+  "date": "2026-11-05",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: per-resource outage behavior (Requirement F13)",
+  "source_identity": "sha256:8523ae534e9323a86ad208d2ca6e77e5bf13e478b59e2a476a30b66245d5be67",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.23.6 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml; local run used Go 1.23.6 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "development host verified against C19 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.23.6 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C19/cli-failure-public-bypass.json",
+      "sha256": "7edcba8ae516ab3488f7d765630e9e3832cf60724148654b99dd1ecef1e75b83",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C19 CLI public route intentional bypass"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C19/cli-failure-sensitive-denied.json",
+      "sha256": "3572759c437896c498d00faec711571462a89ae2c4658eb086c4a26ed9a602fd",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C19 CLI sensitive route outage fail-closed denial"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C19/negative-decision-loss-internal-restricted-deny.json",
+      "sha256": "f84e38acf765c16287d0febdcd4f80f6e9b3a70037298f712ea823b78efa9200",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C19 internal and restricted route decision loss denial"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C19/negative-decision-loss-private-route-deny.json",
+      "sha256": "e543209787bd2a96d82379b84f64d1b23811c5e2c707b6d856713448bcea57f0",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C19 private route decision loss denial (F13)"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C19/negative-malformed-failure-request.json",
+      "sha256": "e1ba7e95894196e8a33c89e6221fc0293c225842acff8a550136569ba81b3238",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C19 malformed failure request with empty path"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C19/negative-provider-unavailable-private-deny.json",
+      "sha256": "89d4d8affeb18a047319634514836792d97e762bb912561dc6516d1b175f5e94",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C19 provider outage fail-closed denial"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C19/negative-public-route-without-bypass-denied.json",
+      "sha256": "67923d6c1fb98ad453cf02cac073b0cd94108d12ce7e5435f096ff0caefd3d48",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C19 public route without bypass flag failing closed"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C19/negative-sensitive-route-illegal-bypass-config.json",
+      "sha256": "811ee5642e44f6c2ed6d051afcfe951ed41d723b2ed361c024c43c98735743c4",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C19 illegal bypass on private route configuration rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C19/negative-unspecified-route-outage-fail-closed.json",
+      "sha256": "cf7b700418bc09ae1beb5a21435e735cad42f0d16d5c696d3b83f367e99a4c00",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C19 unspecified route defaulting private and failing closed (F01 & F13)"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C19/positive-healthy-private-route-allow.json",
+      "sha256": "5fc6eb910e88fb06a66ed58af3bf843571cbc2767c37eba05ac329bd6e792523",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C19 healthy decision engine private route allow"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C19/positive-public-route-intentional-bypass.json",
+      "sha256": "479bced6ca1b67eae7d84a40b914788707f5b498b03bd4d7cdf369419c4d4216",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C19 intentional public bypass under outage with stripped headers (F13)"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C19/positive-recovery-after-outage-restored.json",
+      "sha256": "592832a0295db99bf71c5fb0fcc870ddae7ff530d0af4dc9bfd895062a8aaf24",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C19 recovery after outage restored"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "gofmt -w internal/gateway/failure.go internal/gateway/proxy.go cmd/policyhelix/main.go tests/failure_test.go",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go vet ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go test -v ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "ok cmd/policyhelix; ok internal/contracts; ok internal/policy; ok internal/storage; ok tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "pretest build and engine build passed; all node tests passed"
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "vite build completed; dist/web built"
+    },
+    {
+      "command": "npm run build:engine",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "go build -o dist/engine/policyhelix ./cmd/policyhelix; no errors"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "VALIDATION PASSED; Checked JSON files and repository contract invariants."
+    },
+    {
+      "command": "python3 scripts/source_identity.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "sha256:PLACEHOLDER"
+    }
+  ],
+  "results": [
+    "Implemented internal/gateway/failure.go with authoritative per-resource outage evaluation engine and durable outage tracking.",
+    "Requirement F13 acceptance verified: decision loss denies sensitive routes (private, internal, restricted, and unspecified default-private).",
+    "Requirement F13 public bypass verified: explicit public routes (/health, /healthz) with allow_public_bypass intentionally bypass decision loss, strip untrusted client headers, and bind anonymous subject context.",
+    "Illegal bypass protection verified: any route configuration attempting to allow outage bypass on private, internal, or restricted routes fails closed with ILLEGAL_PUBLIC_BYPASS_CONFIG.",
+    "Wired per-resource outage evaluation into AllowlistedGatewayProxy.EvaluateProxyRequest in internal/gateway/proxy.go as Gate 3.5.",
+    "Added -evaluate-failure CLI flag and POST /api/v1/gateway/failure/evaluate and /api/v1/gateway/failure HTTP routes in cmd/policyhelix/main.go.",
+    "Twelve Apache-2.0 synthetic fixtures generated and SHA-256 verified under tests/fixtures/policyhelix/C19/manifest.json.",
+    "Comprehensive test suite implemented in tests/failure_test.go covering manifest integrity, F13 sensitive denial, F13 public bypass, illegal bypass prevention, proxy integration, HTTP endpoints, CLI execution, and restart/recovery invariants."
+  ],
+  "observed_limitations": [
+    "Decision audit pseudonymization, policy and outcome records without bearer token or cookie leaks are scheduled for C20 (feat(audit): redact bearer tokens and cookies from decision logs)."
+  ],
+  "rollback_or_recovery_observation": "Revert internal/gateway/failure.go, tests/failure_test.go, tests/fixtures/policyhelix/C19/, docs/evidence/C19.json, and the -evaluate-failure / Gate 3.5 wiring in internal/gateway/proxy.go and cmd/policyhelix/main.go. Existing C01-C18 components remain intact."
+}

@@ -1,0 +1,30 @@
+{
+  "fixture_id": "positive-recovery-after-outage-restored",
+  "commit_id": "C19",
+  "description": "After decision service recovery, private routes resume normal authenticated policy evaluation.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c19-pos-03",
+    "method": "POST",
+    "path": "/api/v1/analytics/query",
+    "resource_classification": "private",
+    "decision_loss": false,
+    "decision_engine_state": "healthy",
+    "subject": {
+      "id": "operator-03",
+      "authenticated": true,
+      "roles": ["operator", "auditor"],
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "session_epoch": 2
+    },
+    "evaluation_time": "2026-11-05T14:30:00Z"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "status_code": 200,
+    "disposition": "HEALTHY_DECISION_ENFORCED",
+    "forwarded_to_upstream": true,
+    "side_effects_executed": true
+  }
+}

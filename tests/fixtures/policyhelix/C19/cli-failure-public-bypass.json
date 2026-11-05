@@ -1,0 +1,28 @@
+{
+  "fixture_id": "cli-failure-public-bypass",
+  "commit_id": "C19",
+  "description": "CLI failure evaluation allows explicit public route with intentional bypass under decision loss (Requirement F13).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c19-cli-01",
+    "method": "GET",
+    "path": "/health",
+    "resource_classification": "public",
+    "explicit_public_route": true,
+    "allow_public_bypass": true,
+    "decision_loss": true,
+    "decision_engine_state": "outage",
+    "headers": {
+      "X-User-Id": "spoofed-user-attempt",
+      "User-Agent": "ProbeChecker/1.0"
+    },
+    "evaluation_time": "2026-11-05T14:00:00Z"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "status_code": 200,
+    "disposition": "INTENTIONAL_PUBLIC_BYPASS",
+    "public_bypass_used": true
+  }
+}

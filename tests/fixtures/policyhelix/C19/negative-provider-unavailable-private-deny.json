@@ -1,0 +1,22 @@
+{
+  "fixture_id": "negative-provider-unavailable-private-deny",
+  "commit_id": "C19",
+  "description": "Provider unavailability triggers decision loss and denies access to private resources.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c19-neg-07",
+    "method": "GET",
+    "path": "/api/v1/analytics",
+    "resource_classification": "private",
+    "provider_unavailable": true,
+    "provider_state": "unavailable",
+    "evaluation_time": "2026-11-05T14:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "status_code": 503,
+    "error_code": "DECISION_LOSS_SENSITIVE_DENY",
+    "disposition": "FAIL_CLOSED_DENY"
+  }
+}
