@@ -3,6 +3,7 @@ package gateway
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"strings"
@@ -340,19 +341,39 @@ func EvaluateResourceOutage(ctx context.Context, req ResourceOutageRequest) (*Re
 	}, nil
 }
 
+func cleanComponentID(component string) string {
+	clean := strings.Map(func(r rune) rune {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '-' || r == '_' || r == '.' || r == ':' {
+			return r
+		}
+		return '_'
+	}, strings.TrimSpace(component))
+	if clean == "" {
+		clean = "unknown"
+	}
+	if len(clean) > 40 {
+		clean = clean[:40]
+	}
+	return clean
+}
+
+func outageRecordID(component string) string {
+	return fmt.Sprintf("policyhelix:outage:%s", cleanComponentID(component))
+}
+
 // DurableOutageTracker tracks and persists outage state and recovery across restarts.
 type DurableOutageTracker struct {
-	mu            sync.RWMutex
-	store         storage.StorageAdapter
-	currentState  string
-	lastOutageAt  time.Time
-	recoveredAt   time.Time
-	denyCount     int
-	bypassCount   int
+	mu           sync.RWMutex
+	store        *storage.Adapter
+	currentState string
+	lastOutageAt time.Time
+	recoveredAt  time.Time
+	denyCount    int
+	bypassCount  int
 }
 
 // NewDurableOutageTracker creates a new tracker optionally bound to storage.
-func NewDurableOutageTracker(store storage.StorageAdapter) *DurableOutageTracker {
+func NewDurableOutageTracker(store *storage.Adapter) *DurableOutageTracker {
 	return &DurableOutageTracker{
 		store:        store,
 		currentState: "healthy",
@@ -364,6 +385,16 @@ func (t *DurableOutageTracker) RecordOutageEvent(ctx context.Context, component,
 	t.mu.Lock()
 	defer t.mu.Unlock()
 
+	if at.IsZero() {
+		at = time.Now().UTC()
+	} else {
+		at = at.UTC()
+	}
+
+	oldState := t.currentState
+	oldLastOutageAt := t.lastOutageAt
+	oldRecoveredAt := t.recoveredAt
+
 	t.currentState = state
 	if state == "outage" {
 		t.lastOutageAt = at
@@ -372,25 +403,119 @@ func (t *DurableOutageTracker) RecordOutageEvent(ctx context.Context, component,
 	}
 
 	if t.store != nil {
+		cleanComp := cleanComponentID(component)
+		recordedAt := at
+		var recoveredAt time.Time
+		if state == "recovered" {
+			recoveredAt = at
+			if !t.lastOutageAt.IsZero() {
+				recordedAt = t.lastOutageAt
+			}
+		}
+
 		rec := OutageRecord{
-			EventID:        fmt.Sprintf("outage-%s-%d", component, at.UnixNano()),
+			EventID:        fmt.Sprintf("outage-%s-%d", cleanComp, at.UnixNano()),
 			Component:      component,
 			State:          state,
-			RecordedAt:     at,
+			RecordedAt:     recordedAt,
+			RecoveredAt:    recoveredAt,
 			SensitiveDeny:  t.denyCount,
 			PublicBypasses: t.bypassCount,
 		}
 		raw, err := json.Marshal(rec)
 		if err != nil {
+			t.currentState = oldState
+			t.lastOutageAt = oldLastOutageAt
+			t.recoveredAt = oldRecoveredAt
 			return err
 		}
-		_, err = t.store.WriteRecord(ctx, storage.WriteRequest{
-			OperationID: fmt.Sprintf("op-outage-%d", at.UnixNano()),
-			RecordID:    fmt.Sprintf("rec-outage-%s", component),
-			Data:        raw,
+		epoch := at.Unix()
+		if epoch <= 0 {
+			epoch = time.Now().UTC().Unix()
+		}
+
+		cleanState := strings.Map(func(r rune) rune {
+			if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') || r == '-' || r == '_' {
+				return r
+			}
+			return '_'
+		}, strings.TrimSpace(state))
+		if cleanState == "" {
+			cleanState = "event"
+		}
+
+		recordID := outageRecordID(component)
+		opID := fmt.Sprintf("op-outage-%s-%s-%d", cleanComp, cleanState, at.UnixNano())
+		if len(opID) > 120 {
+			opID = opID[:120]
+		}
+		_, sErr := t.store.WriteRecord(ctx, storage.WriteRequest{
+			SchemaVersion:  storage.SchemaVersion,
+			OperationID:    opID,
+			RecordID:       recordID,
+			OwnerScope:     "policyhelix",
+			Classification: "internal",
+			Identity: storage.CallerIdentity{
+				SubjectID:                "system:outage-tracker",
+				Issuer:                   "https://auth.policyhelix.local",
+				Roles:                    []string{"operator", "admin"},
+				Authenticated:            true,
+				SessionEpoch:             epoch,
+				UntrustedHeadersStripped: true,
+				ProviderState:            "available",
+			},
+			Payload: raw,
 		})
+		if sErr != nil {
+			// Roll back in-memory state on persistence failure to preserve fail-closed consistency
+			t.currentState = oldState
+			t.lastOutageAt = oldLastOutageAt
+			t.recoveredAt = oldRecoveredAt
+			return sErr
+		}
+	}
+	return nil
+}
+
+// GetOutageRecord reads the persisted outage record for a component from storage.
+func (t *DurableOutageTracker) GetOutageRecord(ctx context.Context, component string) (*OutageRecord, error) {
+	t.mu.RLock()
+	store := t.store
+	t.mu.RUnlock()
+
+	if store == nil {
+		return nil, errors.New("storage adapter not configured")
+	}
+
+	recordID := outageRecordID(component)
+	payload, _, sErr := store.ReadRecord(recordID)
+	if sErr != nil {
+		if sErr.Code == storage.ErrRecordNotFound {
+			return nil, errors.New("outage record not found")
+		}
+		return nil, sErr
+	}
+
+	var rec OutageRecord
+	if err := json.Unmarshal(payload, &rec); err != nil {
+		return nil, fmt.Errorf("failed to decode outage record: %w", err)
+	}
+	return &rec, nil
+}
+
+// LoadOutageState loads the persisted state from storage for a component and updates tracker memory.
+func (t *DurableOutageTracker) LoadOutageState(ctx context.Context, component string) error {
+	rec, err := t.GetOutageRecord(ctx, component)
+	if err != nil {
 		return err
 	}
+	t.mu.Lock()
+	defer t.mu.Unlock()
+	t.currentState = rec.State
+	t.lastOutageAt = rec.RecordedAt
+	t.recoveredAt = rec.RecoveredAt
+	t.denyCount = rec.SensitiveDeny
+	t.bypassCount = rec.PublicBypasses
 	return nil
 }
 

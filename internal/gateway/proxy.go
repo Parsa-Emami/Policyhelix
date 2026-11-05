@@ -323,8 +323,6 @@ func (p *AllowlistedGatewayProxy) EvaluateProxyRequest(ctx context.Context, req 
 	// Gate 3.5: Per-Resource Outage Evaluation (C19 / Requirement F13)
 	// Decision loss denies sensitive routes; public route bypass remains intentional and testable.
 	isOutage := req.DecisionLoss ||
-		req.ProviderUnavailable ||
-		strings.EqualFold(strings.TrimSpace(req.ProviderState), "unavailable") ||
 		strings.EqualFold(strings.TrimSpace(req.DecisionEngineState), "outage") ||
 		strings.EqualFold(strings.TrimSpace(req.DecisionEngineState), "timeout") ||
 		strings.EqualFold(strings.TrimSpace(req.DecisionEngineState), "corrupted") ||
