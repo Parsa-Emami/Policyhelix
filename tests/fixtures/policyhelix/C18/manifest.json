@@ -1,0 +1,78 @@
+{
+  "commit_id": "C18",
+  "schema_version": "1",
+  "license": "Apache-2.0",
+  "description": "Synthetic licensed fixtures for PolicyHelix C18: enforce supported policy obligations (Requirement F12).",
+  "fixtures": [
+    {
+      "fixture_id": "cli-obligations-clean",
+      "path": "tests/fixtures/policyhelix/C18/cli-obligations-clean.json",
+      "sha256": "a1fdd16f8171a149204a32e545d3d34f327e23b4dd21c38ad7084ba0940c5189",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "cli-obligations-rejected",
+      "path": "tests/fixtures/policyhelix/C18/cli-obligations-rejected.json",
+      "sha256": "6c96c64da5710e60ac4899d81b56e0c5f9c0ebd7cdab3c1675792b42cdec3d07",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-supported-audit-obligation",
+      "path": "tests/fixtures/policyhelix/C18/positive-supported-audit-obligation.json",
+      "sha256": "0234ab8511bcf2f55e3813d50b4ef9651b7d94041cdc3780820acf700d34ec12",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-supported-header-inject",
+      "path": "tests/fixtures/policyhelix/C18/positive-supported-header-inject.json",
+      "sha256": "592fecdf2ae6c9a97c4de2f0204d1658800aec8def8421288b50be43d779ff9e",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-empty-obligations",
+      "path": "tests/fixtures/policyhelix/C18/positive-empty-obligations.json",
+      "sha256": "d6b3cb7721751849a31b3939bf1b17ac31d05b5d595f5ed7c77997f9fa3be6ea",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-advisory-unknown-obligation",
+      "path": "tests/fixtures/policyhelix/C18/positive-advisory-unknown-obligation.json",
+      "sha256": "b23e751301a9767a9c3a4005614daed9a60a3b7cf0ec3564bae5676ae415e5a6",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-unknown-mandatory-obligation",
+      "path": "tests/fixtures/policyhelix/C18/negative-unknown-mandatory-obligation.json",
+      "sha256": "e9c8f31bd3f927fec21c3c8f73f8ec25f27f635771e6299285dd0f473dd5451e",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-mixed-known-and-unknown-obligations",
+      "path": "tests/fixtures/policyhelix/C18/negative-mixed-known-and-unknown-obligations.json",
+      "sha256": "4b10a62bc60b326b74496468c9e58ecc76458dcd66dde1686777b10b9d31e076",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-malformed-obligation",
+      "path": "tests/fixtures/policyhelix/C18/negative-malformed-obligation.json",
+      "sha256": "e3fc39ef1ea85942f8a48f6fc6d92e3b743c9df956b852f31d209495cc90f948",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-provider-unavailable",
+      "path": "tests/fixtures/policyhelix/C18/negative-provider-unavailable.json",
+      "sha256": "1a5a7a953771d2bb4392a5f809e7938d1a2e570c6548b3265832fc6a52e49536",
+      "type": "negative",
+      "license": "Apache-2.0"
+    }
+  ]
+}

@@ -1,0 +1,177 @@
+{
+  "schema_version": 1,
+  "commit_id": "C18",
+  "project": "PolicyHelix",
+  "date": "2026-11-05",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: enforce supported policy obligations (Requirement F12)",
+  "source_identity": "sha256:625ed5354226d59fc2a55510da03c42a80c9a498b967a23a0af509845bfabab2",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.23.6 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml; local run used Go 1.23.6 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "development host verified against C18 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.23.6 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C18/cli-obligations-clean.json",
+      "sha256": "a1fdd16f8171a149204a32e545d3d34f327e23b4dd21c38ad7084ba0940c5189",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C18 CLI clean supported obligations"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C18/cli-obligations-rejected.json",
+      "sha256": "6c96c64da5710e60ac4899d81b56e0c5f9c0ebd7cdab3c1675792b42cdec3d07",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C18 CLI rejected unknown mandatory obligation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C18/negative-malformed-obligation.json",
+      "sha256": "e3fc39ef1ea85942f8a48f6fc6d92e3b743c9df956b852f31d209495cc90f948",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C18 malformed obligation with empty type"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C18/negative-mixed-known-and-unknown-obligations.json",
+      "sha256": "4b10a62bc60b326b74496468c9e58ecc76458dcd66dde1686777b10b9d31e076",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C18 mixed obligations atomic fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C18/negative-provider-unavailable.json",
+      "sha256": "1a5a7a953771d2bb4392a5f809e7938d1a2e570c6548b3265832fc6a52e49536",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C18 obligation provider outage fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C18/negative-unknown-mandatory-obligation.json",
+      "sha256": "e9c8f31bd3f927fec21c3c8f73f8ec25f27f635771e6299285dd0f473dd5451e",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C18 unknown mandatory obligation fail-closed rejection (F12)"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C18/positive-advisory-unknown-obligation.json",
+      "sha256": "b23e751301a9767a9c3a4005614daed9a60a3b7cf0ec3564bae5676ae415e5a6",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C18 advisory unknown obligation non-failing evaluation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C18/positive-empty-obligations.json",
+      "sha256": "d6b3cb7721751849a31b3939bf1b17ac31d05b5d595f5ed7c77997f9fa3be6ea",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C18 empty obligations array evaluation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C18/positive-supported-audit-obligation.json",
+      "sha256": "0234ab8511bcf2f55e3813d50b4ef9651b7d94041cdc3780820acf700d34ec12",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C18 supported mandatory audit obligation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C18/positive-supported-header-inject.json",
+      "sha256": "592fecdf2ae6c9a97c4de2f0204d1658800aec8def8421288b50be43d779ff9e",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C18 supported mandatory downstream header injection"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "gofmt -w internal/gateway/obligations.go internal/gateway/proxy.go cmd/policyhelix/main.go tests/obligations_test.go",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go vet ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go test -v ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "ok cmd/policyhelix; ok internal/contracts; ok internal/policy; ok internal/storage; ok tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "pretest build and engine build passed; all node tests passed"
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "vite build completed; dist/web built"
+    },
+    {
+      "command": "npm run build:engine",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "go build -o dist/engine/policyhelix ./cmd/policyhelix; no errors"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "VALIDATION PASSED; Checked JSON files and repository contract invariants."
+    },
+    {
+      "command": "python3 scripts/source_identity.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "sha256:625ed5354226d59fc2a55510da03c42a80c9a498b967a23a0af509845bfabab2"
+    }
+  ],
+  "results": [
+    "Implemented internal/gateway/obligations.go with authoritative obligation domain model and EnforceObligations engine.",
+    "Requirement F12 acceptance verified: unknown mandatory obligation denies rather than being ignored (UNKNOWN_MANDATORY_OBLIGATION, HTTP 403 Forbidden).",
+    "Advisory obligations verified: non-mandatory obligations (mandatory: false) with unrecognized types are safely ignored without denying access.",
+    "Supported obligation handlers implemented: audit/audit_log, header_inject/transform_header, rate_limit, and redact.",
+    "Wired obligation enforcement as Gate 9 into AllowlistedGatewayProxy.EvaluateProxyRequest in internal/gateway/proxy.go, merging downstream injected headers.",
+    "Added -enforce-obligations CLI flag and POST /api/v1/gateway/obligations/enforce HTTP routes in cmd/policyhelix/main.go.",
+    "Ten Apache-2.0 synthetic fixtures generated and SHA-256 verified under tests/fixtures/policyhelix/C18/manifest.json.",
+    "Comprehensive test suite implemented in tests/obligations_test.go covering manifest integrity, F12 denial, positive handlers, advisory advice, mixed atomic fail-closed, proxy integration, CLI execution, HTTP endpoints, negative security cases, and restart invariants."
+  ],
+  "observed_limitations": [
+    "Decision loss fallback and sensitive route protection with intentional public route bypass are scheduled for C19 (feat(failclosed): decision loss denies sensitive routes; public route bypass intentional)."
+  ],
+  "rollback_or_recovery_observation": "Revert internal/gateway/obligations.go, tests/obligations_test.go, tests/fixtures/policyhelix/C18/, and the -enforce-obligations / Gate 9 wiring in internal/gateway/proxy.go and cmd/policyhelix/main.go. Existing C01-C17 components remain intact."
+}

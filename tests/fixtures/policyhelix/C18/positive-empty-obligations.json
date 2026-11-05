@@ -1,0 +1,26 @@
+{
+  "fixture_id": "positive-empty-obligations",
+  "commit_id": "C18",
+  "description": "Evaluation succeeds when no policy obligations are attached.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c18-pos-03",
+    "target_upstream_id": "service:analytics",
+    "method": "GET",
+    "path": "/api/v1/analytics/ping",
+    "resource_classification": "private",
+    "subject": {
+      "id": "user-operator-03",
+      "authenticated": true,
+      "roles": ["operator"],
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix"
+    },
+    "obligations": [],
+    "evaluation_time": "2026-11-05T12:00:00Z"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "status_code": 200
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "fixture_id": "positive-supported-audit-obligation",
+  "commit_id": "C18",
+  "description": "Evaluation succeeds and emits audit record for supported mandatory audit obligation.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c18-pos-01",
+    "target_upstream_id": "service:analytics",
+    "method": "GET",
+    "path": "/api/v1/analytics/summary",
+    "resource_classification": "private",
+    "subject": {
+      "id": "user-auditor-01",
+      "authenticated": true,
+      "roles": ["auditor"],
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix"
+    },
+    "obligations": [
+      {
+        "id": "ob-audit-entry-01",
+        "type": "audit",
+        "mandatory": true,
+        "parameters": {
+          "action": "read_financial_summary",
+          "compliance": "sox"
+        }
+      }
+    ],
+    "evaluation_time": "2026-11-05T12:00:00Z"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "status_code": 200
+  }
+}

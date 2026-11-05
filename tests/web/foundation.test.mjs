@@ -35,7 +35,7 @@ test('HTTP isolation, cache rules, health semantics, methods, traversal and syml
   const base = `http://127.0.0.1:${server.address().port}`;
   t.after(async () => { server.closeAllConnections(); await new Promise(resolve => server.close(resolve)); await rm(dir, { recursive: true }); });
   const withHost = host => new Promise((resolve, reject) => {
-    const request = httpRequest(base + '/healthz', { headers: { Host: host } }, response => {
+    const request = httpRequest(base + '/healthz', { agent: false, headers: { Host: host } }, response => {
       response.resume(); response.on('end', () => resolve(response.statusCode));
     });
     request.on('error', reject); request.end();

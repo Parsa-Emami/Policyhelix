@@ -1,0 +1,38 @@
+{
+  "fixture_id": "positive-supported-header-inject",
+  "commit_id": "C18",
+  "description": "Evaluation succeeds and introduces authorized downstream headers for supported header_inject obligation.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c18-pos-02",
+    "target_upstream_id": "service:analytics",
+    "method": "GET",
+    "path": "/api/v1/analytics/realtime",
+    "resource_classification": "private",
+    "subject": {
+      "id": "user-operator-02",
+      "authenticated": true,
+      "roles": ["operator"],
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix"
+    },
+    "obligations": [
+      {
+        "id": "ob-header-entry-02",
+        "type": "header_inject",
+        "mandatory": true,
+        "parameters": {
+          "headers": {
+            "X-PolicyHelix-Obligation-Token": "verified-header-token",
+            "X-Upstream-Rate-Tier": "gold"
+          }
+        }
+      }
+    ],
+    "evaluation_time": "2026-11-05T12:00:00Z"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "status_code": 200
+  }
+}

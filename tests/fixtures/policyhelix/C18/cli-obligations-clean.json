@@ -1,0 +1,46 @@
+{
+  "fixture_id": "cli-obligations-clean",
+  "commit_id": "C18",
+  "description": "CLI obligation evaluation succeeds for supported mandatory audit and header injection obligations.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c18-cli-01",
+    "target_upstream_id": "service:analytics",
+    "method": "GET",
+    "path": "/api/v1/analytics",
+    "resource_classification": "private",
+    "subject": {
+      "id": "user-operator-01",
+      "authenticated": true,
+      "roles": ["operator"],
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix"
+    },
+    "obligations": [
+      {
+        "id": "ob-audit-01",
+        "type": "audit",
+        "mandatory": true,
+        "parameters": {
+          "action": "view_analytics",
+          "severity": "info"
+        }
+      },
+      {
+        "id": "ob-header-01",
+        "type": "header_inject",
+        "mandatory": true,
+        "parameters": {
+          "headers": {
+            "X-PolicyHelix-Obligation-Token": "satisfied-c18-cli"
+          }
+        }
+      }
+    ],
+    "evaluation_time": "2026-11-05T12:00:00Z"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "status_code": 200
+  }
+}

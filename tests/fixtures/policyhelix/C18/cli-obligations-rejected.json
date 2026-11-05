@@ -1,0 +1,36 @@
+{
+  "fixture_id": "cli-obligations-rejected",
+  "commit_id": "C18",
+  "description": "CLI obligation evaluation fails closed when an unknown mandatory obligation is present (Requirement F12).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c18-cli-02",
+    "target_upstream_id": "service:analytics",
+    "method": "POST",
+    "path": "/api/v1/analytics/export",
+    "resource_classification": "private",
+    "subject": {
+      "id": "user-operator-01",
+      "authenticated": true,
+      "roles": ["operator"],
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix"
+    },
+    "obligations": [
+      {
+        "id": "ob-unknown-01",
+        "type": "hardware_biometric_gate",
+        "mandatory": true,
+        "parameters": {
+          "device_level": "fips-140-3"
+        }
+      }
+    ],
+    "evaluation_time": "2026-11-05T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "status_code": 403,
+    "error_code": "UNKNOWN_MANDATORY_OBLIGATION"
+  }
+}

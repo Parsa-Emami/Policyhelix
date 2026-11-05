@@ -1,8 +1,8 @@
 {
   "project": "PolicyHelix",
-  "date": "2026-11-04",
-  "base_commit": "d8d4f8b",
-  "scope": "Task C17: protect one allowlisted upstream; arbitrary upstream URLs cannot be selected; origin is reachable only by gateway",
+  "date": "2026-11-05",
+  "base_commit": "3fbc1d1",
+  "scope": "Task C18: enforce supported policy obligations; unknown mandatory obligation denies rather than being ignored (Requirement F12)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -20,11 +20,12 @@
     "C14",
     "C15",
     "C16",
-    "C17"
+    "C17",
+    "C18"
   ],
   "commands": [
     "npm run validate:plan",
-    "gofmt -w internal/gateway/proxy.go cmd/policyhelix/main.go tests/proxy_test.go",
+    "gofmt -w internal/gateway/obligations.go internal/gateway/proxy.go cmd/policyhelix/main.go tests/obligations_test.go",
     "go vet ./...",
     "go test -v ./...",
     "npm test",
@@ -33,11 +34,11 @@
     "python3 scripts/validate_repo.py",
     "python3 scripts/source_identity.py"
   ],
-  "validation_results": "docs/evidence/C17.json",
-  "final_source_identity": "sha256:f2185898b9708ac4092852c291a8370889eb3b53d23b8daacdac6b56933ffa0f",
+  "validation_results": "docs/evidence/C18.json",
+  "final_source_identity": "sha256:625ed5354226d59fc2a55510da03c42a80c9a498b967a23a0af509845bfabab2",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C18",
+  "next_task": "C19",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C17 verified. Allowlisted single upstream reverse proxy and origin isolation (internal/gateway/proxy.go), CLI/HTTP router integration (cmd/policyhelix/main.go), regression tests (tests/proxy_test.go), and fixtures (tests/fixtures/policyhelix/C17/) implemented. Ready for C18 (feat(obligations): enforce supported policy obligations)."
+  "continuation": "Task C18 verified. Authoritative obligation model and fail-closed enforcer (internal/gateway/obligations.go), Gate 9 proxy wiring (internal/gateway/proxy.go), CLI/HTTP router integration (cmd/policyhelix/main.go), regression tests (tests/obligations_test.go), and fixtures (tests/fixtures/policyhelix/C18/) implemented. Ready for C19 (feat(failclosed): decision loss denies sensitive routes; public route bypass intentional)."
 }

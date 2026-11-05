@@ -1,0 +1,36 @@
+{
+  "fixture_id": "negative-unknown-mandatory-obligation",
+  "commit_id": "C18",
+  "description": "Unknown mandatory obligation denies rather than being ignored (Requirement F12).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c18-neg-01",
+    "target_upstream_id": "service:analytics",
+    "method": "POST",
+    "path": "/api/v1/analytics/records",
+    "resource_classification": "private",
+    "subject": {
+      "id": "user-operator-05",
+      "authenticated": true,
+      "roles": ["operator"],
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix"
+    },
+    "obligations": [
+      {
+        "id": "ob-unknown-mandatory-01",
+        "type": "quarantine_sandbox_isolate",
+        "mandatory": true,
+        "parameters": {
+          "isolation_network": "ns-quarantine-09"
+        }
+      }
+    ],
+    "evaluation_time": "2026-11-05T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "status_code": 403,
+    "error_code": "UNKNOWN_MANDATORY_OBLIGATION"
+  }
+}

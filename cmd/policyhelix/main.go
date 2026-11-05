@@ -595,6 +595,75 @@ func setupRouter() *http.ServeMux {
 		_ = json.NewEncoder(w).Encode(report)
 	})
 
+	handleGatewayObligations := func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", "POST")
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+
+		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 1048576))
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"valid":      false,
+				"allow":      false,
+				"error_code": gateway.ErrCodeMalformedObligation,
+				"message":    "Failed to read request body or exceeded 1MB",
+			})
+			return
+		}
+
+		type obligationsEnvelope struct {
+			Request gateway.ObligationExecutionRequest `json:"request"`
+		}
+
+		var req gateway.ObligationExecutionRequest
+		var env obligationsEnvelope
+		if err := json.Unmarshal(body, &env); err == nil && (len(env.Request.Obligations) > 0 || env.Request.RequestID != "" || env.Request.Path != "") {
+			req = env.Request
+		} else {
+			if err := json.Unmarshal(body, &req); err != nil {
+				w.Header().Set("Content-Type", "application/json; charset=utf-8")
+				w.WriteHeader(http.StatusBadRequest)
+				_ = json.NewEncoder(w).Encode(map[string]interface{}{
+					"valid":      false,
+					"allow":      false,
+					"error_code": gateway.ErrCodeMalformedObligation,
+					"message":    fmt.Sprintf("Malformed obligations JSON: %v", err),
+				})
+				return
+			}
+		}
+
+		report, err := gateway.EnforceObligations(r.Context(), req)
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"valid":      false,
+				"allow":      false,
+				"error_code": "INTERNAL_ERROR",
+				"message":    err.Error(),
+			})
+			return
+		}
+		if !report.Valid || !report.Allow {
+			status := http.StatusForbidden
+			if report.StatusCode != 0 {
+				status = report.StatusCode
+			}
+			w.WriteHeader(status)
+		} else {
+			w.WriteHeader(http.StatusOK)
+		}
+		_ = json.NewEncoder(w).Encode(report)
+	}
+
+	mux.HandleFunc("/api/v1/gateway/obligations/enforce", handleGatewayObligations)
+	mux.HandleFunc("/api/v1/gateway/obligations", handleGatewayObligations)
+
 	return mux
 }
 
@@ -682,6 +751,7 @@ func main() {
 	enforceRevokeFlag := flag.String("enforce-revocation", "", "Path to C15 revocation enforcement workload fixture JSON")
 	normalizeIdentityFlag := flag.String("normalize-identity", "", "Path to C16 gateway identity normalization fixture JSON")
 	proxyUpstreamFlag := flag.String("proxy-upstream", "", "Path to C17 gateway proxy fixture JSON")
+	enforceObligationsFlag := flag.String("enforce-obligations", "", "Path to C18 obligation enforcement fixture JSON")
 	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	flag.Parse()
@@ -1126,6 +1196,40 @@ func main() {
 		report, err := proxy.EvaluateProxyRequest(ctx, req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Proxy evaluation error: %v\n", err)
+			os.Exit(1)
+		}
+		_ = json.NewEncoder(os.Stdout).Encode(report)
+		if !report.Valid || !report.Allow {
+			os.Exit(1)
+		}
+		return
+	}
+
+	if *enforceObligationsFlag != "" {
+		raw, err := os.ReadFile(*enforceObligationsFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Obligations fixture read error: %v\n", err)
+			os.Exit(1)
+		}
+
+		type cliObligationsEnvelope struct {
+			Request gateway.ObligationExecutionRequest `json:"request"`
+		}
+
+		var req gateway.ObligationExecutionRequest
+		var env cliObligationsEnvelope
+		if err := json.Unmarshal(raw, &env); err == nil && (len(env.Request.Obligations) > 0 || env.Request.RequestID != "" || env.Request.Path != "") {
+			req = env.Request
+		} else {
+			if err := json.Unmarshal(raw, &req); err != nil {
+				fmt.Fprintf(os.Stderr, "Obligations fixture JSON error: %v\n", err)
+				os.Exit(1)
+			}
+		}
+
+		report, err := gateway.EnforceObligations(context.Background(), req)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Obligations evaluation error: %v\n", err)
 			os.Exit(1)
 		}
 		_ = json.NewEncoder(os.Stdout).Encode(report)

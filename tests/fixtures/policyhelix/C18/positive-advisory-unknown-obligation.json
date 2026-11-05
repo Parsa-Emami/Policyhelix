@@ -1,0 +1,35 @@
+{
+  "fixture_id": "positive-advisory-unknown-obligation",
+  "commit_id": "C18",
+  "description": "Evaluation succeeds when an unknown obligation is non-mandatory advisory advice (mandatory: false).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c18-pos-04",
+    "target_upstream_id": "service:analytics",
+    "method": "GET",
+    "path": "/api/v1/analytics/stats",
+    "resource_classification": "private",
+    "subject": {
+      "id": "user-operator-04",
+      "authenticated": true,
+      "roles": ["operator"],
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix"
+    },
+    "obligations": [
+      {
+        "id": "ob-advisory-01",
+        "type": "telemetry_hint_v2",
+        "mandatory": false,
+        "parameters": {
+          "sample_rate": 0.1
+        }
+      }
+    ],
+    "evaluation_time": "2026-11-05T12:00:00Z"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "status_code": 200
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "fixture_id": "negative-provider-unavailable",
+  "commit_id": "C18",
+  "description": "Obligation provider outage fails closed with PROVIDER_UNAVAILABLE (HTTP 503).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c18-neg-04",
+    "target_upstream_id": "service:analytics",
+    "method": "GET",
+    "path": "/api/v1/analytics/stream",
+    "resource_classification": "private",
+    "provider_unavailable": true,
+    "provider_state": "unavailable",
+    "subject": {
+      "id": "user-operator-08",
+      "authenticated": true,
+      "roles": ["operator"],
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix"
+    },
+    "obligations": [
+      {
+        "id": "ob-audit-unavail-01",
+        "type": "audit",
+        "mandatory": true
+      }
+    ],
+    "evaluation_time": "2026-11-05T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "status_code": 503,
+    "error_code": "PROVIDER_UNAVAILABLE"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "fixture_id": "negative-mixed-known-and-unknown-obligations",
+  "commit_id": "C18",
+  "description": "Multi-obligation request containing one unknown mandatory obligation fails closed atomically without partial execution.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c18-neg-02",
+    "target_upstream_id": "service:analytics",
+    "method": "POST",
+    "path": "/api/v1/analytics/process",
+    "resource_classification": "private",
+    "subject": {
+      "id": "user-operator-06",
+      "authenticated": true,
+      "roles": ["operator"],
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix"
+    },
+    "obligations": [
+      {
+        "id": "ob-valid-audit-01",
+        "type": "audit",
+        "mandatory": true,
+        "parameters": {
+          "action": "process_batch"
+        }
+      },
+      {
+        "id": "ob-unknown-crypto-01",
+        "type": "crypto_enclave_attestation",
+        "mandatory": true,
+        "parameters": {
+          "enclave_pcr0": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+        }
+      }
+    ],
+    "evaluation_time": "2026-11-05T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "status_code": 403,
+    "error_code": "UNKNOWN_MANDATORY_OBLIGATION"
+  }
+}

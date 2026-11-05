@@ -161,7 +161,7 @@
       "mandatory": true,
       "planned_commit": "C18",
       "evidence_path": "docs/evidence/C18.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "F13",

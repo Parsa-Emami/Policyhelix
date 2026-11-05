@@ -227,7 +227,7 @@
       "id": "C18",
       "title": "feat(obligations): enforce supported policy obligations",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Unknown mandatory obligation denies rather than being ignored."
       ],

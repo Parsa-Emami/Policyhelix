@@ -159,10 +159,12 @@
     },
     {
       "id": "C18",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C18.json"
+      ],
+      "source_identity": "sha256:625ed5354226d59fc2a55510da03c42a80c9a498b967a23a0af509845bfabab2",
+      "notes": "Policy obligation enforcement and fail-closed handling implemented in internal/gateway/obligations.go, internal/gateway/proxy.go, and cmd/policyhelix/main.go; F12 unknown mandatory obligation denies rather than being ignored verified."
     },
     {
       "id": "C19",

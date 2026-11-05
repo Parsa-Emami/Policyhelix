@@ -1,0 +1,33 @@
+{
+  "fixture_id": "negative-malformed-obligation",
+  "commit_id": "C18",
+  "description": "Malformed obligation with missing or empty obligation type fails closed with MALFORMED_OBLIGATION.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c18-neg-03",
+    "target_upstream_id": "service:analytics",
+    "method": "POST",
+    "path": "/api/v1/analytics/report",
+    "resource_classification": "private",
+    "subject": {
+      "id": "user-operator-07",
+      "authenticated": true,
+      "roles": ["operator"],
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix"
+    },
+    "obligations": [
+      {
+        "id": "ob-malformed-01",
+        "type": "",
+        "mandatory": true
+      }
+    ],
+    "evaluation_time": "2026-11-05T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "status_code": 400,
+    "error_code": "MALFORMED_OBLIGATION"
+  }
+}

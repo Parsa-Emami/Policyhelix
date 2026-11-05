@@ -87,6 +87,7 @@ type ProxyRequest struct {
 	RequiredRoles            []string          `json:"required_roles,omitempty"`
 	EvaluationTime           time.Time         `json:"evaluation_time,omitempty"`
 	Body                     string            `json:"body,omitempty"`
+	Obligations              []Obligation      `json:"obligations,omitempty"`
 }
 
 // ProxyResult represents the authoritative outcome of upstream proxy evaluation.
@@ -104,6 +105,8 @@ type ProxyResult struct {
 	NormalizedContext         *NormalizedSubjectContext `json:"normalized_context,omitempty"`
 	StrippedHeaders           []string                  `json:"stripped_headers,omitempty"`
 	DownstreamInjectedHeaders map[string]string         `json:"downstream_injected_headers,omitempty"`
+	ExecutedObligations       []ExecutedObligation      `json:"executed_obligations,omitempty"`
+	AuditRecords              []map[string]interface{}  `json:"audit_records,omitempty"`
 	UpstreamResponseBody      string                    `json:"upstream_response_body,omitempty"`
 	UpstreamStatusCode        int                       `json:"upstream_status_code,omitempty"`
 }
@@ -433,6 +436,76 @@ func (p *AllowlistedGatewayProxy) EvaluateProxyRequest(ctx context.Context, req 
 	}
 	injected[HeaderGatewayProof] = proof
 
+	// Gate 9: Policy Obligation Enforcement (C18 / Requirement F12)
+	var executedObligations []ExecutedObligation
+	var auditRecords []map[string]interface{}
+
+	if len(req.Obligations) > 0 {
+		subj := normRes.Subject
+		obligReq := ObligationExecutionRequest{
+			RequestID:              req.RequestID,
+			Obligations:            req.Obligations,
+			Subject:                subj,
+			ResourceClassification: resClass,
+			TargetUpstreamID:       p.Config.ID,
+			Path:                   reqPath,
+			Method:                 req.Method,
+			Headers:                req.Headers,
+			ProviderUnavailable:    req.ProviderUnavailable,
+			ProviderState:          req.ProviderState,
+			EvaluationTime:         evalTime,
+		}
+
+		obligRes, err := EnforceObligations(ctx, obligReq)
+		if err != nil {
+			return nil, fmt.Errorf("obligation enforcement error: %w", err)
+		}
+		if obligRes == nil || !obligRes.Valid || !obligRes.Allow {
+			status := http.StatusForbidden
+			errCode := ErrCodeUnknownObligation
+			errMsg := "Obligation enforcement failed"
+			if obligRes != nil {
+				if obligRes.StatusCode != 0 {
+					status = obligRes.StatusCode
+				}
+				if obligRes.ErrorCode != "" {
+					errCode = obligRes.ErrorCode
+				}
+				if obligRes.ErrorMessage != "" {
+					errMsg = obligRes.ErrorMessage
+				}
+			}
+			return &ProxyResult{
+				Valid:               false,
+				Allow:               false,
+				ForwardedToUpstream: false,
+				SideEffectsExecuted: false,
+				StatusCode:          status,
+				ErrorCode:           errCode,
+				ErrorMessage:        errMsg,
+				StrippedHeaders:     normRes.StrippedHeaders,
+			}, nil
+		}
+
+		// Merge downstream injected headers from satisfied obligations, ensuring protected headers cannot be overwritten
+		for k, v := range obligRes.DownstreamHeaders {
+			canonicalKey := http.CanonicalHeaderKey(strings.TrimSpace(k))
+			if canonicalKey == http.CanonicalHeaderKey(HeaderGatewayProof) ||
+				canonicalKey == http.CanonicalHeaderKey(HeaderPolicyHelixSubject) ||
+				canonicalKey == http.CanonicalHeaderKey(HeaderPolicyHelixIssuer) ||
+				canonicalKey == http.CanonicalHeaderKey(HeaderPolicyHelixRoles) ||
+				canonicalKey == http.CanonicalHeaderKey(HeaderPolicyHelixAuthenticated) ||
+				canonicalKey == http.CanonicalHeaderKey(HeaderPolicyHelixSessionEpoch) ||
+				canonicalKey == http.CanonicalHeaderKey(HeaderPolicyHelixSessionID) ||
+				canonicalKey == http.CanonicalHeaderKey(HeaderPolicyHelixTenantID) {
+				continue
+			}
+			injected[k] = v
+		}
+		executedObligations = obligRes.ExecutedObligations
+		auditRecords = obligRes.AuditRecords
+	}
+
 	// If actual transport is provided, execute HTTP round trip to upstream
 	upstreamStatus := http.StatusOK
 	upstreamBody := fmt.Sprintf(`{"service":"%s","status":"ok","path":"%s","owner_scope":"%s"}`, p.Config.ID, reqPath, p.Config.RequiredOwnerScope)
@@ -484,6 +557,8 @@ func (p *AllowlistedGatewayProxy) EvaluateProxyRequest(ctx context.Context, req 
 		NormalizedContext:         normRes.NormalizedContext,
 		StrippedHeaders:           normRes.StrippedHeaders,
 		DownstreamInjectedHeaders: injected,
+		ExecutedObligations:       executedObligations,
+		AuditRecords:              auditRecords,
 		UpstreamResponseBody:      upstreamBody,
 		UpstreamStatusCode:        upstreamStatus,
 	}, nil
