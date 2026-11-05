@@ -1,0 +1,47 @@
+{
+  "schema_version": "1",
+  "fixture_id": "C21-NEG-PROVIDER",
+  "commit_id": "C21",
+  "description": "Provider state unavailable causes decision evaluation to fail closed with error",
+  "provider_state": "unavailable",
+  "trusted_issuers": [
+    "https://issuer.policyhelix.local"
+  ],
+  "trusted_signers": [
+    "ed25519-primary-2026"
+  ],
+  "input": {
+    "schema_version": "1",
+    "request_id": "req-c21-provider",
+    "subject": {
+      "id": "usr-normal",
+      "issuer": "https://issuer.policyhelix.local",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 1793793000
+    },
+    "resource": {
+      "id": "/api/v1/vault",
+      "type": "route",
+      "classification": "private"
+    },
+    "action": "read",
+    "context": {
+      "protocol": "http",
+      "source_ip": "127.0.0.1",
+      "client_id": "client-normal",
+      "timestamp": "2026-11-05T15:25:00Z",
+      "untrusted_headers_stripped": true
+    },
+    "limits": {
+      "max_payload_bytes": 65536,
+      "deadline_ms": 200
+    }
+  },
+  "expected": {
+    "allow": false,
+    "error_code": "PROVIDER_UNAVAILABLE"
+  }
+}

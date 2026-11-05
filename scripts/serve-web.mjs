@@ -52,6 +52,30 @@ export function createWebServer({ root, config, projectId, engineUrl }) {
         return;
       }
     }
+    if (path === '/api/v1/runtime/simulate' && engineUrl) {
+      if (req.method !== 'POST') {
+        res.setHeader('Allow', 'POST');
+        send(405, '{"error":"method_not_allowed"}');
+        return;
+      }
+      try {
+        const chunks = [];
+        for await (const chunk of req) chunks.push(chunk);
+        const reqBody = Buffer.concat(chunks);
+        const upstream = await fetch(`${engineUrl}/v1/runtime/simulate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: reqBody,
+          signal: AbortSignal.timeout(5000),
+        });
+        const bodyText = await upstream.text();
+        send(upstream.status, bodyText);
+        return;
+      } catch {
+        send(503, '{"error":"engine_unavailable"}');
+        return;
+      }
+    }
     if (!['GET', 'HEAD'].includes(req.method ?? '')) { res.setHeader('Allow', 'GET, HEAD'); send(405, '{"error":"method_not_allowed"}'); return; }
     if (path === '/healthz') { send(200, '{"status":"ok","scope":"web-shell"}'); return; }
     if (path === '/readyz') {

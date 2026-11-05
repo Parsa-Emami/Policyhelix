@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "commit_id": "C21",
+  "project": "PolicyHelix",
+  "date": "2026-11-05",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix local-first web UI: render policy simulator and decision diffs (Requirement F15)",
+  "source_identity": "sha256:42e2e7557446936f949cd0f3ccfbe085a0be71cc250b3e03782fed15fd4b04f3",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.23.6 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml; local run used Go 1.23.6 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "development host verified against C21 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.23.6 linux/amd64",
+      "passed": true
+    },
+    {
+      "tool": "Playwright",
+      "version": "1.64.1",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C21/negative-simulator-malformed.json",
+      "sha256": "d5740be2e45ed5c16cecc7530aff4a54015dd1b7d0e657bb2e21f241158fd5da",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C21 malformed fixture handling"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C21/negative-simulator-private-fail-closed.json",
+      "sha256": "3a5d69a92e96540234009f1d5fb3a9df277a71d84e4918e0eb233f5b95546a3d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C21 unauthenticated private resource fail-closed simulation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C21/negative-simulator-provider-unavailable.json",
+      "sha256": "97d4a824e24593ffef0f0a2e1686e3ad5071a4fac5cc0720a154b6a9b45c800c",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C21 provider unavailable fail-closed simulation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C21/negative-simulator-sentinel.json",
+      "sha256": "6762e251d4d7cbb5f44d6916f03403b344325295962252b759cd389387acb782",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C21 script and HTML sentinel inertness"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C21/positive-simulator-allow-to-deny.json",
+      "sha256": "62bf1374c87ba5218b97bd98cc017e470b1f470f4eec29d7cb546368f9b550c1",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C21 allow-to-deny decision diff simulation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C21/positive-simulator-deny-to-allow.json",
+      "sha256": "0bd512a578dd20a1bc92d91c2f89236e533b74a61c2bd79559ce8706b4b43e54",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C21 deny-to-allow decision diff simulation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C21/positive-simulator-unchanged-allow.json",
+      "sha256": "bcfd556577f2aa7fe2f50008bc014036a068a00283463b781ec498a86c908a07",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C21 unchanged decision simulation"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "npm run test:browser",
+      "exit_code": 0,
+      "output": "11 passed (2.4s): navigates to simulator, displays policy revision comparison and explains changed decision; switches between sample fixtures and reflects allow_to_deny and unchanged diffs; script and HTML sentinels remain strictly inert (XSS safety); handles malformed and invalid JSON uploads gracefully; clears active simulation and displays empty state; handles engine/provider unavailable (503) fail-closed state; private resource without authenticated credentials fails closed with deny; maintains accessible layout without horizontal overflow at 360px mobile viewport; supports full keyboard navigation across simulator controls and diff table"
+    },
+    {
+      "command": "go test -v -run TestC21 ./tests",
+      "exit_code": 0,
+      "output": "PASS: TestC21_ManifestIntegrity, TestC21_SimulatorHTTPEndpoint, TestC21_SimulatorExplanationGrounding, TestC21_SimulatorSentinelInertness"
+    },
+    {
+      "command": "go test ./...",
+      "exit_code": 0,
+      "output": "ok cmd/policyhelix, internal/contracts, internal/policy, internal/storage, tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "16 passed, 0 failed"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED: Checked 290 JSON files and repository contract invariants."
+    }
+  ],
+  "results": [
+    "Requirement F15 fully implemented: UI displays policy revision and explains changed decision using fixture context in apps/web/src/pages/Simulator.tsx.",
+    "Revision comparison headers and transition status badges (DENY -> ALLOW, ALLOW -> DENY, UNCHANGED) clearly delineate baseline vs candidate policy outcomes.",
+    "Accessible decision comparison table features caption, column/row scopes, and evaluates outcome, revision, digest, target resource, and classification attributes.",
+    "Decision diff explanation card synthesizes subject identity, roles, target resource, and policy rule reasons to explain the root cause of changed decisions.",
+    "Loopback HTTP endpoint /api/v1/runtime/simulate wired into Node supervisor proxy (scripts/serve-web.mjs) and verified against engine handler (cmd/policyhelix/main.go).",
+    "Script and HTML sentinel inertness verified: no script execution or DOM XSS occurs, all content renders inertly with HTML escaping.",
+    "Mobile responsiveness at 360px width verified with zero horizontal scroll (scrollWidth <= innerWidth).",
+    "Keyboard accessibility verified across dropdown, file upload, action buttons, and comparison tables.",
+    "Fail-closed behavior verified for unauthenticated private resources, engine outage (503), malformed JSON, and empty states.",
+    "Seven Apache-2.0 synthetic fixtures cataloged with SHA-256 digests in tests/fixtures/policyhelix/C21/manifest.json.",
+    "Go regression test suite (tests/simulator_ui_test.go) and Playwright browser test suite (apps/web/tests/simulator.spec.ts) provide automated verification."
+  ],
+  "observed_limitations": [
+    "Gateway health status and operator session revocation UI are scheduled for downstream task C22 (feat(ui): expose gateway health and session revoke)."
+  ],
+  "rollback_or_recovery_observation": "Revert apps/web/src/pages/Simulator.tsx, apps/web/tests/simulator.spec.ts, tests/fixtures/policyhelix/C21/, tests/simulator_ui_test.go, scripts/serve-web.mjs simulation proxy additions, and docs/evidence/C21.json. Existing C01-C20 components remain intact."
+}

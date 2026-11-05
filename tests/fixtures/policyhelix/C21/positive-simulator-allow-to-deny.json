@@ -1,0 +1,135 @@
+{
+  "schema_version": "1",
+  "fixture_id": "C21-POS-02",
+  "commit_id": "C21",
+  "description": "Baseline policy rev 2 allows operator; candidate policy rev 3 restricts endpoint strictly to auditor yielding changed allow_to_deny decision",
+  "trusted_issuers": [
+    "https://issuer.policyhelix.local"
+  ],
+  "trusted_signers": [
+    "ed25519-primary-2026"
+  ],
+  "baseline_bundle": {
+    "schema_version": "1",
+    "bundle_id": "bundle-finance-v2",
+    "package": "policyhelix.authz",
+    "issuer": "https://issuer.policyhelix.local",
+    "signer_key_id": "ed25519-primary-2026",
+    "signature": "ed25519:7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a",
+    "signature_verified": true,
+    "revision": 2,
+    "issued_at": "2026-11-04T10:00:00Z",
+    "expires_at": "2026-11-05T10:00:00Z",
+    "digest": "sha256:33334444555566667777888899990000aaaabbbbccccddddeeeeffff11112222",
+    "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+    "routes": [
+      {
+        "pattern": "/api/v1/finance/ledger",
+        "action": "read",
+        "classification": "private",
+        "allow_unauthenticated": false,
+        "required_roles": [
+          "operator",
+          "auditor"
+        ],
+        "description": "Finance ledger viewable by operators and auditors"
+      }
+    ],
+    "rules": [
+      {
+        "id": "rule-operator-finance-read",
+        "effect": "allow",
+        "path_pattern": "/api/v1/finance/ledger",
+        "actions": [
+          "read"
+        ],
+        "roles": [
+          "operator",
+          "auditor"
+        ],
+        "resource_class": "private",
+        "reason_code": "policy_allow_operator",
+        "reason_message": "Operator allowed in baseline revision 2"
+      }
+    ]
+  },
+  "candidate_bundle": {
+    "schema_version": "1",
+    "bundle_id": "bundle-finance-v3",
+    "package": "policyhelix.authz",
+    "issuer": "https://issuer.policyhelix.local",
+    "signer_key_id": "ed25519-primary-2026",
+    "signature": "ed25519:8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b",
+    "signature_verified": true,
+    "revision": 3,
+    "issued_at": "2026-11-05T10:00:00Z",
+    "expires_at": "2026-11-06T10:00:00Z",
+    "digest": "sha256:4444555566667777888899990000aaaabbbbccccddddeeeeffff111122223333",
+    "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+    "routes": [
+      {
+        "pattern": "/api/v1/finance/ledger",
+        "action": "read",
+        "classification": "restricted",
+        "allow_unauthenticated": false,
+        "required_roles": [
+          "auditor"
+        ],
+        "description": "Finance ledger strictly restricted to auditor role"
+      }
+    ],
+    "rules": [
+      {
+        "id": "rule-auditor-strict-finance",
+        "effect": "allow",
+        "path_pattern": "/api/v1/finance/ledger",
+        "actions": [
+          "read"
+        ],
+        "roles": [
+          "auditor"
+        ],
+        "resource_class": "restricted",
+        "reason_code": "policy_allow_auditor_only",
+        "reason_message": "Auditor role exclusively allowed in candidate revision 3"
+      }
+    ]
+  },
+  "input": {
+    "schema_version": "1",
+    "request_id": "req-c21-sim-02",
+    "subject": {
+      "id": "usr-ops-dan-442",
+      "issuer": "https://issuer.policyhelix.local",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 1793793000
+    },
+    "resource": {
+      "id": "/api/v1/finance/ledger",
+      "type": "route",
+      "classification": "restricted"
+    },
+    "action": "read",
+    "context": {
+      "protocol": "http",
+      "source_ip": "127.0.0.1",
+      "client_id": "client-finance-portal",
+      "timestamp": "2026-11-05T15:05:00Z",
+      "untrusted_headers_stripped": true
+    },
+    "limits": {
+      "max_payload_bytes": 65536,
+      "deadline_ms": 200
+    }
+  },
+  "expected": {
+    "allow": false,
+    "changed": true,
+    "transition": "allow_to_deny",
+    "policy_digest": "sha256:4444555566667777888899990000aaaabbbbccccddddeeeeffff111122223333",
+    "within_deadline": true
+  }
+}

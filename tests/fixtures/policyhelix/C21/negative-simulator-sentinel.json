@@ -1,0 +1,131 @@
+{
+  "schema_version": "1",
+  "fixture_id": "C21-NEG-SENTINEL",
+  "commit_id": "C21",
+  "description": "<script>alert('xss-sentinel')</script><img src=x onerror=alert('img-sentinel')> Sentinel inertness test on changed decision",
+  "trusted_issuers": [
+    "https://issuer.policyhelix.local"
+  ],
+  "trusted_signers": [
+    "ed25519-primary-2026"
+  ],
+  "baseline_bundle": {
+    "schema_version": "1",
+    "bundle_id": "bundle-sentinel-v1",
+    "package": "policyhelix.authz",
+    "issuer": "https://issuer.policyhelix.local",
+    "signer_key_id": "ed25519-primary-2026",
+    "signature": "ed25519:7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a",
+    "signature_verified": true,
+    "revision": 1,
+    "issued_at": "2026-11-03T10:00:00Z",
+    "expires_at": "2026-11-04T10:00:00Z",
+    "digest": "sha256:7777888899990000aaaabbbbccccddddeeeeffff111122223333444455556666",
+    "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+    "routes": [
+      {
+        "pattern": "/api/v1/sentinel",
+        "action": "read",
+        "classification": "private",
+        "allow_unauthenticated": false,
+        "required_roles": [
+          "admin"
+        ],
+        "description": "<script>alert('route')</script>"
+      }
+    ],
+    "rules": [
+      {
+        "id": "rule-sentinel-1",
+        "effect": "allow",
+        "path_pattern": "/api/v1/sentinel",
+        "actions": [
+          "read"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "resource_class": "private",
+        "reason_code": "sentinel_code_<script>",
+        "reason_message": "<b>Sentinel bold inert message</b>"
+      }
+    ]
+  },
+  "candidate_bundle": {
+    "schema_version": "1",
+    "bundle_id": "bundle-sentinel-v2",
+    "package": "policyhelix.authz",
+    "issuer": "https://issuer.policyhelix.local",
+    "signer_key_id": "ed25519-primary-2026",
+    "signature": "ed25519:8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b",
+    "signature_verified": true,
+    "revision": 2,
+    "issued_at": "2026-11-04T10:00:00Z",
+    "expires_at": "2026-11-05T10:00:00Z",
+    "digest": "sha256:888899990000aaaabbbbccccddddeeeeffff1111222233334444555566667777",
+    "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+    "routes": [
+      {
+        "pattern": "/api/v1/sentinel",
+        "action": "read",
+        "classification": "private",
+        "allow_unauthenticated": false,
+        "required_roles": [
+          "operator"
+        ],
+        "description": "<script>alert('candidate-route')</script>"
+      }
+    ],
+    "rules": [
+      {
+        "id": "rule-sentinel-candidate",
+        "effect": "allow",
+        "path_pattern": "/api/v1/sentinel",
+        "actions": [
+          "read"
+        ],
+        "roles": [
+          "operator"
+        ],
+        "resource_class": "private",
+        "reason_code": "sentinel_code_candidate",
+        "reason_message": "<script>alert('candidate-reason')</script>"
+      }
+    ]
+  },
+  "input": {
+    "schema_version": "1",
+    "request_id": "req-c21-sentinel",
+    "subject": {
+      "id": "usr-<script>alert('sub')</script>",
+      "issuer": "https://issuer.policyhelix.local",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 1793793000
+    },
+    "resource": {
+      "id": "/api/v1/sentinel",
+      "type": "route",
+      "classification": "private"
+    },
+    "action": "read",
+    "context": {
+      "protocol": "http",
+      "source_ip": "127.0.0.1",
+      "client_id": "client-sentinel",
+      "timestamp": "2026-11-05T15:15:00Z",
+      "untrusted_headers_stripped": true
+    },
+    "limits": {
+      "max_payload_bytes": 65536,
+      "deadline_ms": 200
+    }
+  },
+  "expected": {
+    "allow": true,
+    "changed": true,
+    "transition": "deny_to_allow"
+  }
+}

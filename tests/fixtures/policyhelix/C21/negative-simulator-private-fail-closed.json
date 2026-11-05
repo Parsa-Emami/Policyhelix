@@ -1,0 +1,129 @@
+{
+  "schema_version": "1",
+  "fixture_id": "C21-NEG-FAILCLOSED",
+  "commit_id": "C21",
+  "description": "Private sensitive resource without authenticated identity fails closed with deny decision in both revisions",
+  "trusted_issuers": [
+    "https://issuer.policyhelix.local"
+  ],
+  "trusted_signers": [
+    "ed25519-primary-2026"
+  ],
+  "baseline_bundle": {
+    "schema_version": "1",
+    "bundle_id": "bundle-sec-v1",
+    "package": "policyhelix.authz",
+    "issuer": "https://issuer.policyhelix.local",
+    "signer_key_id": "ed25519-primary-2026",
+    "signature": "ed25519:7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a",
+    "signature_verified": true,
+    "revision": 1,
+    "issued_at": "2026-11-03T10:00:00Z",
+    "expires_at": "2026-11-04T10:00:00Z",
+    "digest": "sha256:99990000aaaabbbbccccddddeeeeffff11112222333344445555666677778888",
+    "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+    "routes": [
+      {
+        "pattern": "/api/v1/vault/keys",
+        "action": "read",
+        "classification": "private",
+        "allow_unauthenticated": false,
+        "required_roles": [
+          "admin"
+        ],
+        "description": "Private key vault"
+      }
+    ],
+    "rules": [
+      {
+        "id": "rule-vault-admin-only",
+        "effect": "allow",
+        "path_pattern": "/api/v1/vault/keys",
+        "actions": [
+          "read"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "resource_class": "private",
+        "reason_code": "vault_admin_allow",
+        "reason_message": "Vault access for admin"
+      }
+    ]
+  },
+  "candidate_bundle": {
+    "schema_version": "1",
+    "bundle_id": "bundle-sec-v2",
+    "package": "policyhelix.authz",
+    "issuer": "https://issuer.policyhelix.local",
+    "signer_key_id": "ed25519-primary-2026",
+    "signature": "ed25519:8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a9b",
+    "signature_verified": true,
+    "revision": 2,
+    "issued_at": "2026-11-04T10:00:00Z",
+    "expires_at": "2026-11-05T10:00:00Z",
+    "digest": "sha256:0000aaaabbbbccccddddeeeeffff111122223333444455556666777788889999",
+    "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+    "routes": [
+      {
+        "pattern": "/api/v1/vault/keys",
+        "action": "read",
+        "classification": "private",
+        "allow_unauthenticated": false,
+        "required_roles": [
+          "admin"
+        ],
+        "description": "Private key vault updated"
+      }
+    ],
+    "rules": [
+      {
+        "id": "rule-vault-admin-only-v2",
+        "effect": "allow",
+        "path_pattern": "/api/v1/vault/keys",
+        "actions": [
+          "read"
+        ],
+        "roles": [
+          "admin"
+        ],
+        "resource_class": "private",
+        "reason_code": "vault_admin_allow",
+        "reason_message": "Vault access for admin in candidate"
+      }
+    ]
+  },
+  "input": {
+    "schema_version": "1",
+    "request_id": "req-c21-failclosed",
+    "subject": {
+      "id": "",
+      "issuer": "https://issuer.policyhelix.local",
+      "roles": [],
+      "authenticated": false,
+      "session_epoch": 0
+    },
+    "resource": {
+      "id": "/api/v1/vault/keys",
+      "type": "route",
+      "classification": "private"
+    },
+    "action": "read",
+    "context": {
+      "protocol": "http",
+      "source_ip": "127.0.0.1",
+      "client_id": "untrusted-agent",
+      "timestamp": "2026-11-05T15:20:00Z",
+      "untrusted_headers_stripped": true
+    },
+    "limits": {
+      "max_payload_bytes": 65536,
+      "deadline_ms": 200
+    }
+  },
+  "expected": {
+    "allow": false,
+    "changed": false,
+    "transition": "unchanged"
+  }
+}

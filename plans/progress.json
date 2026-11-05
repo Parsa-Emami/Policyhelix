@@ -186,10 +186,12 @@
     },
     {
       "id": "C21",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C21.json"
+      ],
+      "source_identity": "sha256:42e2e7557446936f949cd0f3ccfbe085a0be71cc250b3e03782fed15fd4b04f3",
+      "notes": "Policy simulator and decision diff UI implemented in apps/web/src/pages/Simulator.tsx; F15 UI displays policy revision and explains changed decision using fixture context verified."
     },
     {
       "id": "C22",

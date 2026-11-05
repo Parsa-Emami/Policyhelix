@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-05",
   "base_commit": "3fbc1d1",
-  "scope": "Task C20: log decision metadata without tokens; decision includes subject pseudonym, policy and outcome without bearer token or cookie (Requirement F14)",
+  "scope": "Task C21: render policy simulator and decision diffs; UI displays policy revision and explains changed decision using fixture context (Requirement F15)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -23,24 +23,25 @@
     "C17",
     "C18",
     "C19",
-    "C20"
+    "C20",
+    "C21"
   ],
   "commands": [
     "npm run validate:plan",
-    "gofmt -w internal/audit/decision.go internal/gateway/obligations.go cmd/policyhelix/main.go tests/redaction_test.go",
-    "go vet ./...",
-    "go test -v ./...",
+    "npm run test:browser",
+    "go test -v -run TestC21 ./tests",
+    "go test ./...",
     "npm test",
     "npm run build",
     "npm run build:engine",
     "python3 scripts/validate_repo.py",
     "python3 scripts/source_identity.py"
   ],
-  "validation_results": "docs/evidence/C20.json",
-  "final_source_identity": "sha256:f4b641c50e0e7d898c24c8c99b508890244fe2461b399e635719e7c8f2251e78",
+  "validation_results": "docs/evidence/C21.json",
+  "final_source_identity": "sha256:42e2e7557446936f949cd0f3ccfbe085a0be71cc250b3e03782fed15fd4b04f3",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C21",
+  "next_task": "C22",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C20 verified. Authoritative decision audit logging with deterministic HMAC-SHA256 subject pseudonymization, comprehensive Bearer token/cookie/secret redaction, and VerifyNoTokenOrCookie invariant verification (internal/audit/decision.go), gateway obligation integration (internal/gateway/obligations.go), CLI/HTTP router integration (cmd/policyhelix/main.go), regression tests (tests/redaction_test.go), and fixtures (tests/fixtures/policyhelix/C20/) implemented. Ready for C21 (feat(ui): render policy simulator and decision diffs)."
+  "continuation": "Task C21 verified. Policy simulator and decision diff UI (apps/web/src/pages/Simulator.tsx), simulation endpoint proxy (scripts/serve-web.mjs), synthetic fixtures (tests/fixtures/policyhelix/C21/), Playwright browser tests (apps/web/tests/simulator.spec.ts), and Go regression tests (tests/simulator_ui_test.go) implemented. Requirement F15 verified. Ready for C22 (feat(ui): expose gateway health and session revoke)."
 }

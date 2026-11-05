@@ -1,0 +1,10 @@
+{
+  "schema_version": "1",
+  "fixture_id": "C21-NEG-MALFORMED",
+  "commit_id": "C21",
+  "description": "Malformed simulation fixture missing input and required bundle schema",
+  "expected": {
+    "allow": false,
+    "error_code": "MALFORMED_FIXTURE"
+  }
+}

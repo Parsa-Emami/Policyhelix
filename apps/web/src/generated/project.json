@@ -263,7 +263,7 @@
       "id": "C21",
       "title": "feat(ui): render policy simulator and decision diffs",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "UI displays policy revision and explains changed decision using fixture context."
       ],

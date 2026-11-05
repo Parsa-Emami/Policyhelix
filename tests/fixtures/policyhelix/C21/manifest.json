@@ -1,0 +1,57 @@
+{
+  "commit_id": "C21",
+  "schema_version": "1",
+  "license": "Apache-2.0",
+  "description": "Synthetic licensed fixtures for PolicyHelix C21: render policy simulator and decision diffs (Requirement F15).",
+  "fixtures": [
+    {
+      "fixture_id": "negative-simulator-malformed",
+      "path": "tests/fixtures/policyhelix/C21/negative-simulator-malformed.json",
+      "sha256": "d5740be2e45ed5c16cecc7530aff4a54015dd1b7d0e657bb2e21f241158fd5da",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-simulator-private-fail-closed",
+      "path": "tests/fixtures/policyhelix/C21/negative-simulator-private-fail-closed.json",
+      "sha256": "3a5d69a92e96540234009f1d5fb3a9df277a71d84e4918e0eb233f5b95546a3d",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-simulator-provider-unavailable",
+      "path": "tests/fixtures/policyhelix/C21/negative-simulator-provider-unavailable.json",
+      "sha256": "97d4a824e24593ffef0f0a2e1686e3ad5071a4fac5cc0720a154b6a9b45c800c",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-simulator-sentinel",
+      "path": "tests/fixtures/policyhelix/C21/negative-simulator-sentinel.json",
+      "sha256": "6762e251d4d7cbb5f44d6916f03403b344325295962252b759cd389387acb782",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-simulator-allow-to-deny",
+      "path": "tests/fixtures/policyhelix/C21/positive-simulator-allow-to-deny.json",
+      "sha256": "62bf1374c87ba5218b97bd98cc017e470b1f470f4eec29d7cb546368f9b550c1",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-simulator-deny-to-allow",
+      "path": "tests/fixtures/policyhelix/C21/positive-simulator-deny-to-allow.json",
+      "sha256": "0bd512a578dd20a1bc92d91c2f89236e533b74a61c2bd79559ce8706b4b43e54",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-simulator-unchanged-allow",
+      "path": "tests/fixtures/policyhelix/C21/positive-simulator-unchanged-allow.json",
+      "sha256": "bcfd556577f2aa7fe2f50008bc014036a068a00283463b781ec498a86c908a07",
+      "type": "positive",
+      "license": "Apache-2.0"
+    }
+  ]
+}
