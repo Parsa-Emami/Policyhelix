@@ -1,0 +1,43 @@
+{
+  "fixture_id": "positive-denial-decision-logged",
+  "commit_id": "C20",
+  "description": "Decision audit log accurately records denial outcome, reasons, and policy without credential leaks (Requirement F14).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c20-denial-05",
+    "action": "DELETE",
+    "resource_id": "api-system-audit-archive",
+    "resource_classification": "restricted",
+    "policy_digest": "sha256:55667788990011223344aabbccddeeff55667788990011223344aabbccddeeff",
+    "policy_revision": 7,
+    "allow": false,
+    "status_code": 403,
+    "error_code": "ERR_UNAUTHORIZED_MUTATION",
+    "reasons": [
+      "Role auditor does not have permission for destructive DELETE action on system archive"
+    ],
+    "subject": {
+      "id": "usr-auditor-eve-112",
+      "issuer": "https://auth.policyhelix.local/realms/corp",
+      "authenticated": true,
+      "session_epoch": 1793793000
+    },
+    "headers": {
+      "Authorization": "Bearer eyJhbGciOiJSUzI1NiJ9.someExpiredOrUnauthorizedToken.sig",
+      "X-Request-Id": "req-c20-denial-05"
+    },
+    "metadata": {
+      "target_archive_id": "arc-2025-01"
+    },
+    "evaluation_time": "2026-11-05T14:34:00Z",
+    "pseudonym_salt": "policyhelix-test-salt-c20"
+  },
+  "expected": {
+    "valid": true,
+    "allow": false,
+    "status_code": 403,
+    "error_code": "ERR_UNAUTHORIZED_MUTATION",
+    "subject_pseudonym": "pseudo:sha256:a70a5b2ccdcab6e4fd22bc67ffbe15faa1ae590b0ca828a57a55bc273cb5fce2",
+    "policy_digest": "sha256:55667788990011223344aabbccddeeff55667788990011223344aabbccddeeff"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "fixture_id": "negative-malformed-audit-request",
+  "commit_id": "C20",
+  "description": "Malformed audit decision request with missing identifiers fails closed with an explicit error rather than placeholder success.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "",
+    "action": "",
+    "resource_id": "",
+    "headers": {
+      "Authorization": "Bearer invalidMalformedPayload"
+    }
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "error_code": "MALFORMED_AUDIT_REQUEST"
+  }
+}

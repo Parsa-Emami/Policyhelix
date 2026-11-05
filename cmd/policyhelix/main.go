@@ -15,6 +15,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/parsa-emami/policyhelix/internal/audit"
 	"github.com/parsa-emami/policyhelix/internal/auth"
 	"github.com/parsa-emami/policyhelix/internal/bundles"
 	"github.com/parsa-emami/policyhelix/internal/contracts"
@@ -733,6 +734,67 @@ func setupRouter() *http.ServeMux {
 	mux.HandleFunc("/api/v1/gateway/failure/evaluate", handleGatewayFailure)
 	mux.HandleFunc("/api/v1/gateway/failure", handleGatewayFailure)
 
+	handleAuditDecision := func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", "POST")
+			http.Error(w, `{"error":"method_not_allowed"}`, http.StatusMethodNotAllowed)
+			return
+		}
+		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 1048576))
+		if err != nil {
+			http.Error(w, `{"error":"request_body_too_large"}`, http.StatusRequestEntityTooLarge)
+			return
+		}
+
+		type httpAuditEnvelope struct {
+			Request audit.DecisionLogRequest `json:"request"`
+		}
+
+		var req audit.DecisionLogRequest
+		var env httpAuditEnvelope
+		if err := json.Unmarshal(body, &env); err == nil && (env.Request.RequestID != "" || env.Request.Action != "" || env.Request.ResourceID != "") {
+			req = env.Request
+		} else {
+			if err := json.Unmarshal(body, &req); err != nil {
+				w.Header().Set("Content-Type", "application/json; charset=utf-8")
+				w.WriteHeader(http.StatusBadRequest)
+				_ = json.NewEncoder(w).Encode(audit.DecisionLogResult{
+					Valid:        false,
+					Allow:        false,
+					ErrorCode:    audit.ErrCodeMalformedAuditRequest,
+					ErrorMessage: fmt.Sprintf("Malformed audit JSON request: %v", err),
+				})
+				return
+			}
+		}
+
+		report, err := audit.LogDecision(r.Context(), req)
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusInternalServerError)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{"error": err.Error()})
+			return
+		}
+
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if !report.Valid {
+			w.WriteHeader(http.StatusBadRequest)
+		} else if !report.Allow {
+			status := http.StatusForbidden
+			if report.AuditRecord != nil && report.AuditRecord.Outcome.StatusCode > 0 {
+				status = report.AuditRecord.Outcome.StatusCode
+			}
+			w.WriteHeader(status)
+		} else {
+			w.WriteHeader(http.StatusOK)
+		}
+		_ = json.NewEncoder(w).Encode(report)
+	}
+
+	mux.HandleFunc("/api/v1/audit/decision", handleAuditDecision)
+	mux.HandleFunc("/api/v1/audit/log-decision", handleAuditDecision)
+	mux.HandleFunc("/v1/runtime/audit/decision", handleAuditDecision)
+
 	return mux
 }
 
@@ -822,6 +884,7 @@ func main() {
 	proxyUpstreamFlag := flag.String("proxy-upstream", "", "Path to C17 gateway proxy fixture JSON")
 	enforceObligationsFlag := flag.String("enforce-obligations", "", "Path to C18 obligation enforcement fixture JSON")
 	evaluateFailureFlag := flag.String("evaluate-failure", "", "Path to C19 resource outage fixture JSON")
+	auditDecisionFlag := flag.String("audit-decision", "", "Path to C20 decision audit fixture JSON to evaluate and log")
 	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	flag.Parse()
@@ -1334,6 +1397,40 @@ func main() {
 		report, err := gateway.EvaluateResourceOutage(context.Background(), req)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "Failure evaluation error: %v\n", err)
+			os.Exit(1)
+		}
+		_ = json.NewEncoder(os.Stdout).Encode(report)
+		if !report.Valid || !report.Allow {
+			os.Exit(1)
+		}
+		return
+	}
+
+	if *auditDecisionFlag != "" {
+		raw, err := os.ReadFile(*auditDecisionFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Audit fixture read error: %v\n", err)
+			os.Exit(1)
+		}
+
+		type cliAuditEnvelope struct {
+			Request audit.DecisionLogRequest `json:"request"`
+		}
+
+		var req audit.DecisionLogRequest
+		var env cliAuditEnvelope
+		if err := json.Unmarshal(raw, &env); err == nil && (env.Request.RequestID != "" || env.Request.Action != "" || env.Request.ResourceID != "") {
+			req = env.Request
+		} else {
+			if err := json.Unmarshal(raw, &req); err != nil {
+				fmt.Fprintf(os.Stderr, "Audit fixture JSON error: %v\n", err)
+				os.Exit(1)
+			}
+		}
+
+		report, err := audit.LogDecision(context.Background(), req)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Audit decision evaluation error: %v\n", err)
 			os.Exit(1)
 		}
 		_ = json.NewEncoder(os.Stdout).Encode(report)

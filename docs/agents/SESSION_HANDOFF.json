@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-05",
   "base_commit": "3fbc1d1",
-  "scope": "Task C19: implement per resource outage behavior; decision loss denies sensitive routes; public route bypass remains intentional and testable (Requirement F13)",
+  "scope": "Task C20: log decision metadata without tokens; decision includes subject pseudonym, policy and outcome without bearer token or cookie (Requirement F14)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -22,11 +22,12 @@
     "C16",
     "C17",
     "C18",
-    "C19"
+    "C19",
+    "C20"
   ],
   "commands": [
     "npm run validate:plan",
-    "gofmt -w internal/gateway/failure.go internal/gateway/proxy.go cmd/policyhelix/main.go tests/failure_test.go",
+    "gofmt -w internal/audit/decision.go internal/gateway/obligations.go cmd/policyhelix/main.go tests/redaction_test.go",
     "go vet ./...",
     "go test -v ./...",
     "npm test",
@@ -35,11 +36,11 @@
     "python3 scripts/validate_repo.py",
     "python3 scripts/source_identity.py"
   ],
-  "validation_results": "docs/evidence/C19.json",
-  "final_source_identity": "sha256:8523ae534e9323a86ad208d2ca6e77e5bf13e478b59e2a476a30b66245d5be67",
+  "validation_results": "docs/evidence/C20.json",
+  "final_source_identity": "sha256:f4b641c50e0e7d898c24c8c99b508890244fe2461b399e635719e7c8f2251e78",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C20",
+  "next_task": "C21",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C19 verified. Authoritative per-resource outage evaluation (internal/gateway/failure.go), Gate 3.5 proxy wiring (internal/gateway/proxy.go), CLI/HTTP router integration (cmd/policyhelix/main.go), regression tests (tests/failure_test.go), and fixtures (tests/fixtures/policyhelix/C19/) implemented. Ready for C20 (feat(audit): redact bearer tokens and cookies from decision logs)."
+  "continuation": "Task C20 verified. Authoritative decision audit logging with deterministic HMAC-SHA256 subject pseudonymization, comprehensive Bearer token/cookie/secret redaction, and VerifyNoTokenOrCookie invariant verification (internal/audit/decision.go), gateway obligation integration (internal/gateway/obligations.go), CLI/HTTP router integration (cmd/policyhelix/main.go), regression tests (tests/redaction_test.go), and fixtures (tests/fixtures/policyhelix/C20/) implemented. Ready for C21 (feat(ui): render policy simulator and decision diffs)."
 }

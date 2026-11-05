@@ -1,0 +1,78 @@
+{
+  "commit_id": "C20",
+  "schema_version": "1",
+  "license": "Apache-2.0",
+  "description": "Synthetic licensed fixtures for PolicyHelix C20: log decision metadata without tokens (Requirement F14).",
+  "fixtures": [
+    {
+      "fixture_id": "cli-audit-decision",
+      "path": "tests/fixtures/policyhelix/C20/cli-audit-decision.json",
+      "sha256": "06cb7c62cb1eda1f51bcc131fb86860676151500d24413a435356b37ab6e8c10",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-malformed-audit-request",
+      "path": "tests/fixtures/policyhelix/C20/negative-malformed-audit-request.json",
+      "sha256": "2d9b18f5349bfa344d790b239db62b55e3cc7e5b502a215af023f0d24f27dace",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-private-resource-fail-closed",
+      "path": "tests/fixtures/policyhelix/C20/negative-private-resource-fail-closed.json",
+      "sha256": "9ff2a8972a5148e98f669e2c85c95299474d5f1e620e2bce964bc664314d5c96",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-provider-unavailable",
+      "path": "tests/fixtures/policyhelix/C20/negative-provider-unavailable.json",
+      "sha256": "ea8a660ac8188b200e467843aec7b7182193a6ab1f5101fc92de35dc46df26e3",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-bearer-token-redacted",
+      "path": "tests/fixtures/policyhelix/C20/positive-bearer-token-redacted.json",
+      "sha256": "b76e59255802f569f295b00a7ae68621cbdc92daaf6d9a1dbd0b8b2115665a7b",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-cookie-token-redacted",
+      "path": "tests/fixtures/policyhelix/C20/positive-cookie-token-redacted.json",
+      "sha256": "07e6bf85724525ab1e44cd71fd0de1d0499cb0bca3268e70166b147ae622d965",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-denial-decision-logged",
+      "path": "tests/fixtures/policyhelix/C20/positive-denial-decision-logged.json",
+      "sha256": "c98d91531b9b41aebe2d6c98d4986bdf9783090f68895a54010908449306352c",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-multiple-tokens-redacted",
+      "path": "tests/fixtures/policyhelix/C20/positive-multiple-tokens-redacted.json",
+      "sha256": "61ca5ba8b6a3b56a88cf8912981d5958570f4130cf60b9b73c538d17c16dc3f2",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-restart-invariant",
+      "path": "tests/fixtures/policyhelix/C20/positive-restart-invariant.json",
+      "sha256": "da0773625cf1e7721caceeb7c928ae3cb7060d79c5275c14d79649be23d9d0dc",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-subject-pseudonymized",
+      "path": "tests/fixtures/policyhelix/C20/positive-subject-pseudonymized.json",
+      "sha256": "1af45298707dbe0f0053089b037f4c83ba260ac65dab2ed499c90fe1d56eddec",
+      "type": "positive",
+      "license": "Apache-2.0"
+    }
+  ]
+}

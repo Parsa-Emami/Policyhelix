@@ -1,0 +1,32 @@
+{
+  "fixture_id": "positive-restart-invariant",
+  "commit_id": "C20",
+  "description": "Repeated audit evaluation across engine restarts produces identical deterministic subject pseudonym and invariant redaction posture.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c20-restart-10",
+    "action": "GET",
+    "resource_id": "api-system-config",
+    "resource_classification": "internal",
+    "policy_digest": "sha256:aabbccddeeff00112233445566778899aabbccddeeff00112233445566778899",
+    "policy_revision": 5,
+    "allow": true,
+    "status_code": 200,
+    "subject": {
+      "id": "usr-persisted-admin-909",
+      "authenticated": true
+    },
+    "headers": {
+      "Authorization": "Bearer restartedSessionBearerToken99",
+      "Cookie": "policyhelix_session=restartedSessionCookieValue"
+    },
+    "evaluation_time": "2026-11-05T14:38:00Z",
+    "pseudonym_salt": "policyhelix-test-salt-c20"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "status_code": 200,
+    "subject_pseudonym": "pseudo:sha256:8202cbe1a4db69bf7c5f12999b57e0295dfeed3c0d8e5da7fa0d497132221697"
+  }
+}

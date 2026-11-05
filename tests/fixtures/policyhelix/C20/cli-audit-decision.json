@@ -1,0 +1,41 @@
+{
+  "fixture_id": "cli-audit-decision",
+  "commit_id": "C20",
+  "description": "CLI audit decision command parses input fixture, logs metadata with subject pseudonym, redacts bearer token and cookie, and exits cleanly (Requirement F14).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c20-cli-06",
+    "action": "GET",
+    "resource_id": "api-health-metrics",
+    "resource_classification": "internal",
+    "policy_digest": "sha256:8899aabbccddeeff00112233445566778899aabbccddeeff0011223344556677",
+    "policy_revision": 3,
+    "allow": true,
+    "status_code": 200,
+    "subject": {
+      "id": "usr-operator-frank-303",
+      "issuer": "https://auth.policyhelix.local/realms/corp",
+      "roles": ["operator"],
+      "authenticated": true,
+      "session_epoch": 1793793000
+    },
+    "headers": {
+      "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.cliJwtTokenData.signaturePart",
+      "Cookie": "policyhelix_session=cli_session_value_998811",
+      "X-Request-Id": "req-c20-cli-06"
+    },
+    "metadata": {
+      "cli_version": "0.0.1",
+      "origin": "cli-subcommand"
+    },
+    "evaluation_time": "2026-11-05T14:35:00Z",
+    "pseudonym_salt": "policyhelix-test-salt-c20"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "status_code": 200,
+    "subject_pseudonym": "pseudo:sha256:d99c4047ffc7769fb87a390b12e163621a037a21435928585c446939919d2923",
+    "policy_digest": "sha256:8899aabbccddeeff00112233445566778899aabbccddeeff0011223344556677"
+  }
+}

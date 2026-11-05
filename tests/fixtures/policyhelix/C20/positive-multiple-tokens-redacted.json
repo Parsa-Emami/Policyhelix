@@ -1,0 +1,46 @@
+{
+  "fixture_id": "positive-multiple-tokens-redacted",
+  "commit_id": "C20",
+  "description": "Decision audit log strips multiple simultaneous credentials (Bearer token, session cookie, and query token) without leaks (Requirement F14).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c20-multi-03",
+    "action": "PUT",
+    "resource_id": "api-tenant-settings",
+    "resource_classification": "restricted",
+    "policy_digest": "sha256:cc99887766554433221100aabbccddeeff00112233445566778899aabbccddee",
+    "policy_revision": 10,
+    "allow": true,
+    "status_code": 200,
+    "subject": {
+      "id": "usr-admin-charlie-001",
+      "issuer": "https://auth.policyhelix.local/realms/corp",
+      "authenticated": true,
+      "session_epoch": 1793793000
+    },
+    "headers": {
+      "Authorization": "Bearer eyJhbGciOiJSUzI1NiJ9.adminTokenPayload.secretSignatureValue",
+      "Cookie": "policyhelix_session=s_admin_live_sess_778899; token=secretParamValue",
+      "Proxy-Authorization": "Bearer proxySecretToken9988",
+      "X-Api-Key": "live_apikey_secret_99887766"
+    },
+    "metadata": {
+      "request_url": "https://gateway.policyhelix.local/api/tenant-settings?access_token=secretUrlToken12345",
+      "query_params": {
+        "access_token": "secretUrlToken12345",
+        "format": "json"
+      }
+    },
+    "evaluation_time": "2026-11-05T14:32:00Z",
+    "pseudonym_salt": "policyhelix-test-salt-c20"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "status_code": 200,
+    "subject_pseudonym": "pseudo:sha256:c98c5f38303e8db5f0dbeb155a9e5e356e585438bfa42a8e41962e14ed6bbadd",
+    "policy_digest": "sha256:cc99887766554433221100aabbccddeeff00112233445566778899aabbccddee",
+    "bearer_tokens_redacted_min": 1,
+    "cookies_redacted_min": 1
+  }
+}

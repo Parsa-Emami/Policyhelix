@@ -179,7 +179,7 @@
       "mandatory": true,
       "planned_commit": "C20",
       "evidence_path": "docs/evidence/C20.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "F15",

@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "commit_id": "C20",
+  "project": "PolicyHelix",
+  "date": "2026-11-05",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: log decision metadata without tokens (Requirement F14)",
+  "source_identity": "sha256:f4b641c50e0e7d898c24c8c99b508890244fe2461b399e635719e7c8f2251e78",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.23.6 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml; local run used Go 1.23.6 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "development host verified against C20 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.23.6 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C20/cli-audit-decision.json",
+      "sha256": "06cb7c62cb1eda1f51bcc131fb86860676151500d24413a435356b37ab6e8c10",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C20 CLI decision audit"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C20/negative-malformed-audit-request.json",
+      "sha256": "2d9b18f5349bfa344d790b239db62b55e3cc7e5b502a215af023f0d24f27dace",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C20 malformed audit request error handling"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C20/negative-private-resource-fail-closed.json",
+      "sha256": "9ff2a8972a5148e98f669e2c85c95299474d5f1e620e2bce964bc664314d5c96",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C20 unauthenticated private resource fail-closed"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C20/negative-provider-unavailable.json",
+      "sha256": "ea8a660ac8188b200e467843aec7b7182193a6ab1f5101fc92de35dc46df26e3",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C20 provider outage denial logging"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C20/positive-bearer-token-redacted.json",
+      "sha256": "b76e59255802f569f295b00a7ae68621cbdc92daaf6d9a1dbd0b8b2115665a7b",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C20 Bearer token and JWT redaction"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C20/positive-cookie-token-redacted.json",
+      "sha256": "07e6bf85724525ab1e44cd71fd0de1d0499cb0bca3268e70166b147ae622d965",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C20 cookie and Set-Cookie redaction"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C20/positive-denial-decision-logged.json",
+      "sha256": "c98d91531b9b41aebe2d6c98d4986bdf9783090f68895a54010908449306352c",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C20 denial decision outcome recording"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C20/positive-multiple-tokens-redacted.json",
+      "sha256": "61ca5ba8b6a3b56a88cf8912981d5958570f4130cf60b9b73c538d17c16dc3f2",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C20 multi-credential stripping without leaks"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C20/positive-restart-invariant.json",
+      "sha256": "da0773625cf1e7721caceeb7c928ae3cb7060d79c5275c14d79649be23d9d0dc",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C20 restart pseudonymization invariance"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C20/positive-subject-pseudonymized.json",
+      "sha256": "1af45298707dbe0f0053089b037f4c83ba260ac65dab2ed499c90fe1d56eddec",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C20 deterministic HMAC-SHA256 pseudonymization"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "go test -v -run TestC20 ./tests",
+      "exit_code": 0,
+      "output": "PASS: TestC20_ManifestIntegrity, TestC20_BearerTokenRedaction, TestC20_CookieRedaction, TestC20_MultipleTokensRedacted, TestC20_SubjectPseudonymization, TestC20_DenialDecisionLogged, TestC20_MalformedAuditRequest, TestC20_PrivateResourceFailClosed, TestC20_ProviderUnavailable, TestC20_RestartInvariant, TestC20_CLIExecution, TestC20_HTTPRoutes, TestC20_GatewayProxyIntegration"
+    },
+    {
+      "command": "go test ./...",
+      "exit_code": 0,
+      "output": "ok cmd/policyhelix, internal/contracts, internal/policy, internal/storage, tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "16 passed, 0 failed"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED: Checked 281 JSON files and repository contract invariants."
+    }
+  ],
+  "verification_details": [
+    "Requirement F14 fully implemented: Decision audit records include subject pseudonym, policy digest/revision, and decision outcome without bearer tokens, JWTs, or session cookies.",
+    "Deterministic HMAC-SHA256 subject pseudonymization implemented in internal/audit/decision.go; unauthenticated subjects resolve safely to pseudo:unauthenticated.",
+    "Recursive credential redaction (RedactHeaders, RedactMap, RedactText) scrubs Authorization, Cookie, Set-Cookie, Proxy-Authorization, X-Api-Key, and arbitrary sensitive parameters.",
+    "Fail-closed invariant checker VerifyNoTokenOrCookie validates that no unredacted bearer token, JWT, or cookie substring appears in serialized audit JSON.",
+    "Wired into gateway proxy and obligation engine (internal/gateway/obligations.go) so downstream audit obligations log pseudonymized records without credentials.",
+    "CLI command -audit-decision and loopback HTTP route POST /api/v1/audit/decision added to cmd/policyhelix/main.go.",
+    "Ten Apache-2.0 synthetic fixtures generated and SHA-256 verified in tests/fixtures/policyhelix/C20/manifest.json.",
+    "Thorough regression tests in tests/redaction_test.go cover manifest integrity, credential stripping, pseudonymization, fail-closed semantics, CLI execution, HTTP routing, and restart invariance."
+  ],
+  "observed_limitations": [
+    "Simulator UI visualization and decision diffs are scheduled for downstream task C21 (feat(ui): render policy simulator and decision diffs)."
+  ],
+  "rollback_or_recovery_observation": "Revert internal/audit/decision.go, tests/redaction_test.go, tests/fixtures/policyhelix/C20/, docs/evidence/C20.json, and the -audit-decision / route additions in cmd/policyhelix/main.go. Existing C01-C19 components remain intact."
+}

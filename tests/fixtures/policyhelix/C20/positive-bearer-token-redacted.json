@@ -1,0 +1,44 @@
+{
+  "fixture_id": "positive-bearer-token-redacted",
+  "commit_id": "C20",
+  "description": "Decision audit log redacts raw Bearer JWT tokens from headers and body metadata while recording subject pseudonym and allow outcome (Requirement F14).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c20-bearer-01",
+    "action": "GET",
+    "resource_id": "api-documents-101",
+    "resource_classification": "sensitive",
+    "policy_digest": "sha256:4a12ec89301fdc758bb019482756193740285918371947264817492837192847",
+    "policy_revision": 4,
+    "allow": true,
+    "status_code": 200,
+    "subject": {
+      "id": "usr-corp-alice-9982",
+      "issuer": "https://auth.policyhelix.local/realms/corp",
+      "email": "alice@corp.example.com",
+      "roles": ["operator", "auditor"],
+      "authenticated": true,
+      "session_epoch": 1793793000
+    },
+    "headers": {
+      "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3ItY29ycC1hbGljZS05OTgyIiwiYXVkIjoicG9saWN5aGVsaXgifQ.sig1234567890abcdef",
+      "X-Request-Id": "req-c20-bearer-01",
+      "User-Agent": "HelixCLI/2.0"
+    },
+    "metadata": {
+      "downstream_auth": "Bearer eyJhbGciOiJSUzI1NiJ9.eyJlbWFpbCI6ImFsaWNlQGNvcnAuZXhhbXBsZS5jb20ifQ.validSignature123",
+      "origin": "internal-gateway"
+    },
+    "evaluation_time": "2026-11-05T14:30:00Z",
+    "pseudonym_salt": "policyhelix-test-salt-c20"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "status_code": 200,
+    "subject_pseudonym": "pseudo:sha256:e14b858d828af2b96d5ffb8cd1111f33682b063d38c1deef1d41f8671c769074",
+    "policy_digest": "sha256:4a12ec89301fdc758bb019482756193740285918371947264817492837192847",
+    "bearer_tokens_redacted_min": 1,
+    "cookies_redacted": 0
+  }
+}

@@ -7,6 +7,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/parsa-emami/policyhelix/internal/audit"
 	"github.com/parsa-emami/policyhelix/internal/contracts"
 )
 
@@ -262,17 +263,20 @@ func EnforceObligations(ctx context.Context, req ObligationExecutionRequest) (*O
 		// Execute supported handler
 		switch strings.ToLower(cleanType) {
 		case "audit", "audit_log", "log":
+			pseudonym := audit.ComputeSubjectPseudonym(subjID, "")
 			record := map[string]interface{}{
 				"request_id":         req.RequestID,
 				"event":              "obligation_audit",
 				"recorded_at":        evalTime.Format(time.RFC3339),
-				"subject_id":         subjID,
+				"subject_id":         pseudonym,
+				"subject_pseudonym":  pseudonym,
 				"target_upstream_id": req.TargetUpstreamID,
 				"path":               req.Path,
 				"method":             req.Method,
 			}
 			if ob.Parameters != nil {
-				for k, v := range ob.Parameters {
+				sanitizedParams := audit.RedactMap(ob.Parameters, nil)
+				for k, v := range sanitizedParams {
 					record[k] = v
 				}
 			}

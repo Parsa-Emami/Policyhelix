@@ -1,0 +1,33 @@
+{
+  "fixture_id": "negative-private-resource-fail-closed",
+  "commit_id": "C20",
+  "description": "Private sensitive resource fails closed when subject is unauthenticated or missing, recording an explicit denial audit record.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c20-failclosed-08",
+    "action": "GET",
+    "resource_id": "api-internal-keys",
+    "resource_classification": "private",
+    "policy_digest": "sha256:33445566778899001122aabbccddeeff33445566778899001122aabbccddeeff",
+    "allow": true,
+    "subject": {
+      "id": "",
+      "authenticated": false,
+      "roles": []
+    },
+    "headers": {
+      "Authorization": "Bearer forgedOrUnverifiedToken",
+      "Cookie": "policyhelix_session=expiredSessionCookie",
+      "X-Request-Id": "req-c20-failclosed-08"
+    },
+    "evaluation_time": "2026-11-05T14:36:00Z",
+    "pseudonym_salt": "policyhelix-test-salt-c20"
+  },
+  "expected": {
+    "valid": true,
+    "allow": false,
+    "status_code": 403,
+    "error_code": "PRIVATE_RESOURCE_DENIED",
+    "subject_pseudonym": "pseudo:unauthenticated"
+  }
+}

@@ -1,0 +1,43 @@
+{
+  "fixture_id": "positive-subject-pseudonymized",
+  "commit_id": "C20",
+  "description": "Decision audit log replaces subject identity with deterministic HMAC-SHA256 pseudonym without raw email or ID (Requirement F14).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c20-pseudo-04",
+    "action": "GET",
+    "resource_id": "api-financial-reports",
+    "resource_classification": "sensitive",
+    "policy_digest": "sha256:11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff",
+    "policy_revision": 1,
+    "allow": true,
+    "status_code": 200,
+    "subject": {
+      "id": "usr-finance-david-552",
+      "issuer": "https://auth.policyhelix.local/realms/corp",
+      "email": "david.finance@corp.example.com",
+      "roles": ["finance_auditor"],
+      "authenticated": true,
+      "session_epoch": 1793793000
+    },
+    "headers": {
+      "X-Request-Id": "req-c20-pseudo-04",
+      "User-Agent": "FinancePortal/3.1"
+    },
+    "metadata": {
+      "report_quarter": "2026-Q4",
+      "requested_format": "pdf"
+    },
+    "evaluation_time": "2026-11-05T14:33:00Z",
+    "pseudonym_salt": "policyhelix-test-salt-c20"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "status_code": 200,
+    "subject_pseudonym": "pseudo:sha256:e32d5cfe375c8a19da1642b7954a457a983f6903aa6ef6ff52ea2934d5881318",
+    "policy_digest": "sha256:11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff",
+    "raw_email_contained": false,
+    "raw_subject_id_contained": false
+  }
+}

@@ -177,10 +177,12 @@
     },
     {
       "id": "C20",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C20.json"
+      ],
+      "source_identity": "sha256:f4b641c50e0e7d898c24c8c99b508890244fe2461b399e635719e7c8f2251e78",
+      "notes": "Decision audit logging and credential redaction implemented in internal/audit/decision.go; F14 decision includes subject pseudonym, policy and outcome without bearer token or cookie verified."
     },
     {
       "id": "C21",

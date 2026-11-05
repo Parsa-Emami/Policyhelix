@@ -1,0 +1,42 @@
+{
+  "fixture_id": "positive-cookie-token-redacted",
+  "commit_id": "C20",
+  "description": "Decision audit log redacts session cookies and Set-Cookie headers while preserving subject pseudonym and outcome (Requirement F14).",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c20-cookie-02",
+    "action": "POST",
+    "resource_id": "api-orders-checkout",
+    "resource_classification": "internal",
+    "policy_digest": "sha256:7b23fd9012abcdef34567890abcdef1234567890abcdef1234567890abcdef12",
+    "policy_revision": 2,
+    "allow": true,
+    "status_code": 200,
+    "subject": {
+      "id": "usr-bob-customer-441",
+      "issuer": "https://auth.policyhelix.local/realms/corp",
+      "authenticated": true,
+      "session_epoch": 1793793000
+    },
+    "headers": {
+      "Cookie": "policyhelix_session=s_live_sec_99182374619; other_id=1234",
+      "Set-Cookie": "policyhelix_session=s_live_sec_rotated_99182; Path=/; Secure; HttpOnly",
+      "X-Request-Id": "req-c20-cookie-02"
+    },
+    "metadata": {
+      "client_cookie_raw": "policyhelix_session=s_live_sec_99182374619",
+      "cart_id": "cart-8821"
+    },
+    "evaluation_time": "2026-11-05T14:31:00Z",
+    "pseudonym_salt": "policyhelix-test-salt-c20"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "status_code": 200,
+    "subject_pseudonym": "pseudo:sha256:9a443bf790fda8813875082ce3f673ca09383e74a8308b663232d4aa72a0dfeb",
+    "policy_digest": "sha256:7b23fd9012abcdef34567890abcdef1234567890abcdef1234567890abcdef12",
+    "bearer_tokens_redacted": 0,
+    "cookies_redacted_min": 1
+  }
+}

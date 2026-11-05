@@ -1,0 +1,35 @@
+{
+  "fixture_id": "negative-provider-unavailable",
+  "commit_id": "C20",
+  "description": "Provider outage during decision evaluation records explicit PROVIDER_UNAVAILABLE failure and denies access without credential leaks.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c20-provider-outage-09",
+    "action": "GET",
+    "resource_id": "api-secure-vault",
+    "resource_classification": "restricted",
+    "policy_digest": "sha256:77889900112233445566aabbccddeeff77889900112233445566aabbccddeeff",
+    "allow": false,
+    "status_code": 503,
+    "error_code": "PROVIDER_UNAVAILABLE",
+    "reasons": [
+      "Keycloak OIDC authority unreachable during decision validation"
+    ],
+    "subject": {
+      "id": "usr-grace-881",
+      "authenticated": true
+    },
+    "headers": {
+      "Authorization": "Bearer keycloakTokenPendingVerification",
+      "X-Request-Id": "req-c20-provider-outage-09"
+    },
+    "evaluation_time": "2026-11-05T14:37:00Z",
+    "pseudonym_salt": "policyhelix-test-salt-c20"
+  },
+  "expected": {
+    "valid": true,
+    "allow": false,
+    "status_code": 503,
+    "error_code": "PROVIDER_UNAVAILABLE"
+  }
+}
