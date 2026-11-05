@@ -251,7 +251,7 @@
       "id": "C20",
       "title": "feat(audit): log decision metadata without tokens",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Decision includes subject pseudonym, policy and outcome without bearer token or cookie."
       ],

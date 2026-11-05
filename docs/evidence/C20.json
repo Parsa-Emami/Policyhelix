@@ -131,7 +131,7 @@
       "output": "VALIDATION PASSED: Checked 281 JSON files and repository contract invariants."
     }
   ],
-  "verification_details": [
+  "results": [
     "Requirement F14 fully implemented: Decision audit records include subject pseudonym, policy digest/revision, and decision outcome without bearer tokens, JWTs, or session cookies.",
     "Deterministic HMAC-SHA256 subject pseudonymization implemented in internal/audit/decision.go; unauthenticated subjects resolve safely to pseudo:unauthenticated.",
     "Recursive credential redaction (RedactHeaders, RedactMap, RedactText) scrubs Authorization, Cookie, Set-Cookie, Proxy-Authorization, X-Api-Key, and arbitrary sensitive parameters.",
