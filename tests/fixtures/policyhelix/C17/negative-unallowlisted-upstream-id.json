@@ -1,0 +1,22 @@
+{
+  "fixture_id": "negative-unallowlisted-upstream-id",
+  "commit_id": "C17",
+  "description": "Request specifying unallowlisted upstream service ID is rejected.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c17-neg-02",
+    "target_upstream_id": "service:payment-gateway",
+    "method": "POST",
+    "path": "/api/v1/analytics",
+    "untrusted_headers_stripped": true,
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "forwarded_to_upstream": false,
+    "side_effects_executed": false,
+    "status_code": 400,
+    "error_code": "UPSTREAM_NOT_ALLOWLISTED"
+  }
+}

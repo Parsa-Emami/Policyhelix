@@ -150,10 +150,12 @@
     },
     {
       "id": "C17",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C17.json"
+      ],
+      "source_identity": "sha256:f2185898b9708ac4092852c291a8370889eb3b53d23b8daacdac6b56933ffa0f",
+      "notes": "Allowlisted single upstream proxy and origin isolation implemented in internal/gateway/proxy.go and cmd/policyhelix/main.go; F11 arbitrary upstream URLs cannot be selected and origin is reachable only by gateway verified."
     },
     {
       "id": "C18",

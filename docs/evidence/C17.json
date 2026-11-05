@@ -1,0 +1,212 @@
+{
+  "schema_version": 1,
+  "commit_id": "C17",
+  "project": "PolicyHelix",
+  "date": "2026-11-04",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source local web profile: protect one allowlisted upstream and isolate origin",
+  "source_identity": "sha256:f2185898b9708ac4092852c291a8370889eb3b53d23b8daacdac6b56933ffa0f",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.23.6 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml; local run used Go 1.23.6 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "development host verified against C17 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.23.6 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C17/cli-proxy-clean.json",
+      "sha256": "a63f1a205690ff72747ced4e8aed4eb64a4da13d7228ee8b89b1a3ad1f1ac102",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 CLI clean allowlisted upstream forwarding"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C17/cli-proxy-rejected.json",
+      "sha256": "c63ff13ab5799c0f5aae3be8f3311206db339e57387150aac6a97a91dbdf25f7",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 CLI rejected arbitrary upstream URL"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C17/negative-arbitrary-upstream-url.json",
+      "sha256": "b5fe4ca5b7d6e0f40e3088f7905053b36f9f0e4b0361ca31d3840453ffa35e19",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 arbitrary upstream URL SSRF fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C17/negative-direct-origin-bypass.json",
+      "sha256": "fe84de59ed0db18097ff8eebf50cac1317ba4c31598162a1fb85ebbfdc86a86e",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 direct origin bypass fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C17/negative-expired-session.json",
+      "sha256": "f94a5f0eebf8e2513ac366f948b2b38ec7ade5a71c5512db44dd1f2b4093f915",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 expired session upstream access rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C17/negative-forged-header-unstripped.json",
+      "sha256": "59669453cbe9ed11ba2c52b0c585c6e25ab7d736035b563f076996cb7a56a970",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 unstripped forged identity header rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C17/negative-host-header-override.json",
+      "sha256": "a8ddd4ff5dcc40121b0e3f73d19fa0acae38b43111f30561c5c1d6edce13824a",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 host override header injection rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C17/negative-provider-unavailable.json",
+      "sha256": "26e776122679c6fe5bb31cd22b123b6a2d19185bb97921c20c3795d85f66764d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 upstream provider unavailable fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C17/negative-replayed-superseded-session.json",
+      "sha256": "d769c9a4626fdb55872bdbb1f49301e18bc6859747897b5678d802f8fc250e42",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 replayed superseded cookie fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C17/negative-revoked-session.json",
+      "sha256": "556a4af4cd477c84ca4e6b6b4f78084e2fbd39f08dcaf9eceae0655fe524ca79",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 revoked session fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C17/negative-unallowlisted-upstream-id.json",
+      "sha256": "e2cd0277116b2e4ea5ffc6cde65dd556efe8039c7d00218bacb12fa2710fd039",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 unallowlisted upstream service ID rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C17/negative-unauthenticated-private-fail-closed.json",
+      "sha256": "b07605bf06ed1b10e67c91d1341f6712598bc297c1cd4f6094f8f3e68498d857",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 unauthenticated private resource fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C17/negative-unrelated-owner-scope.json",
+      "sha256": "eb1f89e92b8a1327b4d1bfa5ce439570120fe0bf9f1d3342452047149ed962a4",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 unrelated owner scope mismatch rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C17/negative-widened-path-traversal.json",
+      "sha256": "154914c015f49951ed642b7ecb9558dca6f713169ddac8582f7eaf35f9598a8d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 path traversal outside allowlist rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C17/positive-allowlisted-upstream-proxy.json",
+      "sha256": "f2575c7ca4b7c0904946972349c78dd674ab61ff0f7175fcc5b9908a166bba1f",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 authenticated allowlisted upstream forwarding"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C17/positive-public-health-check.json",
+      "sha256": "71622bf12dbcbc19881bdce483dade6afd9317720a14a0d44587dd0fdd53d078",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C17 unauthenticated public health route allow"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "gofmt -w internal/gateway/proxy.go cmd/policyhelix/main.go tests/proxy_test.go",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go vet ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "no output"
+    },
+    {
+      "command": "go test -v ./...",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "ok cmd/policyhelix; ok internal/contracts; ok internal/policy; ok internal/storage; ok tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "pretest build and engine build passed; all node tests passed"
+    },
+    {
+      "command": "npm run build",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "vite build completed; dist/web built"
+    },
+    {
+      "command": "npm run build:engine",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "go build -o dist/engine/policyhelix ./cmd/policyhelix; no errors"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "VALIDATION PASSED; Checked JSON files and repository contract invariants."
+    },
+    {
+      "command": "python3 scripts/source_identity.py",
+      "exit_code": 0,
+      "expected_exit_code": 0,
+      "output": "sha256:3374ad526e4c99a23069128fac919fc1b0ad52c798bd2e5b9e348b89f4a635d1"
+    }
+  ],
+  "results": [
+    "Implemented internal/gateway/proxy.go with AllowlistedGatewayProxy, EvaluateProxyRequest, ProtectedOriginMiddleware, and NewAllowlistedReverseProxy.",
+    "Requirement F11 acceptance verified: arbitrary upstream URLs cannot be selected; origin is reachable only by gateway.",
+    "SSRF and unallowlisted upstream host prevention enforced: requests with arbitrary TargetURL, unknown TargetUpstreamID, or host override headers (X-Forwarded-Host, X-Original-URL, X-Rewrite-URL) fail closed with UPSTREAM_NOT_ALLOWLISTED.",
+    "Origin isolation verified: upstream service protected by ProtectedOriginMiddleware rejects any direct client access attempting to bypass the gateway with DIRECT_ORIGIN_BYPASS_DENIED.",
+    "Required negative security cases verified: missing/expired/replayed/revoked identity, unrelated owner scope, unstripped forged headers, widened path traversal, and provider outage all fail closed before sensitive side effects.",
+    "Added -proxy-upstream CLI flag and POST /api/v1/gateway/proxy HTTP endpoint in cmd/policyhelix/main.go.",
+    "Sixteen Apache-2.0 synthetic fixtures generated and SHA-256 verified under tests/fixtures/policyhelix/C17/manifest.json."
+  ],
+  "observed_limitations": [
+    "Gateway proxy protects a single allowlisted upstream service (service:analytics); policy obligations and multi-upstream federation are scheduled for C18 (feat(obligations): enforce supported policy obligations)."
+  ],
+  "rollback_or_recovery_observation": "Revert internal/gateway/proxy.go, tests/proxy_test.go, tests/fixtures/policyhelix/C17/, and the -proxy-upstream CLI / HTTP wiring in cmd/policyhelix/main.go. Existing C01-C16 components remain intact."
+}

@@ -1,0 +1,27 @@
+{
+  "fixture_id": "negative-host-header-override",
+  "commit_id": "C17",
+  "description": "Host override header X-Forwarded-Host injection is rejected with UPSTREAM_NOT_ALLOWLISTED.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c17-neg-04",
+    "target_upstream_id": "service:analytics",
+    "method": "GET",
+    "path": "/api/v1/analytics",
+    "headers": {
+      "Accept": "application/json",
+      "X-Forwarded-Host": "attacker.controlled.domain"
+    },
+    "session_id": "sess-c17-alice",
+    "untrusted_headers_stripped": true,
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "forwarded_to_upstream": false,
+    "side_effects_executed": false,
+    "status_code": 400,
+    "error_code": "UPSTREAM_NOT_ALLOWLISTED"
+  }
+}

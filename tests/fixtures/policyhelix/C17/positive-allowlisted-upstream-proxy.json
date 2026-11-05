@@ -1,0 +1,47 @@
+{
+  "fixture_id": "positive-allowlisted-upstream-proxy",
+  "commit_id": "C17",
+  "description": "Authenticated operator request to allowlisted upstream forwards with canonical headers and origin proof.",
+  "schema_version": "1",
+  "preload_sessions": [
+    {
+      "session_id": "sess-c17-alice",
+      "subject_id": "alice-admin",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "roles": [
+        "operator",
+        "auditor"
+      ],
+      "owner_scope": "tenant:default",
+      "session_epoch": 1793793600,
+      "created_at": "2026-11-04T11:00:00Z",
+      "expires_at": "2026-11-04T15:00:00Z",
+      "status": "ACTIVE"
+    }
+  ],
+  "request": {
+    "request_id": "req-c17-pos-01",
+    "target_upstream_id": "service:analytics",
+    "method": "GET",
+    "path": "/api/v1/analytics/query",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "session_id": "sess-c17-alice",
+    "client_ip": "10.0.0.1",
+    "user_agent": "PolicyHelix-Client/1.0",
+    "untrusted_headers_stripped": true,
+    "resource_classification": "private",
+    "target_owner_scope": "tenant:default",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "forwarded_to_upstream": true,
+    "side_effects_executed": true,
+    "status_code": 200,
+    "upstream_id": "service:analytics",
+    "resolved_origin_url": "http://127.0.0.1:8088/api/v1/analytics/query"
+  }
+}

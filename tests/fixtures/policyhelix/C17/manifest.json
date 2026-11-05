@@ -1,0 +1,120 @@
+{
+  "commit_id": "C17",
+  "schema_version": "1",
+  "license": "Apache-2.0",
+  "description": "Synthetic licensed fixtures for PolicyHelix C17: protect one allowlisted upstream (Requirement F11).",
+  "fixtures": [
+    {
+      "fixture_id": "cli-proxy-clean",
+      "path": "tests/fixtures/policyhelix/C17/cli-proxy-clean.json",
+      "sha256": "a63f1a205690ff72747ced4e8aed4eb64a4da13d7228ee8b89b1a3ad1f1ac102",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "cli-proxy-rejected",
+      "path": "tests/fixtures/policyhelix/C17/cli-proxy-rejected.json",
+      "sha256": "c63ff13ab5799c0f5aae3be8f3311206db339e57387150aac6a97a91dbdf25f7",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-allowlisted-upstream-proxy",
+      "path": "tests/fixtures/policyhelix/C17/positive-allowlisted-upstream-proxy.json",
+      "sha256": "f2575c7ca4b7c0904946972349c78dd674ab61ff0f7175fcc5b9908a166bba1f",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-public-health-check",
+      "path": "tests/fixtures/policyhelix/C17/positive-public-health-check.json",
+      "sha256": "71622bf12dbcbc19881bdce483dade6afd9317720a14a0d44587dd0fdd53d078",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-arbitrary-upstream-url",
+      "path": "tests/fixtures/policyhelix/C17/negative-arbitrary-upstream-url.json",
+      "sha256": "b5fe4ca5b7d6e0f40e3088f7905053b36f9f0e4b0361ca31d3840453ffa35e19",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-unallowlisted-upstream-id",
+      "path": "tests/fixtures/policyhelix/C17/negative-unallowlisted-upstream-id.json",
+      "sha256": "e2cd0277116b2e4ea5ffc6cde65dd556efe8039c7d00218bacb12fa2710fd039",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-direct-origin-bypass",
+      "path": "tests/fixtures/policyhelix/C17/negative-direct-origin-bypass.json",
+      "sha256": "fe84de59ed0db18097ff8eebf50cac1317ba4c31598162a1fb85ebbfdc86a86e",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-host-header-override",
+      "path": "tests/fixtures/policyhelix/C17/negative-host-header-override.json",
+      "sha256": "a8ddd4ff5dcc40121b0e3f73d19fa0acae38b43111f30561c5c1d6edce13824a",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-unauthenticated-private-fail-closed",
+      "path": "tests/fixtures/policyhelix/C17/negative-unauthenticated-private-fail-closed.json",
+      "sha256": "b07605bf06ed1b10e67c91d1341f6712598bc297c1cd4f6094f8f3e68498d857",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-expired-session",
+      "path": "tests/fixtures/policyhelix/C17/negative-expired-session.json",
+      "sha256": "f94a5f0eebf8e2513ac366f948b2b38ec7ade5a71c5512db44dd1f2b4093f915",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-revoked-session",
+      "path": "tests/fixtures/policyhelix/C17/negative-revoked-session.json",
+      "sha256": "556a4af4cd477c84ca4e6b6b4f78084e2fbd39f08dcaf9eceae0655fe524ca79",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-replayed-superseded-session",
+      "path": "tests/fixtures/policyhelix/C17/negative-replayed-superseded-session.json",
+      "sha256": "d769c9a4626fdb55872bdbb1f49301e18bc6859747897b5678d802f8fc250e42",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-forged-header-unstripped",
+      "path": "tests/fixtures/policyhelix/C17/negative-forged-header-unstripped.json",
+      "sha256": "59669453cbe9ed11ba2c52b0c585c6e25ab7d736035b563f076996cb7a56a970",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-unrelated-owner-scope",
+      "path": "tests/fixtures/policyhelix/C17/negative-unrelated-owner-scope.json",
+      "sha256": "eb1f89e92b8a1327b4d1bfa5ce439570120fe0bf9f1d3342452047149ed962a4",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-widened-path-traversal",
+      "path": "tests/fixtures/policyhelix/C17/negative-widened-path-traversal.json",
+      "sha256": "154914c015f49951ed642b7ecb9558dca6f713169ddac8582f7eaf35f9598a8d",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-provider-unavailable",
+      "path": "tests/fixtures/policyhelix/C17/negative-provider-unavailable.json",
+      "sha256": "26e776122679c6fe5bb31cd22b123b6a2d19185bb97921c20c3795d85f66764d",
+      "type": "negative",
+      "license": "Apache-2.0"
+    }
+  ]
+}

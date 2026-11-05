@@ -1,0 +1,24 @@
+{
+  "fixture_id": "negative-direct-origin-bypass",
+  "commit_id": "C17",
+  "description": "Direct client origin access without gateway proof is denied with DIRECT_ORIGIN_BYPASS_DENIED.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c17-neg-03",
+    "target_upstream_id": "service:analytics",
+    "method": "GET",
+    "path": "/api/v1/analytics",
+    "direct_origin_access": true,
+    "gateway_origin_proof": "",
+    "untrusted_headers_stripped": true,
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "forwarded_to_upstream": false,
+    "side_effects_executed": false,
+    "status_code": 403,
+    "error_code": "DIRECT_ORIGIN_BYPASS_DENIED"
+  }
+}

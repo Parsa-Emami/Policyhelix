@@ -1,0 +1,27 @@
+{
+  "fixture_id": "positive-public-health-check",
+  "commit_id": "C17",
+  "description": "Unauthenticated public health check route forwards to allowlisted upstream.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c17-pos-02",
+    "target_upstream_id": "service:analytics",
+    "method": "GET",
+    "path": "/health",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "untrusted_headers_stripped": true,
+    "resource_classification": "public",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": true,
+    "allow": true,
+    "forwarded_to_upstream": true,
+    "side_effects_executed": true,
+    "status_code": 200,
+    "upstream_id": "service:analytics",
+    "resolved_origin_url": "http://127.0.0.1:8088/health"
+  }
+}

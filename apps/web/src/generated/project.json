@@ -215,7 +215,7 @@
       "id": "C17",
       "title": "feat(gateway): protect one allowlisted upstream",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Arbitrary upstream URLs cannot be selected; origin is reachable only by gateway."
       ],

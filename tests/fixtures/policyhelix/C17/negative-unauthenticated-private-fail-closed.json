@@ -1,0 +1,23 @@
+{
+  "fixture_id": "negative-unauthenticated-private-fail-closed",
+  "commit_id": "C17",
+  "description": "Unauthenticated request to private upstream fails closed with PRIVATE_RESOURCE_FAIL_CLOSED.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c17-neg-05",
+    "target_upstream_id": "service:analytics",
+    "method": "GET",
+    "path": "/api/v1/analytics",
+    "untrusted_headers_stripped": true,
+    "resource_classification": "private",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "forwarded_to_upstream": false,
+    "side_effects_executed": false,
+    "status_code": 403,
+    "error_code": "PRIVATE_RESOURCE_FAIL_CLOSED"
+  }
+}

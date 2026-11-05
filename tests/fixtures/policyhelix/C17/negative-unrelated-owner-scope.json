@@ -1,0 +1,40 @@
+{
+  "fixture_id": "negative-unrelated-owner-scope",
+  "commit_id": "C17",
+  "description": "Cross-tenant scope mismatch fails closed with UNRELATED_OWNER_SCOPE.",
+  "schema_version": "1",
+  "preload_sessions": [
+    {
+      "session_id": "sess-c17-tenant-mismatch",
+      "subject_id": "user-frank",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "roles": [
+        "operator"
+      ],
+      "owner_scope": "tenant-corp-b",
+      "session_epoch": 1793793600,
+      "created_at": "2026-11-04T11:00:00Z",
+      "expires_at": "2026-11-04T15:00:00Z",
+      "status": "ACTIVE"
+    }
+  ],
+  "request": {
+    "request_id": "req-c17-neg-10",
+    "target_upstream_id": "service:analytics",
+    "method": "GET",
+    "path": "/api/v1/analytics",
+    "session_id": "sess-c17-tenant-mismatch",
+    "untrusted_headers_stripped": true,
+    "resource_classification": "private",
+    "target_owner_scope": "tenant-corp-b",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "forwarded_to_upstream": false,
+    "side_effects_executed": false,
+    "status_code": 403,
+    "error_code": "UNRELATED_OWNER_SCOPE"
+  }
+}

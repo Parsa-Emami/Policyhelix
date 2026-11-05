@@ -1,0 +1,27 @@
+{
+  "fixture_id": "negative-arbitrary-upstream-url",
+  "commit_id": "C17",
+  "description": "Arbitrary external URL selection (SSRF attempt) is rejected with UPSTREAM_NOT_ALLOWLISTED.",
+  "schema_version": "1",
+  "request": {
+    "request_id": "req-c17-neg-01",
+    "target_upstream_id": "service:analytics",
+    "target_url": "http://169.254.169.254/latest/meta-data/",
+    "method": "GET",
+    "path": "/api/v1/analytics",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "session_id": "sess-c17-alice",
+    "untrusted_headers_stripped": true,
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "forwarded_to_upstream": false,
+    "side_effects_executed": false,
+    "status_code": 400,
+    "error_code": "UPSTREAM_NOT_ALLOWLISTED"
+  }
+}
