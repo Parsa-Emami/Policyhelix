@@ -338,3 +338,73 @@ func TestEngineEvaluateContractEndpoint(t *testing.T) {
 	close(stopCh)
 	<-serverDone
 }
+
+func TestEngineShadowEndpoints(t *testing.T) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("Failed to allocate port: %v", err)
+	}
+	port := listener.Addr().(*net.TCPAddr).Port
+	_ = listener.Close()
+
+	stopCh := make(chan struct{})
+	serverDone := make(chan error, 1)
+	go func() {
+		serverDone <- runServer("127.0.0.1", port, stopCh)
+	}()
+
+	client := &http.Client{Timeout: 2 * time.Second}
+	baseURL := fmt.Sprintf("http://127.0.0.1:%d", port)
+
+	for i := 0; i < 20; i++ {
+		resp, err := client.Get(baseURL + "/healthz")
+		if err == nil && resp.StatusCode == http.StatusOK {
+			_ = resp.Body.Close()
+			break
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	// 1. Evaluate shadow request via POST /api/v1/rollout/shadow/evaluate
+	evalPayload := `{
+		"request": {
+			"request_id": "req-main-test-01",
+			"path": "/api/v1/workloads/jobs",
+			"action": "read",
+			"subject": {
+				"id": "usr-op-01",
+				"issuer": "https://issuer.policyhelix.local",
+				"roles": ["operator"],
+				"authenticated": true
+			}
+		}
+	}`
+
+	resp, err := client.Post(baseURL+"/api/v1/rollout/shadow/evaluate", "application/json", strings.NewReader(evalPayload))
+	if err != nil || (resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusForbidden) {
+		t.Fatalf("POST /api/v1/rollout/shadow/evaluate failed: %v, status: %v", err, resp.Status)
+	}
+	_ = resp.Body.Close()
+
+	// 2. Query divergence via GET /api/v1/rollout/shadow/divergence
+	divResp, err := client.Get(baseURL + "/api/v1/rollout/shadow/divergence")
+	if err != nil || divResp.StatusCode != http.StatusOK {
+		t.Fatalf("GET /api/v1/rollout/shadow/divergence failed: %v, status: %v", err, divResp.Status)
+	}
+	var divData map[string]interface{}
+	_ = json.NewDecoder(divResp.Body).Decode(&divData)
+	_ = divResp.Body.Close()
+	if _, ok := divData["stats"]; !ok {
+		t.Errorf("expected stats field in divergence response: %+v", divData)
+	}
+
+	// 3. Clear divergence store via POST /api/v1/rollout/shadow/divergence?clear=true
+	clearResp, err := client.Post(baseURL+"/api/v1/rollout/shadow/divergence?clear=true", "application/json", nil)
+	if err != nil || clearResp.StatusCode != http.StatusOK {
+		t.Fatalf("POST clear failed: %v, status: %v", err, clearResp.Status)
+	}
+	_ = clearResp.Body.Close()
+
+	close(stopCh)
+	<-serverDone
+}

@@ -1,0 +1,139 @@
+{
+  "schema_version": 1,
+  "commit_id": "C23",
+  "project": "PolicyHelix",
+  "date": "2026-11-06",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix local-first rollout engine: test candidate policies in shadow mode (Requirement F17)",
+  "source_identity": "sha256:dfcb4396b9f88570a26af064f0a22ec1f1e33a31fc3c211d3ea7d1782e32f4fa",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml; local run used Go 1.26.2 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "development host verified against C23 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C23/positive-shadow-allow-to-deny.json",
+      "sha256": "c7d938b0d24182e5fbb3e82b0627b35839b310f7a5e13317489a5d8c7b9809c9",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C23 shadow allow-to-deny divergence with enforced allow non-interference"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C23/positive-shadow-deny-to-allow.json",
+      "sha256": "0f4286bf35fd3887360d6d156141b24c9cdf2179f9a98f9721c50b4287fa245c",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C23 shadow deny-to-allow divergence with enforced deny non-interference"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C23/positive-shadow-unchanged-allow.json",
+      "sha256": "89695fdb154e7d41f22aade81f49f448c93ea25cffe05c781bada4c0be59e03c",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C23 shadow unchanged allow decision"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C23/positive-shadow-resilience-panic.json",
+      "sha256": "a26e863be1c1c93c9fdd1235d54fb21be4d27d5286bf48eb8ce3012895c3cac3",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C23 candidate evaluation panic isolation and recovery"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C23/positive-shadow-restart-invariant.json",
+      "sha256": "5fb38956ddf550fae48bf25ed22bd1ba6f050f201eb6545e099bf67b0a9a751d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C23 restart invariance and deterministic subject pseudonymization"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C23/negative-private-resource-fail-closed.json",
+      "sha256": "ef0efec51ef3869ac04fca25e79dd812f48315729e0eab877da4969ac53b268b",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C23 private resource unauthenticated fail-closed semantics"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C23/negative-provider-unavailable.json",
+      "sha256": "f8db741508a8d5a26137add2dad0c38145f62516d585daba013a52d7564c9423",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C23 unavailable provider explicit 503 error"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C23/negative-malformed-request.json",
+      "sha256": "0bc1607e4dbdcb72ee1bd358d404885d50f0ff54a293ee40ff5eaf777e1e7897",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C23 malformed request explicit 400 error"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "go test -v -run TestC23 ./tests",
+      "exit_code": 0,
+      "output": "PASS: TestC23_ManifestIntegrity, TestC23_Acceptance_EnforcedResultNeverChanged, TestC23_DivergenceAuditing_ZeroTokenLeaks, TestC23_ShadowResilience_PanicAndTimeout, TestC23_Negative_MissingPrerequisitesAndMalformed, TestC23_Negative_ProviderUnavailable, TestC23_Negative_PrivateResourcesFailClosed, TestC23_RestartInvariance, TestC23_CLIExecution, TestC23_ObligationParameterDivergence, TestC23_ConcurrentStressDivergenceStore, TestC23_HTTPEndpoints"
+    },
+    {
+      "command": "go test ./...",
+      "exit_code": 0,
+      "output": "ok cmd/policyhelix, internal/contracts, internal/policy, internal/storage, tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "16 passed, 0 failed"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED: Checked 313 JSON files and repository contract invariants."
+    }
+  ],
+  "results": [
+    "Requirement F17 fully implemented: Shadow decision never changes enforced result and divergence is auditable.",
+    "Thread-safe shadow evaluation engine implemented in internal/rollout/shadow.go with bounded MemoryDivergenceStore.",
+    "Strict non-interference verified: authoritative decision (allow, status code, obligations) is 100% governed by enforced policy under all conditions including candidate denials, candidate permits, candidate panics, and candidate timeouts.",
+    "Resilient candidate isolation verified: candidate evaluation panics, timeout bounds, and syntax faults are safely trapped and recorded as SHADOW_ERROR without impacting the enforced authorization decision.",
+    "GDPR-aligned zero-token auditing verified: divergence records contain deterministic HMAC-SHA256 subject pseudonyms and fully redacted credentials; no Bearer tokens, raw JWTs, or session cookies appear in serialized records.",
+    "Private resources fail closed: unauthenticated requests to private resources strictly fail closed (403 Forbidden) on enforced evaluation regardless of candidate policy.",
+    "Explicit negative error semantics verified: missing required prerequisites return HTTP 400 MALFORMED_REQUEST; unavailable providers return HTTP 503 PROVIDER_UNAVAILABLE.",
+    "Restart invariance verified: divergence store state exports and imports with 100% fidelity across engine restarts preserving records, order, and aggregate metrics.",
+    "CLI -evaluate-shadow flag and live HTTP endpoints (/api/v1/rollout/shadow/evaluate, /v1/runtime/rollout/shadow, /api/v1/rollout/shadow/divergence) registered in cmd/policyhelix/main.go and proxied through Node supervisor (scripts/serve-web.mjs).",
+    "Eight Apache-2.0 synthetic fixtures cataloged with SHA-256 digests in tests/fixtures/policyhelix/C23/manifest.json.",
+    "Automated regression test coverage established in tests/shadow_test.go covering manifest integrity, acceptance non-interference, credential redaction, panic isolation, fail-closed semantics, CLI execution, and HTTP endpoints."
+  ],
+  "observed_limitations": [
+    "Decision cache binding on subject, action, context, and revision is scheduled for downstream task C24 (feat(gateway): bind cache on subject, action, context and revision)."
+  ],
+  "rollback_or_recovery_observation": "Revert internal/rollout/shadow.go, tests/shadow_test.go, tests/fixtures/policyhelix/C23/, cmd/policyhelix/main.go rollout additions, scripts/serve-web.mjs rollout proxy additions, and docs/evidence/C23.json. Existing C01-C22 components remain intact."
+}

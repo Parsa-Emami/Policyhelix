@@ -1,0 +1,64 @@
+{
+  "commit_id": "C23",
+  "schema_version": "1",
+  "license": "Apache-2.0",
+  "description": "Synthetic licensed fixtures for PolicyHelix C23: test candidate policies in shadow mode (Requirement F17).",
+  "fixtures": [
+    {
+      "fixture_id": "positive-shadow-allow-to-deny",
+      "path": "tests/fixtures/policyhelix/C23/positive-shadow-allow-to-deny.json",
+      "sha256": "c7d938b0d24182e5fbb3e82b0627b35839b310f7a5e13317489a5d8c7b9809c9",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-shadow-deny-to-allow",
+      "path": "tests/fixtures/policyhelix/C23/positive-shadow-deny-to-allow.json",
+      "sha256": "0f4286bf35fd3887360d6d156141b24c9cdf2179f9a98f9721c50b4287fa245c",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-shadow-unchanged-allow",
+      "path": "tests/fixtures/policyhelix/C23/positive-shadow-unchanged-allow.json",
+      "sha256": "89695fdb154e7d41f22aade81f49f448c93ea25cffe05c781bada4c0be59e03c",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-shadow-resilience-panic",
+      "path": "tests/fixtures/policyhelix/C23/positive-shadow-resilience-panic.json",
+      "sha256": "a26e863be1c1c93c9fdd1235d54fb21be4d27d5286bf48eb8ce3012895c3cac3",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-shadow-restart-invariant",
+      "path": "tests/fixtures/policyhelix/C23/positive-shadow-restart-invariant.json",
+      "sha256": "5fb38956ddf550fae48bf25ed22bd1ba6f050f201eb6545e099bf67b0a9a751d",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-private-resource-fail-closed",
+      "path": "tests/fixtures/policyhelix/C23/negative-private-resource-fail-closed.json",
+      "sha256": "ef0efec51ef3869ac04fca25e79dd812f48315729e0eab877da4969ac53b268b",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-provider-unavailable",
+      "path": "tests/fixtures/policyhelix/C23/negative-provider-unavailable.json",
+      "sha256": "f8db741508a8d5a26137add2dad0c38145f62516d585daba013a52d7564c9423",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-malformed-request",
+      "path": "tests/fixtures/policyhelix/C23/negative-malformed-request.json",
+      "sha256": "0bc1607e4dbdcb72ee1bd358d404885d50f0ff54a293ee40ff5eaf777e1e7897",
+      "type": "negative",
+      "license": "Apache-2.0"
+    }
+  ]
+}

@@ -124,6 +124,50 @@ export function createWebServer({ root, config, projectId, engineUrl }) {
         return;
       }
     }
+    if (path === '/api/v1/rollout/shadow/evaluate' && engineUrl) {
+      if (req.method !== 'POST') {
+        res.setHeader('Allow', 'POST');
+        send(405, '{"error":"method_not_allowed"}');
+        return;
+      }
+      try {
+        const chunks = [];
+        for await (const chunk of req) chunks.push(chunk);
+        const reqBody = Buffer.concat(chunks);
+        const upstream = await fetch(`${engineUrl}/api/v1/rollout/shadow/evaluate`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: reqBody,
+          signal: AbortSignal.timeout(5000),
+        });
+        const bodyText = await upstream.text();
+        send(upstream.status, bodyText);
+        return;
+      } catch {
+        send(503, '{"error":"engine_unavailable"}');
+        return;
+      }
+    }
+    if (path === '/api/v1/rollout/shadow/divergence' && engineUrl) {
+      if (!['GET', 'POST'].includes(req.method ?? '')) {
+        res.setHeader('Allow', 'GET, POST');
+        send(405, '{"error":"method_not_allowed"}');
+        return;
+      }
+      try {
+        const search = (req.url ?? '').includes('?') ? (req.url ?? '').slice((req.url ?? '').indexOf('?')) : '';
+        const upstream = await fetch(`${engineUrl}/api/v1/rollout/shadow/divergence${search}`, {
+          method: req.method,
+          signal: AbortSignal.timeout(5000),
+        });
+        const bodyText = await upstream.text();
+        send(upstream.status, bodyText);
+        return;
+      } catch {
+        send(503, '{"error":"engine_unavailable"}');
+        return;
+      }
+    }
     if (!['GET', 'HEAD'].includes(req.method ?? '')) { res.setHeader('Allow', 'GET, HEAD'); send(405, '{"error":"method_not_allowed"}'); return; }
     if (path === '/healthz') { send(200, '{"status":"ok","scope":"web-shell"}'); return; }
     if (path === '/readyz') {

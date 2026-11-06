@@ -21,8 +21,11 @@ import (
 	"github.com/parsa-emami/policyhelix/internal/contracts"
 	"github.com/parsa-emami/policyhelix/internal/gateway"
 	"github.com/parsa-emami/policyhelix/internal/policy"
+	"github.com/parsa-emami/policyhelix/internal/rollout"
 	"github.com/parsa-emami/policyhelix/internal/storage"
 )
+
+var defaultShadowEngine = rollout.NewShadowEngine(nil, nil, nil)
 
 const (
 	EngineName    = "policyhelix-engine"
@@ -835,6 +838,120 @@ func setupRouter() *http.ServeMux {
 	mux.HandleFunc("/api/v1/audit/log-decision", handleAuditDecision)
 	mux.HandleFunc("/v1/runtime/audit/decision", handleAuditDecision)
 
+	handleShadowEvaluate := func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", "POST")
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{"error": "method_not_allowed"})
+			return
+		}
+
+		body, err := io.ReadAll(io.LimitReader(r.Body, 131072))
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{"error": "failed_to_read_body"})
+			return
+		}
+
+		type shadowEnvelope struct {
+			TrustedIssuers []string                  `json:"trusted_issuers,omitempty"`
+			TrustedSigners []string                  `json:"trusted_signers,omitempty"`
+			Request        rollout.ShadowEvalRequest `json:"request"`
+		}
+
+		var req rollout.ShadowEvalRequest
+		var env shadowEnvelope
+		var issuers []string
+		var signers []string
+
+		if err := json.Unmarshal(body, &env); err == nil && (env.Request.Path != "" || env.Request.Action != "" || env.Request.ProviderUnavailable) {
+			req = env.Request
+			issuers = env.TrustedIssuers
+			signers = env.TrustedSigners
+		} else {
+			if err := json.Unmarshal(body, &req); err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_ = json.NewEncoder(w).Encode(map[string]interface{}{
+					"error":   "malformed_request",
+					"message": fmt.Sprintf("invalid JSON payload: %v", err),
+				})
+				return
+			}
+		}
+
+		engine := defaultShadowEngine
+		if len(issuers) > 0 || len(signers) > 0 {
+			enfEval := policy.NewBundleEvaluator(issuers, signers)
+			candEval := policy.NewBundleEvaluator(issuers, signers)
+			engine = rollout.NewShadowEngine(enfEval, candEval, defaultShadowEngine.GetStore())
+		}
+
+		res, rErr := engine.Evaluate(r.Context(), req)
+		status := http.StatusOK
+		if res != nil && res.StatusCode > 0 {
+			status = res.StatusCode
+		} else if rErr != nil {
+			var roErr *rollout.RolloutError
+			if errors.As(rErr, &roErr) && roErr.StatusCode > 0 {
+				status = roErr.StatusCode
+			} else {
+				status = http.StatusBadRequest
+			}
+		}
+
+		w.WriteHeader(status)
+		if res != nil {
+			_ = json.NewEncoder(w).Encode(res)
+		} else {
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"error":   "evaluation_failed",
+				"message": rErr.Error(),
+			})
+		}
+	}
+
+	handleShadowDivergence := func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if r.Method == http.MethodPost && r.URL.Query().Get("clear") == "true" {
+			defaultShadowEngine.GetStore().Clear()
+			w.WriteHeader(http.StatusOK)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{"status": "cleared"})
+			return
+		}
+
+		if r.Method != http.MethodGet {
+			w.Header().Set("Allow", "GET")
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{"error": "method_not_allowed"})
+			return
+		}
+
+		filter := rollout.DivergenceFilter{}
+		q := r.URL.Query()
+		if q.Get("diverged_only") == "true" || q.Get("diverged_only") == "1" {
+			filter.DivergedOnly = true
+		}
+		if t := q.Get("type"); t != "" {
+			filter.DivergenceType = rollout.DivergenceType(t)
+		}
+
+		store := defaultShadowEngine.GetStore()
+		records := store.GetRecords(filter)
+		stats := store.GetStats()
+
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(map[string]interface{}{
+			"stats":   stats,
+			"records": records,
+			"count":   len(records),
+		})
+	}
+
+	mux.HandleFunc("/api/v1/rollout/shadow/evaluate", handleShadowEvaluate)
+	mux.HandleFunc("/v1/runtime/rollout/shadow", handleShadowEvaluate)
+	mux.HandleFunc("/api/v1/rollout/shadow/divergence", handleShadowDivergence)
+
 	return mux
 }
 
@@ -925,6 +1042,7 @@ func main() {
 	enforceObligationsFlag := flag.String("enforce-obligations", "", "Path to C18 obligation enforcement fixture JSON")
 	evaluateFailureFlag := flag.String("evaluate-failure", "", "Path to C19 resource outage fixture JSON")
 	auditDecisionFlag := flag.String("audit-decision", "", "Path to C20 decision audit fixture JSON to evaluate and log")
+	evaluateShadowFlag := flag.String("evaluate-shadow", "", "Path to C23 shadow evaluation fixture JSON")
 	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	flag.Parse()
@@ -1475,6 +1593,101 @@ func main() {
 		}
 		_ = json.NewEncoder(os.Stdout).Encode(report)
 		if !report.Valid || !report.Allow {
+			os.Exit(1)
+		}
+		return
+	}
+
+	if *evaluateShadowFlag != "" {
+		raw, err := os.ReadFile(*evaluateShadowFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Shadow fixture read error: %v\n", err)
+			os.Exit(1)
+		}
+
+		type cliShadowExpected struct {
+			Allow          *bool                  `json:"allow,omitempty"`
+			StatusCode     int                    `json:"status_code,omitempty"`
+			EnforcedAllow  *bool                  `json:"enforced_allow,omitempty"`
+			CandidateAllow *bool                  `json:"candidate_allow,omitempty"`
+			Diverged       *bool                  `json:"diverged,omitempty"`
+			DivergenceType rollout.DivergenceType `json:"divergence_type,omitempty"`
+			ErrorCode      string                 `json:"error_code,omitempty"`
+		}
+
+		type cliShadowEnvelope struct {
+			TrustedIssuers []string                  `json:"trusted_issuers,omitempty"`
+			TrustedSigners []string                  `json:"trusted_signers,omitempty"`
+			Request        rollout.ShadowEvalRequest `json:"request"`
+			Expected       *cliShadowExpected        `json:"expected,omitempty"`
+		}
+
+		var req rollout.ShadowEvalRequest
+		var env cliShadowEnvelope
+		var issuers []string
+		var signers []string
+
+		if err := json.Unmarshal(raw, &env); err == nil && (env.Request.Path != "" || env.Request.Action != "" || env.Request.ProviderUnavailable) {
+			req = env.Request
+			issuers = env.TrustedIssuers
+			signers = env.TrustedSigners
+		} else {
+			if err := json.Unmarshal(raw, &req); err != nil {
+				fmt.Fprintf(os.Stderr, "Shadow fixture JSON error: %v\n", err)
+				os.Exit(1)
+			}
+		}
+
+		if len(issuers) == 0 {
+			issuers = []string{"https://issuer.policyhelix.local", "https://auth.policyhelix.local"}
+		}
+		if len(signers) == 0 {
+			signers = []string{"ed25519-primary-2026", "ed25519-staging-2026"}
+		}
+
+		enfEval := policy.NewBundleEvaluator(issuers, signers)
+		candEval := policy.NewBundleEvaluator(issuers, signers)
+		engine := rollout.NewShadowEngine(enfEval, candEval, nil)
+
+		res, err := engine.Evaluate(context.Background(), req)
+		if err != nil && res == nil {
+			fmt.Fprintf(os.Stderr, "Shadow evaluation error: %v\n", err)
+			os.Exit(1)
+		}
+
+		_ = json.NewEncoder(os.Stdout).Encode(res)
+
+		if env.Expected != nil {
+			// Negative fixture expecting an explicit error code must return non-zero exit code
+			if env.Expected.ErrorCode != "" {
+				os.Exit(1)
+			}
+			// Positive fixture: verify that actual result strictly matches declared expected values
+			if env.Expected.Allow != nil && res.Allow != *env.Expected.Allow {
+				os.Exit(1)
+			}
+			if env.Expected.StatusCode > 0 && res.StatusCode != env.Expected.StatusCode {
+				os.Exit(1)
+			}
+			if env.Expected.EnforcedAllow != nil && res.EnforcedDecision.Allow != *env.Expected.EnforcedAllow {
+				os.Exit(1)
+			}
+			if env.Expected.CandidateAllow != nil && (res.CandidateDecision == nil || res.CandidateDecision.Allow != *env.Expected.CandidateAllow) {
+				os.Exit(1)
+			}
+			if env.Expected.Diverged != nil && res.Diverged != *env.Expected.Diverged {
+				os.Exit(1)
+			}
+			if env.Expected.DivergenceType != "" && res.DivergenceType != env.Expected.DivergenceType {
+				os.Exit(1)
+			}
+			if err != nil {
+				os.Exit(1)
+			}
+			return
+		}
+
+		if err != nil || res.StatusCode >= 400 || !res.Allow {
 			os.Exit(1)
 		}
 		return

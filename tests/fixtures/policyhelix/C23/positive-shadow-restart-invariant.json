@@ -1,0 +1,133 @@
+{
+  "schema_version": "1",
+  "fixture_id": "positive-shadow-restart-invariant",
+  "commit_id": "C23",
+  "description": "Repeated shadow evaluation across engine restarts produces identical deterministic subject pseudonyms and zero token exposure.",
+  "license": "Apache-2.0",
+  "trusted_issuers": [
+    "https://issuer.policyhelix.local"
+  ],
+  "trusted_signers": [
+    "ed25519-primary-2026"
+  ],
+  "request": {
+    "request_id": "req-c23-shadow-05",
+    "path": "/api/v1/workloads/jobs",
+    "action": "read",
+    "subject": {
+      "id": "usr-operator-persisted",
+      "issuer": "https://issuer.policyhelix.local",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 1793793000
+    },
+    "resource_id": "job-worker-105",
+    "resource_classification": "private",
+    "headers": {
+      "Authorization": "Bearer restartedSessionBearerTokenC23",
+      "Cookie": "policyhelix_session=restartedSessionCookieValueC23"
+    },
+    "deadline_ms": 200,
+    "eval_time": "2026-11-06T12:00:00Z",
+    "enforced_bundle": {
+      "schema_version": "1",
+      "bundle_id": "bundle-workloads-enf-v10",
+      "package": "policyhelix.authz",
+      "issuer": "https://issuer.policyhelix.local",
+      "signer_key_id": "ed25519-primary-2026",
+      "signature": "ed25519:7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a",
+      "signature_verified": true,
+      "revision": 10,
+      "issued_at": "2026-11-06T00:00:00Z",
+      "expires_at": "2026-11-07T00:00:00Z",
+      "digest": "sha256:5e08449017a14e9061dd5f6658cab2db23d75704b711f9c7e1eacc5d0657661d",
+      "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+      "routes": [
+        {
+          "pattern": "/api/v1/workloads/jobs",
+          "action": "read",
+          "classification": "private",
+          "allow_unauthenticated": false,
+          "required_roles": [
+            "operator",
+            "admin"
+          ],
+          "description": "Route rule for /api/v1/workloads/jobs (rev 10)"
+        }
+      ],
+      "rules": [
+        {
+          "id": "rule-api-v1-workloads-jobs-10",
+          "effect": "allow",
+          "path_pattern": "/api/v1/workloads/jobs",
+          "actions": [
+            "read"
+          ],
+          "roles": [
+            "operator",
+            "admin"
+          ],
+          "resource_class": "private",
+          "reason_code": "policy_allow_operator",
+          "reason_message": "Operator allowed in enforced policy revision 10"
+        }
+      ]
+    },
+    "candidate_bundle": {
+      "schema_version": "1",
+      "bundle_id": "bundle-workloads-cand-v14",
+      "package": "policyhelix.authz",
+      "issuer": "https://issuer.policyhelix.local",
+      "signer_key_id": "ed25519-primary-2026",
+      "signature": "ed25519:7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a",
+      "signature_verified": true,
+      "revision": 14,
+      "issued_at": "2026-11-06T00:00:00Z",
+      "expires_at": "2026-11-07T00:00:00Z",
+      "digest": "sha256:91509b5bffcbe7ad05b1b80b82290028572ec4da7998ebca1215cf132b9ef4e0",
+      "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+      "routes": [
+        {
+          "pattern": "/api/v1/workloads/jobs",
+          "action": "read",
+          "classification": "private",
+          "allow_unauthenticated": false,
+          "required_roles": [
+            "operator",
+            "admin"
+          ],
+          "description": "Route rule for /api/v1/workloads/jobs (rev 14)"
+        }
+      ],
+      "rules": [
+        {
+          "id": "rule-api-v1-workloads-jobs-14",
+          "effect": "allow",
+          "path_pattern": "/api/v1/workloads/jobs",
+          "actions": [
+            "read"
+          ],
+          "roles": [
+            "operator",
+            "admin"
+          ],
+          "resource_class": "private",
+          "reason_code": "policy_allow_operator",
+          "reason_message": "Operator allowed in candidate revision 14"
+        }
+      ]
+    },
+    "pseudonym_salt": "policyhelix-test-salt-c23"
+  },
+  "expected": {
+    "allow": true,
+    "status_code": 200,
+    "enforced_allow": true,
+    "candidate_allow": true,
+    "diverged": false,
+    "divergence_type": "NONE",
+    "subject_pseudonym": "pseudo:sha256:553bbf7c42c884665d0b2e0e8b680c78c48861e35cdbce472b110d2927d245bb"
+  }
+}

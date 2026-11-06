@@ -1,0 +1,129 @@
+{
+  "schema_version": "1",
+  "fixture_id": "positive-shadow-deny-to-allow",
+  "commit_id": "C23",
+  "description": "Enforced policy requires admin; candidate policy permits operator. Authoritative result remains allow=false (enforced wins), candidate divergence deny_to_allow is recorded.",
+  "license": "Apache-2.0",
+  "trusted_issuers": [
+    "https://issuer.policyhelix.local"
+  ],
+  "trusted_signers": [
+    "ed25519-primary-2026"
+  ],
+  "request": {
+    "request_id": "req-c23-shadow-02",
+    "path": "/api/v1/workloads/jobs",
+    "action": "read",
+    "subject": {
+      "id": "usr-operator-02",
+      "issuer": "https://issuer.policyhelix.local",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 1793793000
+    },
+    "resource_id": "job-worker-102",
+    "resource_classification": "restricted",
+    "headers": {
+      "Authorization": "Bearer eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJ1c3Itb3BlcmF0b3ItMDIifQ.sigShadow02",
+      "Cookie": "policyhelix_session=shadowCookieToken02"
+    },
+    "deadline_ms": 200,
+    "eval_time": "2026-11-06T12:00:00Z",
+    "enforced_bundle": {
+      "schema_version": "1",
+      "bundle_id": "bundle-workloads-enf-v12",
+      "package": "policyhelix.authz",
+      "issuer": "https://issuer.policyhelix.local",
+      "signer_key_id": "ed25519-primary-2026",
+      "signature": "ed25519:7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a",
+      "signature_verified": true,
+      "revision": 12,
+      "issued_at": "2026-11-06T00:00:00Z",
+      "expires_at": "2026-11-07T00:00:00Z",
+      "digest": "sha256:11bca5d1206fe8aaa3c1d4f6a801d8ba5d2ccaca91c90bcbe7d2f811bef32e0a",
+      "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+      "routes": [
+        {
+          "pattern": "/api/v1/workloads/jobs",
+          "action": "read",
+          "classification": "restricted",
+          "allow_unauthenticated": false,
+          "required_roles": [
+            "admin"
+          ],
+          "description": "Route rule for /api/v1/workloads/jobs (rev 12)"
+        }
+      ],
+      "rules": [
+        {
+          "id": "rule-api-v1-workloads-jobs-12",
+          "effect": "allow",
+          "path_pattern": "/api/v1/workloads/jobs",
+          "actions": [
+            "read"
+          ],
+          "roles": [
+            "admin"
+          ],
+          "resource_class": "restricted",
+          "reason_code": "policy_allow_admin_only",
+          "reason_message": "Admin strictly allowed in enforced revision 12"
+        }
+      ]
+    },
+    "candidate_bundle": {
+      "schema_version": "1",
+      "bundle_id": "bundle-workloads-cand-v13",
+      "package": "policyhelix.authz",
+      "issuer": "https://issuer.policyhelix.local",
+      "signer_key_id": "ed25519-primary-2026",
+      "signature": "ed25519:7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a",
+      "signature_verified": true,
+      "revision": 13,
+      "issued_at": "2026-11-06T00:00:00Z",
+      "expires_at": "2026-11-07T00:00:00Z",
+      "digest": "sha256:2748e99d437fa1c2f7f3f8caa9a070ff89ca7b47c053c08ff5aefcdcb692131c",
+      "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+      "routes": [
+        {
+          "pattern": "/api/v1/workloads/jobs",
+          "action": "read",
+          "classification": "private",
+          "allow_unauthenticated": false,
+          "required_roles": [
+            "operator",
+            "admin"
+          ],
+          "description": "Route rule for /api/v1/workloads/jobs (rev 13)"
+        }
+      ],
+      "rules": [
+        {
+          "id": "rule-api-v1-workloads-jobs-13",
+          "effect": "allow",
+          "path_pattern": "/api/v1/workloads/jobs",
+          "actions": [
+            "read"
+          ],
+          "roles": [
+            "operator",
+            "admin"
+          ],
+          "resource_class": "private",
+          "reason_code": "policy_allow_operator",
+          "reason_message": "Operator allowed in candidate revision 13"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "allow": false,
+    "status_code": 403,
+    "enforced_allow": false,
+    "candidate_allow": true,
+    "diverged": true,
+    "divergence_type": "OUTCOME_DIVERGENCE_DENY_TO_ALLOW"
+  }
+}

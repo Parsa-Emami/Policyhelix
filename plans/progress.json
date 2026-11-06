@@ -204,10 +204,12 @@
     },
     {
       "id": "C23",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C23.json"
+      ],
+      "source_identity": "sha256:dfcb4396b9f88570a26af064f0a22ec1f1e33a31fc3c211d3ea7d1782e32f4fa",
+      "notes": "Candidate policy shadow execution and auditable divergence tracking implemented in internal/rollout/shadow.go and tests/shadow_test.go; F17 shadow decision never changes enforced result and divergence is auditable verified."
     },
     {
       "id": "C24",

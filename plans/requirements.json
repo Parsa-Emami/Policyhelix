@@ -206,7 +206,7 @@
       "mandatory": true,
       "planned_commit": "C23",
       "evidence_path": "docs/evidence/C23.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "F18",

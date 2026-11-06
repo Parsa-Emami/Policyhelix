@@ -1,0 +1,124 @@
+{
+  "schema_version": "1",
+  "fixture_id": "negative-private-resource-fail-closed",
+  "commit_id": "C23",
+  "description": "Unauthenticated access to a private resource fails closed on enforced evaluation (allow=false, 403 Forbidden) regardless of candidate policy.",
+  "license": "Apache-2.0",
+  "trusted_issuers": [
+    "https://issuer.policyhelix.local"
+  ],
+  "trusted_signers": [
+    "ed25519-primary-2026"
+  ],
+  "request": {
+    "request_id": "req-c23-shadow-06",
+    "path": "/api/v1/secure/vault",
+    "action": "read",
+    "subject": {
+      "id": "",
+      "issuer": "",
+      "roles": null,
+      "authenticated": false,
+      "session_epoch": 0
+    },
+    "resource_id": "vault-secrets-01",
+    "resource_classification": "private",
+    "deadline_ms": 200,
+    "eval_time": "2026-11-06T12:00:00Z",
+    "enforced_bundle": {
+      "schema_version": "1",
+      "bundle_id": "bundle-vault-v15",
+      "package": "policyhelix.authz",
+      "issuer": "https://issuer.policyhelix.local",
+      "signer_key_id": "ed25519-primary-2026",
+      "signature": "ed25519:7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a",
+      "signature_verified": true,
+      "revision": 15,
+      "issued_at": "2026-11-06T00:00:00Z",
+      "expires_at": "2026-11-07T00:00:00Z",
+      "digest": "sha256:8f3a457cbc00b2d82c3e28650bb71589a809e0cde4a21f10b8cb71b28d31d3fb",
+      "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+      "routes": [
+        {
+          "pattern": "/api/v1/secure/vault",
+          "action": "read",
+          "classification": "private",
+          "allow_unauthenticated": false,
+          "required_roles": [
+            "admin"
+          ],
+          "description": "Route rule for /api/v1/secure/vault (rev 15)"
+        }
+      ],
+      "rules": [
+        {
+          "id": "rule-api-v1-secure-vault-15",
+          "effect": "allow",
+          "path_pattern": "/api/v1/secure/vault",
+          "actions": [
+            "read"
+          ],
+          "roles": [
+            "admin"
+          ],
+          "resource_class": "private",
+          "reason_code": "policy_allow_vault_admin",
+          "reason_message": "Vault access restricted to admin"
+        }
+      ]
+    },
+    "candidate_bundle": {
+      "schema_version": "1",
+      "bundle_id": "bundle-vault-cand-v16",
+      "package": "policyhelix.authz",
+      "issuer": "https://issuer.policyhelix.local",
+      "signer_key_id": "ed25519-primary-2026",
+      "signature": "ed25519:7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a",
+      "signature_verified": true,
+      "revision": 16,
+      "issued_at": "2026-11-06T00:00:00Z",
+      "expires_at": "2026-11-07T00:00:00Z",
+      "digest": "sha256:e8bdb220a0c1454bc96b3a0b82ca75724726b7495efea2129539da95fc513557",
+      "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+      "routes": [
+        {
+          "pattern": "/api/v1/secure/vault",
+          "action": "read",
+          "classification": "private",
+          "allow_unauthenticated": false,
+          "required_roles": [
+            "operator",
+            "admin"
+          ],
+          "description": "Route rule for /api/v1/secure/vault (rev 16)"
+        }
+      ],
+      "rules": [
+        {
+          "id": "rule-api-v1-secure-vault-16",
+          "effect": "allow",
+          "path_pattern": "/api/v1/secure/vault",
+          "actions": [
+            "read"
+          ],
+          "roles": [
+            "operator",
+            "admin"
+          ],
+          "resource_class": "private",
+          "reason_code": "policy_allow_vault_candidate",
+          "reason_message": "Candidate attempts vault permit"
+        }
+      ]
+    }
+  },
+  "expected": {
+    "allow": false,
+    "status_code": 403,
+    "enforced_allow": false,
+    "candidate_allow": false,
+    "diverged": false,
+    "divergence_type": "NONE",
+    "error_code": "PRIVATE_RESOURCE_FAIL_CLOSED"
+  }
+}
