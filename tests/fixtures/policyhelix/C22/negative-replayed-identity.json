@@ -1,0 +1,15 @@
+{
+  "schema_version": "1",
+  "fixture_id": "C22-NEG-01",
+  "commit_id": "C22",
+  "description": "Replayed and expired session identity fails validation before sensitive side effects can be executed.",
+  "session_id": "sess-c22-replayed-99",
+  "status": "EXPIRED_OR_REPLAYED",
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "side_effects_executed": false,
+    "error_code": "ERR_IDENTITY_REPLAYED",
+    "zero_token_exposure": true
+  }
+}

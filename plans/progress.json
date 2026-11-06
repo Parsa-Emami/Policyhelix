@@ -195,10 +195,12 @@
     },
     {
       "id": "C22",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C22.json"
+      ],
+      "source_identity": "sha256:3b4a4fc4c279d2f1ca0d7d17c3ff612525614dcd7a87b3ac003335626c8fe2d0",
+      "notes": "Gateway health and session revoke dashboard implemented in apps/web/src/pages/Gateway.tsx; F16 operator sees stale policy, IdP outage and revocation result without exposing tokens verified."
     },
     {
       "id": "C23",

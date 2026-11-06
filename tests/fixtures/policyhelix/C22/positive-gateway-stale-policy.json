@@ -1,0 +1,27 @@
+{
+  "schema_version": "1",
+  "fixture_id": "C22-POS-01",
+  "commit_id": "C22",
+  "description": "Operator views gateway health: active policy revision has exceeded the configured 30s freshness window, resulting in a prominent STALE POLICY warning and deny on stale execution.",
+  "policy": {
+    "active_revision": 1,
+    "digest": "sha256:1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff",
+    "stale": true,
+    "stale_seconds": 45,
+    "freshness_window_seconds": 30
+  },
+  "idp": {
+    "status": "healthy",
+    "issuer": "https://auth.policyhelix.local/realms/policyhelix"
+  },
+  "revocation": {
+    "max_stale_seconds": 30,
+    "enforced": true
+  },
+  "expected": {
+    "stale": true,
+    "allow": false,
+    "reason_code": "ERR_STALE_POLICY_WINDOW_EXCEEDED",
+    "zero_token_exposure": true
+  }
+}

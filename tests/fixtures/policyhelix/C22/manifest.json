@@ -1,0 +1,57 @@
+{
+  "commit_id": "C22",
+  "schema_version": "1",
+  "license": "Apache-2.0",
+  "description": "Synthetic licensed fixtures for PolicyHelix C22: expose gateway health and session revoke (Requirement F16).",
+  "fixtures": [
+    {
+      "fixture_id": "negative-forged-header",
+      "path": "tests/fixtures/policyhelix/C22/negative-forged-header.json",
+      "sha256": "2457149df4761b7d9cbcfe0571f83ea6fc4b33089c609f4fffbe358520305aef",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-private-resource-fail-closed",
+      "path": "tests/fixtures/policyhelix/C22/negative-private-resource-fail-closed.json",
+      "sha256": "9ca9195d6f94d8f34407767d74b0439c14c1fe23058050cceedf25c67529db2b",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-replayed-identity",
+      "path": "tests/fixtures/policyhelix/C22/negative-replayed-identity.json",
+      "sha256": "83e044ab17557201b3471b8b49c941b7033e1725b47b06ba767d2ae9dd87a9f1",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-sentinel-inertness",
+      "path": "tests/fixtures/policyhelix/C22/negative-sentinel-inertness.json",
+      "sha256": "23a37c3ae9264afe46bbe40e7fa540bfd987b5dc9cc09417b90b98df33bd662d",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-gateway-idp-outage",
+      "path": "tests/fixtures/policyhelix/C22/positive-gateway-idp-outage.json",
+      "sha256": "e3002806784c29ced83c271d99d7bead9a71faa1bc4fddb9e121c808edb4c64a",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-gateway-session-revoke",
+      "path": "tests/fixtures/policyhelix/C22/positive-gateway-session-revoke.json",
+      "sha256": "76e14f21454cfaf520289a537b0ab41bd0995df51d68a918fbcf29dc24852530",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-gateway-stale-policy",
+      "path": "tests/fixtures/policyhelix/C22/positive-gateway-stale-policy.json",
+      "sha256": "b3d93f8d341b0c139cee35c36094831cf8b40d3cb433a1590fa0590db02dcce9",
+      "type": "positive",
+      "license": "Apache-2.0"
+    }
+  ]
+}

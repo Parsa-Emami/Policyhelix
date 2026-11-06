@@ -1,0 +1,27 @@
+{
+  "schema_version": "1",
+  "fixture_id": "C22-POS-02",
+  "commit_id": "C22",
+  "description": "Operator views gateway health: identity provider outage detected; gateway fails closed on sensitive routes while preserving intentional public bypass without exposing credentials.",
+  "policy": {
+    "active_revision": 2,
+    "digest": "sha256:222233334444555566667777888899990000aaaabbbbccccddddeeeeffff1111",
+    "stale": false
+  },
+  "idp": {
+    "status": "outage",
+    "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+    "fail_closed_on_outage": true
+  },
+  "revocation": {
+    "max_stale_seconds": 30,
+    "enforced": true
+  },
+  "expected": {
+    "idp_outage": true,
+    "status_code": 503,
+    "error_code": "IDP_OUTAGE_FAIL_CLOSED",
+    "public_bypass_supported": true,
+    "zero_token_exposure": true
+  }
+}

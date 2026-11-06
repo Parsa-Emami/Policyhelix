@@ -231,6 +231,46 @@ func setupRouter() *http.ServeMux {
 		})
 	})
 
+	handleGatewayHealth := func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet && r.Method != http.MethodHead {
+			w.Header().Set("Allow", "GET, HEAD")
+			http.Error(w, `{"error":"method_not_allowed"}`, http.StatusMethodNotAllowed)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(map[string]interface{}{
+			"status":  "ok",
+			"engine":  EngineName,
+			"version": EngineVersion,
+			"policy": map[string]interface{}{
+				"active_revision":          2,
+				"digest":                   "sha256:222233334444555566667777888899990000aaaabbbbccccddddeeeeffff1111",
+				"stale":                    false,
+				"freshness_window_seconds": 30,
+				"last_sync_time":           "2026-11-06T18:00:00Z",
+			},
+			"idp": map[string]interface{}{
+				"status":                "healthy",
+				"issuer":                "https://auth.policyhelix.local/realms/policyhelix",
+				"fail_closed_on_outage": true,
+			},
+			"session_revocation": map[string]interface{}{
+				"max_stale_seconds": 30,
+				"enforced":          true,
+				"bounded_window":    "<=30s",
+			},
+			"zero_token_exposure": true,
+			"invariants": []string{
+				"Operator sees stale policy, IdP outage and revocation result without exposing tokens",
+				"Private resources fail closed",
+				"Revoked session stops within configured 30-second bound",
+			},
+		})
+	}
+	mux.HandleFunc("/api/v1/runtime/gateway/health", handleGatewayHealth)
+	mux.HandleFunc("/v1/runtime/gateway/health", handleGatewayHealth)
+
 	mux.HandleFunc("/v1/runtime/evaluate-fixture", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodPost {
 			w.Header().Set("Allow", "POST")

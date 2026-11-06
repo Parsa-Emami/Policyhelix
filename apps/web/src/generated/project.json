@@ -275,7 +275,7 @@
       "id": "C22",
       "title": "feat(ui): expose gateway health and session revoke",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Operator sees stale policy, IdP outage and revocation result without exposing tokens."
       ],

@@ -1,0 +1,18 @@
+{
+  "schema_version": "1",
+  "fixture_id": "C22-NEG-02",
+  "commit_id": "C22",
+  "description": "Client request with forged identity headers (X-Authenticated-Subject) has headers stripped and cannot authorize sensitive side effects.",
+  "forged_headers": [
+    "X-Authenticated-Subject",
+    "X-User-Roles"
+  ],
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "headers_stripped": true,
+    "error_code": "ERR_FORGED_HEADER_REJECTED",
+    "side_effects_executed": false,
+    "zero_token_exposure": true
+  }
+}

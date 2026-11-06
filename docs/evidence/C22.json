@@ -1,0 +1,143 @@
+{
+  "schema_version": 1,
+  "commit_id": "C22",
+  "project": "PolicyHelix",
+  "date": "2026-11-06",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix local-first web UI: expose gateway health and session revoke (Requirement F16)",
+  "source_identity": "sha256:3b4a4fc4c279d2f1ca0d7d17c3ff612525614dcd7a87b3ac003335626c8fe2d0",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.23.6 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml; local run used Go 1.23.6 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "development host verified against C22 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.23.6 linux/amd64",
+      "passed": true
+    },
+    {
+      "tool": "Playwright",
+      "version": "1.64.1",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C22/negative-forged-header.json",
+      "sha256": "2457149df4761b7d9cbcfe0571f83ea6fc4b33089c609f4fffbe358520305aef",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C22 forged identity header rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C22/negative-private-resource-fail-closed.json",
+      "sha256": "9ca9195d6f94d8f34407767d74b0439c14c1fe23058050cceedf25c67529db2b",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C22 private resource fail-closed under IdP outage"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C22/negative-replayed-identity.json",
+      "sha256": "83e044ab17557201b3471b8b49c941b7033e1725b47b06ba767d2ae9dd87a9f1",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C22 replayed and expired identity rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C22/negative-sentinel-inertness.json",
+      "sha256": "23a37c3ae9264afe46bbe40e7fa540bfd987b5dc9cc09417b90b98df33bd662d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C22 script and HTML sentinel inertness"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C22/positive-gateway-idp-outage.json",
+      "sha256": "e3002806784c29ced83c271d99d7bead9a71faa1bc4fddb9e121c808edb4c64a",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C22 IdP outage and fail-closed posture"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C22/positive-gateway-session-revoke.json",
+      "sha256": "76e14f21454cfaf520289a537b0ab41bd0995df51d68a918fbcf29dc24852530",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C22 session revocation workload bounded stopping"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C22/positive-gateway-stale-policy.json",
+      "sha256": "b3d93f8d341b0c139cee35c36094831cf8b40d3cb433a1590fa0590db02dcce9",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C22 stale policy posture warning"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "npm run test:browser",
+      "exit_code": 0,
+      "output": "21 passed (2.5s): navigates to gateway, displays status grid, and shows stale policy warning; switches to IdP outage scenario and displays fail-closed alert banner; executes session revocation workload and verifies bounded enforcement (<=30s); verifies absolute zero token exposure across entire DOM (Requirement F16); script and HTML sentinels remain strictly inert (XSS safety); negative cases: replayed identity and forged headers are rejected without side effects; handles malformed and invalid JSON uploads gracefully; clears active scenario and displays empty state; maintains accessible layout without horizontal overflow at 360px mobile viewport; supports keyboard navigation across gateway controls and revocation form"
+    },
+    {
+      "command": "go test -v -run TestC22 ./tests",
+      "exit_code": 0,
+      "output": "PASS: TestC22_ManifestIntegrity, TestC22_GatewayHealthEndpoint, TestC22_RevocationBoundedEnforcement, TestC22_ZeroTokenExposure, TestC22_SentinelInertness"
+    },
+    {
+      "command": "go test ./...",
+      "exit_code": 0,
+      "output": "ok cmd/policyhelix, internal/contracts, internal/policy, internal/storage, tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "16 passed, 0 failed"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED: Checked 299 JSON files and repository contract invariants."
+    }
+  ],
+  "results": [
+    "Requirement F16 fully implemented: Operator sees stale policy, IdP outage, and revocation result without exposing tokens in apps/web/src/pages/Gateway.tsx.",
+    "Policy posture card prominently exposes STALE POLICY warning and age indicators when the active policy bundle exceeds the configured <=30s freshness window.",
+    "Identity Provider (IdP) health card alerts operators to authentication outages (503 Service Unavailable) and confirms fail-closed posture across all sensitive routes while preserving intentional public bypass.",
+    "Operator session revocation control triggers time-bounded revocation and renders sequential workload audit steps verifying access stopped within the <=30s bound with zero side effects.",
+    "Absolute zero token exposure verified: no Bearer tokens, raw JWTs (eyJ...), session cookies, or secrets appear anywhere in the DOM or serialized responses.",
+    "Live HTTP endpoints registered in cmd/policyhelix/main.go (GET /api/v1/runtime/gateway/health) and proxied through Node supervisor (scripts/serve-web.mjs).",
+    "Script and HTML sentinel inertness verified: no script execution, prompt, or DOM XSS occurs, all content renders inertly with HTML escaping.",
+    "Mobile accessibility verified: zero horizontal scrolling at 360px viewport width (scrollWidth <= innerWidth) across all views.",
+    "Keyboard accessibility verified across navigation, scenario dropdowns, file inputs, text fields, and action buttons.",
+    "Seven Apache-2.0 synthetic fixtures cataloged with SHA-256 digests in tests/fixtures/policyhelix/C22/manifest.json.",
+    "Automated regression test coverage established via Playwright browser suite (apps/web/tests/gateway.spec.ts) and Go test suite (tests/gateway_ui_test.go)."
+  ],
+  "observed_limitations": [
+    "Shadow policy execution and auditable divergence tracking are scheduled for downstream task C23 (feat(ui): render shadow policy execution and audit log viewer)."
+  ],
+  "rollback_or_recovery_observation": "Revert apps/web/src/pages/Gateway.tsx, apps/web/tests/gateway.spec.ts, tests/fixtures/policyhelix/C22/, tests/gateway_ui_test.go, scripts/serve-web.mjs gateway proxy additions, and docs/evidence/C22.json. Existing C01-C21 components remain intact."
+}

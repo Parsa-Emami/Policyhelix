@@ -1,0 +1,17 @@
+{
+  "schema_version": "1",
+  "fixture_id": "C22-NEG-03",
+  "commit_id": "C22",
+  "description": "Private sensitive resource access under IdP outage fails closed with deny and zero side effects.",
+  "resource": "/api/v1/vault/keys",
+  "classification": "private",
+  "expected": {
+    "valid": false,
+    "allow": false,
+    "status_code": 503,
+    "error_code": "DECISION_LOSS_SENSITIVE_DENY",
+    "disposition": "FAIL_CLOSED_DENY",
+    "side_effects_executed": false,
+    "zero_token_exposure": true
+  }
+}

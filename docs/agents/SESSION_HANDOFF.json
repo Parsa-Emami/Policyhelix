@@ -1,8 +1,8 @@
 {
   "project": "PolicyHelix",
-  "date": "2026-11-05",
+  "date": "2026-11-06",
   "base_commit": "3fbc1d1",
-  "scope": "Task C21: render policy simulator and decision diffs; UI displays policy revision and explains changed decision using fixture context (Requirement F15)",
+  "scope": "Task C22: expose gateway health and session revoke; UI displays stale policy, IdP outage and revocation result without exposing tokens (Requirement F16)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -24,12 +24,13 @@
     "C18",
     "C19",
     "C20",
-    "C21"
+    "C21",
+    "C22"
   ],
   "commands": [
     "npm run validate:plan",
     "npm run test:browser",
-    "go test -v -run TestC21 ./tests",
+    "go test -v -run TestC22 ./tests",
     "go test ./...",
     "npm test",
     "npm run build",
@@ -37,11 +38,11 @@
     "python3 scripts/validate_repo.py",
     "python3 scripts/source_identity.py"
   ],
-  "validation_results": "docs/evidence/C21.json",
-  "final_source_identity": "sha256:42e2e7557446936f949cd0f3ccfbe085a0be71cc250b3e03782fed15fd4b04f3",
+  "validation_results": "docs/evidence/C22.json",
+  "final_source_identity": "sha256:3b4a4fc4c279d2f1ca0d7d17c3ff612525614dcd7a87b3ac003335626c8fe2d0",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C22",
+  "next_task": "C23",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C21 verified. Policy simulator and decision diff UI (apps/web/src/pages/Simulator.tsx), simulation endpoint proxy (scripts/serve-web.mjs), synthetic fixtures (tests/fixtures/policyhelix/C21/), Playwright browser tests (apps/web/tests/simulator.spec.ts), and Go regression tests (tests/simulator_ui_test.go) implemented. Requirement F15 verified. Ready for C22 (feat(ui): expose gateway health and session revoke)."
+  "continuation": "Task C22 verified. Gateway health and session revoke dashboard (apps/web/src/pages/Gateway.tsx), gateway health endpoint (cmd/policyhelix/main.go), supervisor proxy routing (scripts/serve-web.mjs), synthetic fixtures (tests/fixtures/policyhelix/C22/), Playwright browser tests (apps/web/tests/gateway.spec.ts), and Go regression tests (tests/gateway_ui_test.go) implemented. Requirement F16 verified. Ready for C23 (feat(ui): render audit query filter and redact credentials)."
 }

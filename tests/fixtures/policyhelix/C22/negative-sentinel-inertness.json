@@ -1,0 +1,12 @@
+{
+  "schema_version": "1",
+  "fixture_id": "C22-NEG-SENTINEL",
+  "commit_id": "C22",
+  "description": "<script>alert('xss-c22')</script><img src=x onerror=alert('c22')> Script and HTML sentinel inertness test on gateway health and session revocation.",
+  "session_id": "sess-<script>alert('sess')</script>",
+  "subject_id": "usr-<script>alert('sub')</script>",
+  "expected": {
+    "inert": true,
+    "zero_token_exposure": true
+  }
+}

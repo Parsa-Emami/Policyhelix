@@ -1,0 +1,24 @@
+{
+  "schema_version": "1",
+  "fixture_id": "C22-POS-03",
+  "commit_id": "C22",
+  "description": "Operator triggers session revocation: target session sess-c22-workload-01 is revoked and stops within the configured 30-second bound with zero side effects and zero token exposure.",
+  "session_id": "sess-c22-workload-01",
+  "subject_id": "usr-c22-operator",
+  "revocation": {
+    "max_stale_seconds": 30,
+    "enforced": true
+  },
+  "workload_outcome": {
+    "revoked": true,
+    "stopped_within_bound": true,
+    "allowed_before_revoke_count": 1,
+    "denied_after_revoke_count": 2,
+    "side_effects_executed": false
+  },
+  "expected": {
+    "revoked": true,
+    "stopped_within_bound": true,
+    "zero_token_exposure": true
+  }
+}

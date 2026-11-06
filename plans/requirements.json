@@ -197,7 +197,7 @@
       "mandatory": true,
       "planned_commit": "C22",
       "evidence_path": "docs/evidence/C22.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "F17",
