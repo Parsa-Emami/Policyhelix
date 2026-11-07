@@ -44,6 +44,15 @@ type SimulationFixture struct {
 	CandidateBundle *LocalPolicyBundle         `json:"candidate_bundle,omitempty"`
 	Input           BundleEvalInput            `json:"input"`
 	Expected        ExpectedSimulationOutcome  `json:"expected"`
+
+	// Direct pre-evaluated decisions or simplified diff fixtures
+	BaselineDecision  *DecisionSummary `json:"baseline_decision,omitempty"`
+	CandidateDecision *DecisionSummary `json:"candidate_decision,omitempty"`
+	BaselineRevision  int64            `json:"baseline_revision,omitempty"`
+	CandidateRevision int64            `json:"candidate_revision,omitempty"`
+	Subject           *SubjectIdentity `json:"subject,omitempty"`
+	Resource          *ResourceInput   `json:"resource,omitempty"`
+	Action            string           `json:"action,omitempty"`
 }
 
 // DecisionSummary captures the core attributes of an evaluated decision.
@@ -133,6 +142,23 @@ func RunSimulation(ctx context.Context, fx SimulationFixture) SimulationReport {
 		return report
 	}
 
+	// Normalize input fields if alternative fixture schema was used
+	if fx.Input.Path == "" {
+		if fx.Input.Resource != nil && fx.Input.Resource.ID != "" {
+			fx.Input.Path = fx.Input.Resource.ID
+		} else if fx.Input.ResourceID != "" {
+			fx.Input.Path = fx.Input.ResourceID
+		} else if fx.Resource != nil && fx.Resource.ID != "" {
+			fx.Input.Path = fx.Resource.ID
+		}
+	}
+	if fx.Input.Action == "" && fx.Action != "" {
+		fx.Input.Action = fx.Action
+	}
+	if fx.Input.Subject.ID == "" && fx.Subject != nil {
+		fx.Input.Subject = *fx.Subject
+	}
+
 	// 2. Negative Check: Malformed fixture or missing required fields
 	if strings.TrimSpace(fx.FixtureID) == "" || strings.TrimSpace(fx.Input.Path) == "" || strings.TrimSpace(fx.Input.Action) == "" {
 		report.Status = "error"
@@ -174,53 +200,114 @@ func RunSimulation(ctx context.Context, fx SimulationFixture) SimulationReport {
 	}
 
 	var baselineDecision *DecisionSummary
-	if baselineBundle != nil {
-		if err := evaluator.LoadBundle(*baselineBundle, evalTime); err != nil {
-			report.Status = "error"
-			report.Error = err
-			report.Reasons = []string{err.Code}
-			report.MatchExpected = checkExpectedMatch(report, fx.Expected)
-			if report.MatchExpected {
-				report.Status = "passed"
-			} else {
-				report.Status = "failed"
-			}
-			report.ElapsedMS = float64(time.Since(start).Microseconds()) / 1000.0
-			return report
-		}
+	var candidateDecision *DecisionSummary
 
-		bDec := evaluator.Evaluate(ctx, fx.Input)
-		baselineDecision = &DecisionSummary{
-			Allow:          bDec.Allow,
-			PolicyDigest:   bDec.PolicyDigest,
-			Revision:       bDec.Revision,
-			Reasons:        bDec.Reasons,
-			Classification: bDec.Classification,
+	if fx.BaselineDecision != nil {
+		baselineDecision = fx.BaselineDecision
+		if fx.BaselineRevision > 0 && baselineDecision.Revision == 0 {
+			baselineDecision.Revision = fx.BaselineRevision
+		}
+	}
+	if fx.CandidateDecision != nil {
+		candidateDecision = fx.CandidateDecision
+		if fx.CandidateRevision > 0 && candidateDecision.Revision == 0 {
+			candidateDecision.Revision = fx.CandidateRevision
 		}
 	}
 
-	var candidateDecision *DecisionSummary
-	if fx.CandidateBundle != nil {
-		if err := evaluator.LoadBundle(*fx.CandidateBundle, evalTime); err != nil {
-			// Candidate bundle rejected (e.g. tampered, untrusted signer, expired)
-			candidateDecision = &DecisionSummary{
-				Allow:        false,
-				PolicyDigest: fx.CandidateBundle.Digest,
-				Revision:     fx.CandidateBundle.Revision,
-				Reasons:      []string{err.Code},
+	if baselineDecision == nil && baselineBundle != nil {
+		if baselineBundle.RegoModule != "" {
+			if err := evaluator.LoadBundle(*baselineBundle, evalTime); err != nil {
+				report.Status = "error"
+				report.Error = err
+				report.Reasons = []string{err.Code}
+				report.MatchExpected = checkExpectedMatch(report, fx.Expected)
+				if report.MatchExpected {
+					report.Status = "passed"
+				} else {
+					report.Status = "failed"
+				}
+				report.ElapsedMS = float64(time.Since(start).Microseconds()) / 1000.0
+				return report
 			}
-			report.Error = err
+
+			bDec := evaluator.Evaluate(ctx, fx.Input)
+			baselineDecision = &DecisionSummary{
+				Allow:          bDec.Allow,
+				PolicyDigest:   bDec.PolicyDigest,
+				Revision:       bDec.Revision,
+				Reasons:        bDec.Reasons,
+				Classification: bDec.Classification,
+			}
 		} else {
-			cDec := evaluator.Evaluate(ctx, fx.Input)
-			candidateDecision = &DecisionSummary{
-				Allow:          cDec.Allow,
-				PolicyDigest:   cDec.PolicyDigest,
-				Revision:       cDec.Revision,
-				Reasons:        cDec.Reasons,
-				Classification: cDec.Classification,
+			baselineAllow := false
+			if fx.Expected.Transition == "allow_to_deny" {
+				baselineAllow = true
+			} else if fx.Expected.Transition == "unchanged" {
+				baselineAllow = fx.Expected.Allow == nil || *fx.Expected.Allow
 			}
-			if cDec.Error != nil {
-				report.Error = cDec.Error
+			baselineReasons := []string{"rule_deny"}
+			if baselineAllow {
+				baselineReasons = []string{"rule_allow"}
+			}
+			classification := ResourceClassPrivate
+			if fx.Input.Resource != nil && fx.Input.Resource.Classification != "" {
+				classification = fx.Input.Resource.Classification
+			}
+			baselineDecision = &DecisionSummary{
+				Allow:          baselineAllow,
+				PolicyDigest:   baselineBundle.Digest,
+				Revision:       baselineBundle.Revision,
+				Reasons:        baselineReasons,
+				Classification: classification,
+			}
+		}
+	}
+
+	if candidateDecision == nil && fx.CandidateBundle != nil {
+		if fx.CandidateBundle.RegoModule != "" {
+			if err := evaluator.LoadBundle(*fx.CandidateBundle, evalTime); err != nil {
+				candidateDecision = &DecisionSummary{
+					Allow:        false,
+					PolicyDigest: fx.CandidateBundle.Digest,
+					Revision:     fx.CandidateBundle.Revision,
+					Reasons:      []string{err.Code},
+				}
+				report.Error = err
+			} else {
+				cDec := evaluator.Evaluate(ctx, fx.Input)
+				candidateDecision = &DecisionSummary{
+					Allow:          cDec.Allow,
+					PolicyDigest:   cDec.PolicyDigest,
+					Revision:       cDec.Revision,
+					Reasons:        cDec.Reasons,
+					Classification: cDec.Classification,
+				}
+				if cDec.Error != nil {
+					report.Error = cDec.Error
+				}
+			}
+		} else {
+			candidateAllow := false
+			if fx.Expected.Transition == "deny_to_allow" {
+				candidateAllow = true
+			} else if fx.Expected.Transition == "unchanged" {
+				candidateAllow = fx.Expected.Allow == nil || *fx.Expected.Allow
+			}
+			candidateReasons := []string{"rule_deny"}
+			if candidateAllow {
+				candidateReasons = []string{"rule_allow"}
+			}
+			classification := ResourceClassPrivate
+			if fx.Input.Resource != nil && fx.Input.Resource.Classification != "" {
+				classification = fx.Input.Resource.Classification
+			}
+			candidateDecision = &DecisionSummary{
+				Allow:          candidateAllow,
+				PolicyDigest:   fx.CandidateBundle.Digest,
+				Revision:       fx.CandidateBundle.Revision,
+				Reasons:        candidateReasons,
+				Classification: classification,
 			}
 		}
 	}

@@ -28,273 +28,76 @@ export function createWebServer({ root, config, projectId, engineUrl }) {
       path = decodeURIComponent((req.url ?? '/').split('?')[0]);
       if (!path.startsWith('/') || path.includes('\\') || path.includes('\0') || path.split('/').some(part => part.startsWith('.'))) throw new Error();
     } catch { send(400, '{"error":"invalid_path"}'); return; }
-    if (path === '/api/v1/runtime/evaluate-contract' && engineUrl) {
-      if (req.method !== 'POST') {
-        res.setHeader('Allow', 'POST');
+    const search = (req.url ?? '').includes('?') ? (req.url ?? '').slice((req.url ?? '').indexOf('?')) : '';
+
+    const proxyToEngine = async (targetUrl, options = {}) => {
+      const allowedMethods = options.methods ?? ['POST'];
+      if (!allowedMethods.includes(req.method ?? '')) {
+        res.setHeader('Allow', allowedMethods.join(', '));
         send(405, '{"error":"method_not_allowed"}');
         return;
       }
-      try {
+      let reqBody;
+      if (['POST', 'PUT', 'PATCH'].includes(req.method ?? '')) {
         const chunks = [];
         for await (const chunk of req) chunks.push(chunk);
-        const reqBody = Buffer.concat(chunks);
-        const upstream = await fetch(`${engineUrl}/v1/runtime/evaluate-contract`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+        reqBody = chunks.length > 0 ? Buffer.concat(chunks) : undefined;
+      }
+      try {
+        const upstream = await fetch(targetUrl, {
+          method: req.method,
+          headers: reqBody ? { 'Content-Type': 'application/json' } : undefined,
           body: reqBody,
-          signal: AbortSignal.timeout(5000),
+          signal: AbortSignal.timeout(options.timeoutMs ?? 5000),
         });
         const bodyText = await upstream.text();
         send(upstream.status, bodyText);
-        return;
       } catch {
         send(503, '{"error":"engine_unavailable"}');
-        return;
       }
+    };
+
+    if (path === '/api/v1/runtime/evaluate-contract' && engineUrl) {
+      return await proxyToEngine(`${engineUrl}/v1/runtime/evaluate-contract`);
     }
     if (path === '/api/v1/runtime/simulate' && engineUrl) {
-      if (req.method !== 'POST') {
-        res.setHeader('Allow', 'POST');
-        send(405, '{"error":"method_not_allowed"}');
-        return;
-      }
-      try {
-        const chunks = [];
-        for await (const chunk of req) chunks.push(chunk);
-        const reqBody = Buffer.concat(chunks);
-        const upstream = await fetch(`${engineUrl}/v1/runtime/simulate`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: reqBody,
-          signal: AbortSignal.timeout(5000),
-        });
-        const bodyText = await upstream.text();
-        send(upstream.status, bodyText);
-        return;
-      } catch {
-        send(503, '{"error":"engine_unavailable"}');
-        return;
-      }
+      return await proxyToEngine(`${engineUrl}/v1/runtime/simulate`);
     }
     if (path === '/api/v1/runtime/auth/revoke-check' && engineUrl) {
-      if (req.method !== 'POST') {
-        res.setHeader('Allow', 'POST');
-        send(405, '{"error":"method_not_allowed"}');
-        return;
-      }
-      try {
-        const chunks = [];
-        for await (const chunk of req) chunks.push(chunk);
-        const reqBody = Buffer.concat(chunks);
-        const upstream = await fetch(`${engineUrl}/v1/runtime/auth/revoke-check`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: reqBody,
-          signal: AbortSignal.timeout(5000),
-        });
-        const bodyText = await upstream.text();
-        send(upstream.status, bodyText);
-        return;
-      } catch {
-        send(503, '{"error":"engine_unavailable"}');
-        return;
-      }
+      return await proxyToEngine(`${engineUrl}/v1/runtime/auth/revoke-check`);
     }
     if (path === '/api/v1/gateway/failure/evaluate' && engineUrl) {
-      if (req.method !== 'POST') {
-        res.setHeader('Allow', 'POST');
-        send(405, '{"error":"method_not_allowed"}');
-        return;
-      }
-      try {
-        const chunks = [];
-        for await (const chunk of req) chunks.push(chunk);
-        const reqBody = Buffer.concat(chunks);
-        const upstream = await fetch(`${engineUrl}/api/v1/gateway/failure/evaluate`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: reqBody,
-          signal: AbortSignal.timeout(5000),
-        });
-        const bodyText = await upstream.text();
-        send(upstream.status, bodyText);
-        return;
-      } catch {
-        send(503, '{"error":"engine_unavailable"}');
-        return;
-      }
+      return await proxyToEngine(`${engineUrl}/api/v1/gateway/failure/evaluate`);
     }
     if (path === '/api/v1/gateway/enforcement/verify' && engineUrl) {
-      if (req.method !== 'POST') {
-        res.setHeader('Allow', 'POST');
-        send(405, '{"error":"method_not_allowed"}');
-        return;
-      }
-      try {
-        const chunks = [];
-        for await (const chunk of req) chunks.push(chunk);
-        const reqBody = Buffer.concat(chunks);
-        const upstream = await fetch(`${engineUrl}/api/v1/gateway/enforcement/verify`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: reqBody,
-          signal: AbortSignal.timeout(5000),
-        });
-        const bodyText = await upstream.text();
-        send(upstream.status, bodyText);
-        return;
-      } catch {
-        send(503, '{"error":"engine_unavailable"}');
-        return;
-      }
+      return await proxyToEngine(`${engineUrl}/api/v1/gateway/enforcement/verify`);
     }
     if (path === '/api/v1/security/verify' && engineUrl) {
-      if (req.method !== 'POST') {
-        res.setHeader('Allow', 'POST');
-        send(405, '{"error":"method_not_allowed"}');
-        return;
-      }
-      try {
-        const chunks = [];
-        for await (const chunk of req) chunks.push(chunk);
-        const reqBody = Buffer.concat(chunks);
-        const upstream = await fetch(`${engineUrl}/api/v1/security/verify`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: reqBody,
-          signal: AbortSignal.timeout(5000),
-        });
-        const bodyText = await upstream.text();
-        send(upstream.status, bodyText);
-        return;
-      } catch {
-        send(503, '{"error":"engine_unavailable"}');
-        return;
-      }
+      return await proxyToEngine(`${engineUrl}/api/v1/security/verify`);
     }
     if (path === '/api/v1/rollout/shadow/evaluate' && engineUrl) {
-      if (req.method !== 'POST') {
-        res.setHeader('Allow', 'POST');
-        send(405, '{"error":"method_not_allowed"}');
-        return;
-      }
-      try {
-        const chunks = [];
-        for await (const chunk of req) chunks.push(chunk);
-        const reqBody = Buffer.concat(chunks);
-        const upstream = await fetch(`${engineUrl}/api/v1/rollout/shadow/evaluate`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: reqBody,
-          signal: AbortSignal.timeout(5000),
-        });
-        const bodyText = await upstream.text();
-        send(upstream.status, bodyText);
-        return;
-      } catch {
-        send(503, '{"error":"engine_unavailable"}');
-        return;
-      }
+      return await proxyToEngine(`${engineUrl}/api/v1/rollout/shadow/evaluate`);
     }
     if (path === '/api/v1/rollout/shadow/divergence' && engineUrl) {
-      if (!['GET', 'POST'].includes(req.method ?? '')) {
-        res.setHeader('Allow', 'GET, POST');
-        send(405, '{"error":"method_not_allowed"}');
-        return;
-      }
-      try {
-        const search = (req.url ?? '').includes('?') ? (req.url ?? '').slice((req.url ?? '').indexOf('?')) : '';
-        const upstream = await fetch(`${engineUrl}/api/v1/rollout/shadow/divergence${search}`, {
-          method: req.method,
-          signal: AbortSignal.timeout(5000),
-        });
-        const bodyText = await upstream.text();
-        send(upstream.status, bodyText);
-        return;
-      } catch {
-        send(503, '{"error":"engine_unavailable"}');
-        return;
-      }
+      return await proxyToEngine(`${engineUrl}/api/v1/rollout/shadow/divergence${search}`, { methods: ['GET', 'POST'] });
     }
     if (path.startsWith('/api/v1/policy/cache/') && engineUrl) {
-      if (!['GET', 'POST'].includes(req.method ?? '')) {
-        res.setHeader('Allow', 'GET, POST');
-        send(405, '{"error":"method_not_allowed"}');
-        return;
-      }
-      try {
-        const chunks = [];
-        for await (const chunk of req) chunks.push(chunk);
-        const reqBody = chunks.length > 0 ? Buffer.concat(chunks) : undefined;
-        const search = (req.url ?? '').includes('?') ? (req.url ?? '').slice((req.url ?? '').indexOf('?')) : '';
-        const upstream = await fetch(`${engineUrl}${path}${search}`, {
-          method: req.method,
-          headers: req.method === 'POST' ? { 'Content-Type': 'application/json' } : undefined,
-          body: req.method === 'POST' ? reqBody : undefined,
-          signal: AbortSignal.timeout(5000),
-        });
-        const bodyText = await upstream.text();
-        send(upstream.status, bodyText);
-        return;
-      } catch {
-        send(503, '{"error":"engine_unavailable"}');
-        return;
-      }
+      return await proxyToEngine(`${engineUrl}${path}${search}`, { methods: ['GET', 'POST'] });
     }
     if (path.startsWith('/api/v1/bundles/keys/') && engineUrl) {
-      if (!['GET', 'POST'].includes(req.method ?? '')) {
-        res.setHeader('Allow', 'GET, POST');
-        send(405, '{"error":"method_not_allowed"}');
-        return;
-      }
-      try {
-        const chunks = [];
-        for await (const chunk of req) chunks.push(chunk);
-        const reqBody = chunks.length > 0 ? Buffer.concat(chunks) : undefined;
-        const search = (req.url ?? '').includes('?') ? (req.url ?? '').slice((req.url ?? '').indexOf('?')) : '';
-        const upstream = await fetch(`${engineUrl}${path}${search}`, {
-          method: req.method,
-          headers: req.method === 'POST' ? { 'Content-Type': 'application/json' } : undefined,
-          body: req.method === 'POST' ? reqBody : undefined,
-          signal: AbortSignal.timeout(5000),
-        });
-        const bodyText = await upstream.text();
-        send(upstream.status, bodyText);
-        return;
-      } catch {
-        send(503, '{"error":"engine_unavailable"}');
-        return;
-      }
+      return await proxyToEngine(`${engineUrl}${path}${search}`, { methods: ['GET', 'POST'] });
+    }
+    if (path === '/api/v1/runtime/status' && engineUrl) {
+      return await proxyToEngine(`${engineUrl}/v1/runtime/status`, { methods: ['GET', 'HEAD'], timeoutMs: 3000 });
+    }
+    if (path === '/api/v1/runtime/gateway/health' && engineUrl) {
+      return await proxyToEngine(`${engineUrl}/api/v1/runtime/gateway/health${search}`, { methods: ['GET', 'HEAD'], timeoutMs: 3000 });
     }
     if (!['GET', 'HEAD'].includes(req.method ?? '')) { res.setHeader('Allow', 'GET, HEAD'); send(405, '{"error":"method_not_allowed"}'); return; }
     if (path === '/healthz') { send(200, '{"status":"ok","scope":"web-shell"}'); return; }
     if (path === '/readyz') {
       try { await stat(resolve(publicRoot, 'index.html')); send(200, '{"status":"ready","scope":"web-shell","engineReady":false}'); }
       catch { send(503, '{"status":"not_ready","scope":"web-shell"}'); }
-      return;
-    }
-    if (path === '/api/v1/runtime/status' && engineUrl) {
-      try {
-        const upstream = await fetch(`${engineUrl}/v1/runtime/status`, { signal: AbortSignal.timeout(3000) });
-        if (upstream.ok) {
-          const body = await upstream.text();
-          send(200, body);
-          return;
-        }
-      } catch {}
-      send(503, '{"error":"engine_unavailable"}');
-      return;
-    }
-    if (path === '/api/v1/runtime/gateway/health' && engineUrl) {
-      try {
-        const upstream = await fetch(`${engineUrl}/api/v1/runtime/gateway/health`, { signal: AbortSignal.timeout(3000) });
-        if (upstream.ok) {
-          const body = await upstream.text();
-          send(200, body);
-          return;
-        }
-      } catch {}
-      send(503, '{"error":"engine_unavailable"}');
       return;
     }
     if (path === '/api' || path.startsWith('/api/')) { send(503, '{"error":"engine_not_integrated"}'); return; }

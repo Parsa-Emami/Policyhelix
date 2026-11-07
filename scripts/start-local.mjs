@@ -71,10 +71,14 @@ export async function startSupervisor(options = {}) {
   const product = JSON.parse(await readFile(resolve(root, 'ops/web/brand.json'), 'utf8'));
   const config = JSON.parse(await readFile(configPath, 'utf8'));
 
+  let stopping = false;
+  const storageDir = resolve(root, options.storageDir ?? (enginePort === 4174 ? '.local-data/storage' : `.local-data/storage-${enginePort}`));
+
   // Spawn Go engine
   const engineProcess = spawn(engineBinPath, [
     '--host', host,
     '--port', String(enginePort),
+    '--storage-dir', storageDir,
   ], {
     cwd: root,
     stdio: ['ignore', 'pipe', 'pipe'],
@@ -119,8 +123,6 @@ export async function startSupervisor(options = {}) {
     server.once('error', rejectListening);
     server.listen(port, host, () => resolveListening());
   });
-
-  let stopping = false;
 
   async function stop() {
     if (stopping) return;

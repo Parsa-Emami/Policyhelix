@@ -6,15 +6,18 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"os"
 	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/parsa-emami/policyhelix/internal/bundles"
 )
 
 func TestEngineVersion(t *testing.T) {
-	cmd := exec.Command("go", "run", "./main.go", "--version")
+	cmd := exec.Command("go", "run", ".", "--version")
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
@@ -39,7 +42,7 @@ func TestEngineVersion(t *testing.T) {
 }
 
 func TestEngineSmokeTestCLI(t *testing.T) {
-	cmd := exec.Command("go", "run", "./main.go", "--smoke-test")
+	cmd := exec.Command("go", "run", ".", "--smoke-test")
 	var stdout, stderr bytes.Buffer
 	cmd.Stdout = &stdout
 	cmd.Stderr = &stderr
@@ -62,7 +65,7 @@ func TestEngineSmokeTestCLI(t *testing.T) {
 func TestEngineLoopbackEnforcement(t *testing.T) {
 	nonLoopback := []string{"0.0.0.0", "192.168.1.100", "example.com"}
 	for _, host := range nonLoopback {
-		err := runServer(host, 0, make(chan struct{}))
+		err := runServer(host, 0, "", make(chan struct{}))
 		if err == nil {
 			t.Errorf("Expected error for non-loopback host '%s', got nil", host)
 		}
@@ -83,7 +86,7 @@ func TestEngineOccupiedPort(t *testing.T) {
 	port := listener.Addr().(*net.TCPAddr).Port
 
 	// Attempt to start engine on the same port
-	err = runServer("127.0.0.1", port, make(chan struct{}))
+	err = runServer("127.0.0.1", port, "", make(chan struct{}))
 	if err == nil {
 		t.Fatalf("Expected error for occupied port %d, got nil", port)
 	}
@@ -104,7 +107,7 @@ func TestEngineHealthAndStatusEndpoints(t *testing.T) {
 	serverDone := make(chan error, 1)
 
 	go func() {
-		serverDone <- runServer("127.0.0.1", port, stopCh)
+		serverDone <- runServer("127.0.0.1", port, "", stopCh)
 	}()
 
 	client := &http.Client{Timeout: 2 * time.Second}
@@ -259,7 +262,7 @@ func TestEngineEvaluateContractEndpoint(t *testing.T) {
 	stopCh := make(chan struct{})
 	serverDone := make(chan error, 1)
 	go func() {
-		serverDone <- runServer("127.0.0.1", port, stopCh)
+		serverDone <- runServer("127.0.0.1", port, "", stopCh)
 	}()
 
 	client := &http.Client{Timeout: 2 * time.Second}
@@ -350,7 +353,7 @@ func TestEngineShadowEndpoints(t *testing.T) {
 	stopCh := make(chan struct{})
 	serverDone := make(chan error, 1)
 	go func() {
-		serverDone <- runServer("127.0.0.1", port, stopCh)
+		serverDone <- runServer("127.0.0.1", port, "", stopCh)
 	}()
 
 	client := &http.Client{Timeout: 2 * time.Second}
@@ -421,7 +424,7 @@ func TestPolicyCacheEndpoints(t *testing.T) {
 	serverDone := make(chan struct{})
 	go func() {
 		defer close(serverDone)
-		_ = runServer("127.0.0.1", port, stopCh)
+		_ = runServer("127.0.0.1", port, "", stopCh)
 	}()
 
 	client := &http.Client{Timeout: 3 * time.Second}
@@ -517,3 +520,101 @@ func TestPolicyCacheEndpoints(t *testing.T) {
 	close(stopCh)
 	<-serverDone
 }
+
+func TestEngineStorageDirAndDurableRestore(t *testing.T) {
+	tmpDir, err := os.MkdirTemp("", "ph-engine-storage-test-*")
+	if err != nil {
+		t.Fatalf("Failed to create temp dir: %v", err)
+	}
+	defer os.RemoveAll(tmpDir)
+
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("Failed to allocate port: %v", err)
+	}
+	port := listener.Addr().(*net.TCPAddr).Port
+	_ = listener.Close()
+
+	stopCh := make(chan struct{})
+	serverDone := make(chan error, 1)
+	go func() {
+		serverDone <- runServer("127.0.0.1", port, tmpDir, stopCh)
+	}()
+
+	client := &http.Client{Timeout: 2 * time.Second}
+	baseURL := fmt.Sprintf("http://127.0.0.1:%d", port)
+
+	for i := 0; i < 20; i++ {
+		resp, err := client.Get(baseURL + "/healthz")
+		if err == nil && resp.StatusCode == http.StatusOK {
+			_ = resp.Body.Close()
+			break
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	// Verify key rotation state endpoint backed by durable storage
+	resp, err := client.Get(baseURL + "/api/v1/bundles/keys/state")
+	if err != nil || resp.StatusCode != http.StatusOK {
+		t.Fatalf("GET /api/v1/bundles/keys/state failed: %v, status: %v", err, resp.Status)
+	}
+	var state bundles.KeyRotationState
+	_ = json.NewDecoder(resp.Body).Decode(&state)
+	_ = resp.Body.Close()
+
+	if state.Status != bundles.KeyRotationStatusRestored && state.Status != bundles.KeyRotationStatusEmpty && state.Status != "" {
+		t.Errorf("Unexpected key state status: %v", state.Status)
+	}
+
+	close(stopCh)
+	<-serverDone
+}
+
+func TestEngineGatewayHealthScenarios(t *testing.T) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("Failed to allocate port: %v", err)
+	}
+	port := listener.Addr().(*net.TCPAddr).Port
+	_ = listener.Close()
+
+	stopCh := make(chan struct{})
+	serverDone := make(chan error, 1)
+	go func() {
+		serverDone <- runServer("127.0.0.1", port, "", stopCh)
+	}()
+
+	client := &http.Client{Timeout: 2 * time.Second}
+	baseURL := fmt.Sprintf("http://127.0.0.1:%d", port)
+
+	for i := 0; i < 20; i++ {
+		resp, err := client.Get(baseURL + "/healthz")
+		if err == nil && resp.StatusCode == http.StatusOK {
+			_ = resp.Body.Close()
+			break
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	scenarios := []string{"stale-policy", "idp-outage", "session-revoke", "replayed-identity", "forged-header", "sentinel"}
+	for _, sc := range scenarios {
+		resp, err := client.Get(fmt.Sprintf("%s/api/v1/runtime/gateway/health?scenario=%s", baseURL, sc))
+		if err != nil || resp.StatusCode != http.StatusOK {
+			t.Fatalf("GET gateway/health?scenario=%s failed: %v", sc, err)
+		}
+		var data map[string]interface{}
+		_ = json.NewDecoder(resp.Body).Decode(&data)
+		_ = resp.Body.Close()
+
+		if data["active_scenario"] != sc {
+			t.Errorf("scenario %s: expected active_scenario %s, got %v", sc, sc, data["active_scenario"])
+		}
+		if data["zero_token_exposure"] != true {
+			t.Errorf("scenario %s: expected zero_token_exposure=true", sc)
+		}
+	}
+
+	close(stopCh)
+	<-serverDone
+}
+

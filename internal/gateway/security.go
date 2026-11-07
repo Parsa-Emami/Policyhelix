@@ -189,15 +189,6 @@ func EvaluateSecurityBoundaryFixture(ctx context.Context, storageDir string, fx 
 		evalTime = parsed.UTC()
 	}
 
-	ad, _, err := storage.Open(storageDir)
-	if err != nil {
-		rep.ErrorCode = bundles.ErrCodeActivationStoreUnavail
-		rep.ErrorMessage = err.Error()
-		rep.StatusCode = http.StatusServiceUnavailable
-		return rep, err
-	}
-	defer ad.Close()
-
 	// Stage 1: Untrusted Import / XSS / Prototype-Pollution Gate (if specified)
 	if strings.TrimSpace(fx.UntrustedImportRaw) != "" {
 		escaped, inert, impErr := ValidateUntrustedImportPayload(fx.UntrustedImportRaw)
@@ -223,35 +214,19 @@ func EvaluateSecurityBoundaryFixture(ctx context.Context, storageDir string, fx 
 	}
 
 	// Stage 2: Preload Trusted Keys, Bundle, Sessions, Revocations & Baseline Scoped Records
-	mgr := bundles.NewKeyRotationManagerFromAdapter(ad, bundles.NewKeyring(fx.TrustedKeys...))
-	mgr.Now = func() time.Time { return evalTime }
+	env, err := SetupGatewayFixtureEnv(ctx, storageDir, fx.TrustedKeys, fx.PreloadBundle, fx.EvaluationTime, evalTime, fx.PreloadSessions, fx.PreloadRevocations)
+	if err != nil {
+		rep.ErrorCode = bundles.ErrCodeActivationStoreUnavail
+		rep.ErrorMessage = err.Error()
+		rep.StatusCode = http.StatusServiceUnavailable
+		return rep, err
+	}
+	defer env.Close()
 
-	if fx.PreloadBundle != nil {
-		preRes := mgr.ActivateBundle(ctx, *fx.PreloadBundle, fx.EvaluationTime)
-		if preRes.Status == bundles.ActivationStatusRejected {
-			rep.ErrorCode = preRes.ErrorCode
-			rep.ErrorMessage = fmt.Sprintf("preload bundle rejected: %s", preRes.Message)
-			rep.StatusCode = http.StatusForbidden
-			return rep, fmt.Errorf("%s: %s", rep.ErrorCode, rep.ErrorMessage)
-		}
-	}
-
-	sessStore := auth.NewStorageSessionStore(ad)
-	revStore := auth.NewStorageRevocationStore(ad)
-	for _, s := range fx.PreloadSessions {
-		_ = sessStore.SaveSession(ctx, s)
-	}
-	for _, r := range fx.PreloadRevocations {
-		if r.SessionID != "" {
-			_ = revStore.SaveSessionRevocation(ctx, r)
-		}
-		if r.SubjectID != "" && r.MinRequiredEpoch > 0 {
-			_ = revStore.SaveSubjectRevocation(ctx, r)
-		}
-		if r.OwnerScope != "" {
-			_ = revStore.SaveScopeRevocation(ctx, r)
-		}
-	}
+	ad := env.Adapter
+	mgr := env.KeyManager
+	sessStore := env.SessionStore
+	revStore := env.RevocationStore
 	for _, rec := range fx.PreloadRecords {
 		if _, wErr := ad.WriteRecord(ctx, rec); wErr != nil {
 			rep.ErrorCode = wErr.Code

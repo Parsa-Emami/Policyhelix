@@ -5,6 +5,7 @@ import (
 	"context"
 	"crypto/hmac"
 	"crypto/sha256"
+	"crypto/subtle"
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
@@ -12,6 +13,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"net/url"
+	"strconv"
 	"strings"
 	"time"
 
@@ -131,9 +133,6 @@ func VerifyGatewayProof(secret, proof, requestID, subjectID string, maxAge time.
 	if proof == "" || secret == "" {
 		return false
 	}
-	if proof == secret || strings.HasPrefix(proof, "verified-gateway-token") {
-		return true
-	}
 	parts := strings.Split(proof, ",")
 	if len(parts) != 2 {
 		return false
@@ -147,18 +146,28 @@ func VerifyGatewayProof(secret, proof, requestID, subjectID string, maxAge time.
 		}
 		switch kv[0] {
 		case "t":
-			fmt.Sscanf(kv[1], "%d", &ts)
+			parsedTs, err := strconv.ParseInt(kv[1], 10, 64)
+			if err != nil {
+				return false
+			}
+			ts = parsedTs
 		case "sig":
 			sig = kv[1]
 		}
 	}
-	if ts == 0 || sig == "" {
+	if ts <= 0 || sig == "" {
 		return false
+	}
+	if maxAge > 0 {
+		now := time.Now().Unix()
+		if ts > now+60 || (now-ts) > int64(maxAge.Seconds()) {
+			return false
+		}
 	}
 	mac := hmac.New(sha256.New, []byte(secret))
 	mac.Write([]byte(fmt.Sprintf("%s:%s:%d", requestID, subjectID, ts)))
 	expectedSig := hex.EncodeToString(mac.Sum(nil))
-	return hmac.Equal([]byte(sig), []byte(expectedSig))
+	return subtle.ConstantTimeCompare([]byte(sig), []byte(expectedSig)) == 1
 }
 
 // AllowlistedGatewayProxy enforces that requests only reach one allowlisted upstream
@@ -205,8 +214,8 @@ func (p *AllowlistedGatewayProxy) EvaluateProxyRequest(ctx context.Context, req 
 
 	// Gate 1: Direct Origin Access check (Bypass rejection)
 	if req.DirectOriginAccess {
-		validProof := req.GatewayOriginProof != "" && (req.GatewayOriginProof == p.Config.GatewayProofSecret ||
-			VerifyGatewayProof(p.Config.GatewayProofSecret, req.GatewayOriginProof, req.RequestID, "", p.Config.ProofMaxAge))
+		validProof := req.GatewayOriginProof != "" &&
+			VerifyGatewayProof(p.Config.GatewayProofSecret, req.GatewayOriginProof, req.RequestID, "", p.Config.ProofMaxAge)
 		if !validProof {
 			return &ProxyResult{
 				Valid:               false,
@@ -664,7 +673,7 @@ func ProtectedOriginMiddleware(secret string) func(http.Handler) http.Handler {
 			reqID := r.Header.Get("X-Request-Id")
 			subjID := r.Header.Get(HeaderPolicyHelixSubject)
 
-			if proof == "" || (!VerifyGatewayProof(secret, proof, reqID, subjID, 5*time.Minute) && proof != secret) {
+			if proof == "" || !VerifyGatewayProof(secret, proof, reqID, subjID, 5*time.Minute) {
 				w.Header().Set("Content-Type", "application/json; charset=utf-8")
 				w.WriteHeader(http.StatusForbidden)
 				_ = json.NewEncoder(w).Encode(map[string]interface{}{

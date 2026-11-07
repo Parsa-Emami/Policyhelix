@@ -230,12 +230,12 @@ const SAMPLE_FIXTURES: Record<string, SimulationFixture> = {
 export function Simulator() {
   const [selectedSample, setSelectedSample] = useState<string>('deny-to-allow');
   const [activeFixture, setActiveFixture] = useState<SimulationFixture | null>(SAMPLE_FIXTURES['deny-to-allow']);
-  const [report, setReport] = useState<SimulationReport | null>(() => computeLocalSimulationReport(SAMPLE_FIXTURES['deny-to-allow']));
+  const [report, setReport] = useState<SimulationReport | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Helper to run simulation via engine API with offline fallback
+  // Helper to run simulation via engine API
   const runSimulation = async (fixture: SimulationFixture) => {
     setLoading(true);
     setError(null);
@@ -247,36 +247,20 @@ export function Simulator() {
         body: JSON.stringify(fixture),
       });
 
-      if (response.ok) {
+      if (response.ok || response.status === 422) {
         const data: SimulationReport = await response.json();
-        if (data.error && !data.candidate_decision) {
-          setReport(computeLocalSimulationReport(fixture));
-        } else {
-          setReport(data);
-        }
-      } else if (response.status === 422) {
-        const data: SimulationReport = await response.json();
-        if (data.error && !data.candidate_decision) {
-          setReport(computeLocalSimulationReport(fixture));
-        } else {
-          setReport(data);
-        }
+        setReport(data);
       } else if (response.status === 503) {
         setError('Engine or policy provider unavailable (503 Service Unavailable) — fail closed');
         setReport(null);
-      } else if (response.status === 404) {
-        // Fallback when engine route is in mock or offline mode
-        const rep = computeLocalSimulationReport(fixture);
-        setReport(rep);
       } else {
         const errorText = await response.text();
         setError(`Simulation failed (${response.status}): ${errorText || 'Unknown engine error'}`);
         setReport(null);
       }
     } catch {
-      // Local fallback simulation when engine is offline or running static previews
-      const rep = computeLocalSimulationReport(fixture);
-      setReport(rep);
+      setError('Engine unavailable: Running in offline shell mode. Connect engine on loopback to simulate.');
+      setReport(null);
     } finally {
       setLoading(false);
     }
@@ -453,9 +437,16 @@ export function Simulator() {
 
       {/* Error / Alert Display */}
       {error && (
-        <section className="notice notice-error" role="alert">
+        <section className="notice notice-error" role="alert" aria-live="polite">
           <span className="dot dot-error" />
           <p>{error}</p>
+        </section>
+      )}
+
+      {/* Loading State */}
+      {loading && !report && !error && (
+        <section className="panel" role="status" aria-live="polite">
+          <p className="muted">Evaluating decision simulation via loopback engine…</p>
         </section>
       )}
 
@@ -585,47 +576,6 @@ function truncateDigest(digest?: string): string {
   if (!digest) return 'sha256:0000…';
   if (digest.length <= 22) return digest;
   return `${digest.slice(0, 14)}…${digest.slice(-6)}`;
-}
-
-// Local simulation fallback for resilient client-side execution if engine loopback is starting
-function computeLocalSimulationReport(fx: SimulationFixture): SimulationReport {
-  const isAllowToDeny = fx.fixture_id === 'C21-POS-02' || fx.expected?.transition === 'allow_to_deny';
-  const isUnchanged = fx.fixture_id === 'C21-POS-03' || fx.fixture_id === 'C21-NEG-FAILCLOSED' || fx.expected?.transition === 'unchanged';
-  const isFailClosed = fx.fixture_id === 'C21-NEG-FAILCLOSED' || fx.input?.resource?.id === '/api/v1/vault/keys';
-
-  const baselineAllow = isAllowToDeny ? true : isUnchanged ? !isFailClosed : false;
-  const candidateAllow = isAllowToDeny ? false : isFailClosed ? false : true;
-  const changed = !isUnchanged;
-
-  const baselineRev = fx.baseline_bundle?.revision ?? 1;
-  const candidateRev = fx.candidate_bundle?.revision ?? (baselineRev + 1);
-
-  return {
-    status: 'passed',
-    fixture_id: fx.fixture_id,
-    description: fx.description,
-    changed,
-    transition: changed ? (candidateAllow ? 'deny_to_allow' : 'allow_to_deny') : 'unchanged',
-    revision: candidateRev,
-    policy_digest: fx.candidate_bundle?.digest || 'sha256:candidateDigest',
-    baseline_decision: {
-      allow: baselineAllow,
-      revision: baselineRev,
-      policy_digest: fx.baseline_bundle?.digest || 'sha256:baselineDigest',
-      reasons: baselineAllow ? ['rule_baseline_allow'] : ['rule_baseline_deny'],
-      classification: fx.input?.resource?.classification || 'private',
-    },
-    candidate_decision: {
-      allow: candidateAllow,
-      revision: candidateRev,
-      policy_digest: fx.candidate_bundle?.digest || 'sha256:candidateDigest',
-      reasons: candidateAllow ? ['rule_candidate_allow'] : ['rule_candidate_deny'],
-      classification: fx.input?.resource?.classification || 'private',
-    },
-    reasons: candidateAllow ? ['policy_allow_role_operator'] : ['policy_deny_restricted'],
-    match_expected: true,
-    elapsed_ms: 2.4,
-  };
 }
 
 export default Simulator;

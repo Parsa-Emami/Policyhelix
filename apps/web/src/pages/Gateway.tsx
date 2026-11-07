@@ -46,221 +46,49 @@ export interface GatewayHealthReport {
   };
 }
 
-const PRELOADED_SCENARIOS: Record<string, GatewayHealthReport> = {
-  'stale-policy': {
-    status: 'degraded',
-    active_scenario: 'stale-policy',
-    description: 'Active policy revision 1 exceeded 30s freshness window (45s elapsed); operator sees STALE POLICY alert and fail-closed denial on stale execution.',
-    zero_token_exposure: true,
-    policy: {
-      active_revision: 1,
-      digest: 'sha256:1111222233334444555566667777888899990000aaaabbbbccccddddeeeeffff',
-      stale: true,
-      stale_seconds: 45,
-      freshness_window_seconds: 30,
-      last_sync_time: '2026-11-06T18:15:00Z',
-    },
-    idp: {
-      status: 'healthy',
-      issuer: 'https://auth.policyhelix.local/realms/policyhelix',
-      fail_closed_on_outage: true,
-    },
-    session_revocation: {
-      max_stale_seconds: 30,
-      enforced: true,
-      bounded_window: '<=30s',
-    },
-  },
-  'idp-outage': {
-    status: 'degraded',
-    active_scenario: 'idp-outage',
-    description: 'Identity provider outage detected; all sensitive routes fail closed (503 Service Unavailable) while preserving intentional public health route bypass.',
-    zero_token_exposure: true,
-    policy: {
-      active_revision: 2,
-      digest: 'sha256:222233334444555566667777888899990000aaaabbbbccccddddeeeeffff1111',
-      stale: false,
-      stale_seconds: 12,
-      freshness_window_seconds: 30,
-      last_sync_time: '2026-11-06T18:30:00Z',
-    },
-    idp: {
-      status: 'outage',
-      issuer: 'https://auth.policyhelix.local/realms/policyhelix',
-      fail_closed_on_outage: true,
-      outage_message: 'Identity Provider unreachable (503 Service Unavailable); failing closed on sensitive endpoints.',
-    },
-    session_revocation: {
-      max_stale_seconds: 30,
-      enforced: true,
-      bounded_window: '<=30s',
-    },
-  },
-  'session-revoke': {
-    status: 'ok',
-    active_scenario: 'session-revoke',
-    description: 'Operator triggers session revocation: target session sess-c22-workload-01 is revoked and stops within the configured 30-second bound with zero side effects.',
-    zero_token_exposure: true,
-    policy: {
-      active_revision: 2,
-      digest: 'sha256:222233334444555566667777888899990000aaaabbbbccccddddeeeeffff1111',
-      stale: false,
-      stale_seconds: 8,
-      freshness_window_seconds: 30,
-      last_sync_time: '2026-11-06T18:30:00Z',
-    },
-    idp: {
-      status: 'healthy',
-      issuer: 'https://auth.policyhelix.local/realms/policyhelix',
-      fail_closed_on_outage: true,
-    },
-    session_revocation: {
-      max_stale_seconds: 30,
-      enforced: true,
-      bounded_window: '<=30s',
-      last_revocation: {
-        session_id: 'sess-c22-workload-01',
-        subject_id: 'usr-c22-operator',
-        revoked: true,
-        stopped_within_bound: true,
-        allowed_before_revoke_count: 1,
-        denied_after_revoke_count: 2,
-        side_effects_executed: false,
-        timestamp: '2026-11-06T18:35:00Z',
-      },
-    },
-  },
-  'replayed-identity': {
-    status: 'degraded',
-    active_scenario: 'replayed-identity',
-    description: 'Replayed and expired session identity fails validation before sensitive side effects can be executed.',
-    zero_token_exposure: true,
-    policy: {
-      active_revision: 2,
-      digest: 'sha256:222233334444555566667777888899990000aaaabbbbccccddddeeeeffff1111',
-      stale: false,
-      freshness_window_seconds: 30,
-    },
-    idp: {
-      status: 'healthy',
-      issuer: 'https://auth.policyhelix.local/realms/policyhelix',
-      fail_closed_on_outage: true,
-    },
-    session_revocation: {
-      max_stale_seconds: 30,
-      enforced: true,
-      bounded_window: '<=30s',
-      last_revocation: {
-        session_id: 'sess-c22-replayed-99',
-        subject_id: 'usr-c22-untrusted',
-        revoked: true,
-        stopped_within_bound: true,
-        allowed_before_revoke_count: 0,
-        denied_after_revoke_count: 1,
-        side_effects_executed: false,
-        timestamp: '2026-11-06T18:36:00Z',
-      },
-    },
-    error: {
-      code: 'ERR_IDENTITY_REPLAYED',
-      message: 'Replayed or expired session identity rejected before side effects.',
-    },
-  },
-  'forged-header': {
-    status: 'degraded',
-    active_scenario: 'forged-header',
-    description: 'Client request with forged identity headers (X-Authenticated-Subject) has headers stripped and cannot authorize sensitive side effects.',
-    zero_token_exposure: true,
-    policy: {
-      active_revision: 2,
-      digest: 'sha256:222233334444555566667777888899990000aaaabbbbccccddddeeeeffff1111',
-      stale: false,
-      freshness_window_seconds: 30,
-    },
-    idp: {
-      status: 'healthy',
-      issuer: 'https://auth.policyhelix.local/realms/policyhelix',
-      fail_closed_on_outage: true,
-    },
-    session_revocation: {
-      max_stale_seconds: 30,
-      enforced: true,
-      bounded_window: '<=30s',
-    },
-    error: {
-      code: 'ERR_FORGED_HEADER_REJECTED',
-      message: 'Forged identity headers stripped; sensitive action denied.',
-    },
-  },
-  'sentinel': {
-    status: 'ok',
-    active_scenario: 'sentinel',
-    description: "<script>alert('xss-c22')</script><img src=x onerror=alert('c22')> Script and HTML sentinel inertness test on gateway health and session revocation.",
-    zero_token_exposure: true,
-    policy: {
-      active_revision: 2,
-      digest: 'sha256:222233334444555566667777888899990000aaaabbbbccccddddeeeeffff1111',
-      stale: false,
-      freshness_window_seconds: 30,
-    },
-    idp: {
-      status: 'healthy',
-      issuer: 'https://auth.policyhelix.local/realms/policyhelix',
-      fail_closed_on_outage: true,
-    },
-    session_revocation: {
-      max_stale_seconds: 30,
-      enforced: true,
-      bounded_window: '<=30s',
-      last_revocation: {
-        session_id: "sess-<script>alert('sess')</script>",
-        subject_id: "usr-<script>alert('sub')</script>",
-        revoked: true,
-        stopped_within_bound: true,
-        allowed_before_revoke_count: 0,
-        denied_after_revoke_count: 1,
-        side_effects_executed: false,
-        timestamp: '2026-11-06T18:37:00Z',
-      },
-    },
-  },
-};
-
 export function Gateway() {
   const [selectedScenario, setSelectedScenario] = useState<string>('stale-policy');
-  const [report, setReport] = useState<GatewayHealthReport>(() => PRELOADED_SCENARIOS['stale-policy']);
+  const [report, setReport] = useState<GatewayHealthReport | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [targetSessionId, setTargetSessionId] = useState<string>('sess-c22-workload-01');
   const [revoking, setRevoking] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const fetchGatewayHealth = async (scenarioKey: string) => {
+    if (!scenarioKey) {
+      setReport(null);
+      return;
+    }
+    setLoading(true);
     setError(null);
     try {
-      const response = await fetch('/api/v1/runtime/gateway/health', {
+      const query = `?scenario=${encodeURIComponent(scenarioKey)}`;
+      const response = await fetch(`/api/v1/runtime/gateway/health${query}`, {
         headers: { 'Content-Type': 'application/json' },
       });
       if (response.ok) {
         const data = await response.json();
-        // If query is specifically requesting a simulated scenario state, combine with live engine facts
-        if (scenarioKey === 'stale-policy' || scenarioKey === 'idp-outage' || scenarioKey === 'sentinel' || scenarioKey === 'replayed-identity' || scenarioKey === 'forged-header') {
-          setReport(PRELOADED_SCENARIOS[scenarioKey]);
-        } else {
-          setReport({
-            status: data.status || 'ok',
-            policy: data.policy,
-            idp: data.idp,
-            session_revocation: data.session_revocation,
-            zero_token_exposure: true,
-            description: 'Live Go engine gateway posture verified over loopback proxy.',
-          });
-        }
+        setReport({
+          status: data.status || 'ok',
+          policy: data.policy,
+          idp: data.idp,
+          session_revocation: data.session_revocation,
+          zero_token_exposure: data.zero_token_exposure !== false,
+          active_scenario: data.active_scenario || scenarioKey,
+          description: data.description || 'Live Go engine gateway posture verified over loopback proxy.',
+          error: data.error,
+        });
       } else {
-        setReport(PRELOADED_SCENARIOS[scenarioKey] || PRELOADED_SCENARIOS['stale-policy']);
+        const errText = await response.text();
+        setError(`Failed to retrieve gateway health from engine (${response.status}): ${errText || 'Unknown error'}`);
+        setReport(null);
       }
     } catch {
-      // Local fallback for standalone browser execution or when engine is offline
-      setReport(PRELOADED_SCENARIOS[scenarioKey] || PRELOADED_SCENARIOS['stale-policy']);
+      setError('Engine unavailable: Running in offline shell mode. Connect engine on loopback to inspect gateway health.');
+      setReport(null);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -271,9 +99,10 @@ export function Gateway() {
   const handleSelectScenario = (key: string) => {
     setSelectedScenario(key);
     setError(null);
-    const sc = PRELOADED_SCENARIOS[key];
-    if (sc) {
-      setReport(sc);
+    if (key) {
+      void fetchGatewayHealth(key);
+    } else {
+      setReport(null);
     }
   };
 
@@ -296,30 +125,38 @@ export function Gateway() {
             subject_id: 'usr-c22-operator',
             session_epoch: 1793793600,
             status: 'ACTIVE',
+            created_at: '2026-11-06T18:00:00Z',
+            expires_at: '2026-11-06T20:00:00Z',
+            last_seen_at: '2026-11-06T18:00:00Z',
           },
         ],
         workload_steps: [
           {
             step_id: 'step-1-pre-revoke',
             step_type: 'access',
+            timestamp: '2026-11-06T18:29:55Z',
             access: {
               session_id: sessionIdToRevoke,
+              untrusted_headers_stripped: true,
               requested_path: '/api/v1/analytics/reports',
               resource_classification: 'private',
             },
           },
           {
             step_id: 'step-2-revoke-trigger',
-            step_type: 'revoke',
-            revoke: {
-              session_id: sessionIdToRevoke,
-            },
+            step_type: 'revoke_session',
+            timestamp: '2026-11-06T18:30:00Z',
+            revoke_target: sessionIdToRevoke,
+            reason: 'operator revocation test',
+            actor: 'usr-c22-operator',
           },
           {
             step_id: 'step-3-post-revoke',
             step_type: 'access',
+            timestamp: '2026-11-06T18:30:10Z',
             access: {
               session_id: sessionIdToRevoke,
+              untrusted_headers_stripped: true,
               requested_path: '/api/v1/analytics/reports',
               resource_classification: 'private',
             },
@@ -333,9 +170,9 @@ export function Gateway() {
         body: JSON.stringify(payload),
       });
 
-      if (response.ok) {
+      if (response.ok || response.status === 403) {
         const data = await response.json();
-        setReport((prev) => ({
+        setReport((prev) => prev ? ({
           ...prev,
           active_scenario: 'session-revoke',
           session_revocation: {
@@ -351,13 +188,13 @@ export function Gateway() {
               timestamp: new Date().toISOString(),
             },
           },
-        }));
+        }) : null);
       } else {
-        // Fallback to deterministic local computation
-        setReport(PRELOADED_SCENARIOS['session-revoke']);
+        const errText = await response.text();
+        setError(`Session revocation check failed (${response.status}): ${errText || 'Engine error'}`);
       }
     } catch {
-      setReport(PRELOADED_SCENARIOS['session-revoke']);
+      setError('Engine unavailable: Failed to submit revocation check to loopback engine.');
     } finally {
       setRevoking(false);
     }
@@ -434,6 +271,7 @@ export function Gateway() {
 
   const handleClear = () => {
     setSelectedScenario('');
+    setReport(null);
     setError(null);
   };
 
@@ -494,14 +332,21 @@ export function Gateway() {
 
       {/* Error Notice */}
       {error && (
-        <section className="notice notice-error" role="alert">
+        <section className="notice notice-error" role="alert" aria-live="polite">
           <span className="dot dot-error" />
           <p>{error}</p>
         </section>
       )}
 
+      {/* Loading State */}
+      {loading && !report && !error && (
+        <section className="panel" role="status" aria-live="polite">
+          <p className="muted">Inspecting gateway health posture via loopback engine…</p>
+        </section>
+      )}
+
       {/* Empty State */}
-      {!selectedScenario && !error && (
+      {!selectedScenario && !error && !loading && (
         <section className="panel empty-state" role="status">
           <h2>No scenario selected</h2>
           <p className="muted">
@@ -510,7 +355,7 @@ export function Gateway() {
         </section>
       )}
 
-      {selectedScenario && (
+      {selectedScenario && report && !error && (
         <div className="gateway-dashboard">
           {/* Status Cards Grid */}
           <div className="gateway-status-grid">

@@ -8,7 +8,7 @@
       "mandatory": true,
       "planned_commit": "C01",
       "evidence_path": "docs/evidence/C01.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "N02",
@@ -17,7 +17,7 @@
       "mandatory": true,
       "planned_commit": "C02",
       "evidence_path": "docs/evidence/C02.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "N03",
@@ -26,7 +26,7 @@
       "mandatory": true,
       "planned_commit": "C03",
       "evidence_path": "docs/evidence/C03.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "N04",
@@ -35,7 +35,7 @@
       "mandatory": true,
       "planned_commit": "C04",
       "evidence_path": "docs/evidence/C04.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "N05",
@@ -44,7 +44,7 @@
       "mandatory": true,
       "planned_commit": "C05",
       "evidence_path": "docs/evidence/C05.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "N06",
@@ -53,7 +53,7 @@
       "mandatory": true,
       "planned_commit": "C06",
       "evidence_path": "docs/evidence/C06.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "F01",
@@ -62,7 +62,7 @@
       "mandatory": true,
       "planned_commit": "C07",
       "evidence_path": "docs/evidence/C07.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "F02",
@@ -71,7 +71,7 @@
       "mandatory": true,
       "planned_commit": "C08",
       "evidence_path": "docs/evidence/C08.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "F03",
@@ -80,7 +80,7 @@
       "mandatory": true,
       "planned_commit": "C09",
       "evidence_path": "docs/evidence/C09.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "F04",
@@ -89,7 +89,7 @@
       "mandatory": true,
       "planned_commit": "C10",
       "evidence_path": "docs/evidence/C10.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "F05",
@@ -98,7 +98,7 @@
       "mandatory": true,
       "planned_commit": "C11",
       "evidence_path": "docs/evidence/C11.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "F06",
@@ -107,7 +107,7 @@
       "mandatory": true,
       "planned_commit": "C12",
       "evidence_path": "docs/evidence/C12.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "F07",

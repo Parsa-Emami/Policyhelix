@@ -10,7 +10,6 @@ import (
 	"github.com/parsa-emami/policyhelix/internal/auth"
 	"github.com/parsa-emami/policyhelix/internal/bundles"
 	"github.com/parsa-emami/policyhelix/internal/policy"
-	"github.com/parsa-emami/policyhelix/internal/storage"
 )
 
 // EnforcementMatrixFixture models an end-to-end C26 enforcement scenario verifying
@@ -95,29 +94,20 @@ func EvaluateEnforcementFixture(ctx context.Context, storageDir string, fx Enfor
 		evalTime = parsed.UTC()
 	}
 
-	ad, _, err := storage.Open(storageDir)
+	env, err := SetupGatewayFixtureEnv(ctx, storageDir, fx.TrustedKeys, fx.PreloadBundle, fx.EvaluationTime, evalTime, fx.PreloadSessions, fx.PreloadRevocations)
 	if err != nil {
 		rep.ErrorCode = bundles.ErrCodeActivationStoreUnavail
 		rep.ErrorMessage = err.Error()
 		rep.StatusCode = http.StatusServiceUnavailable
 		return rep, err
 	}
-	defer ad.Close()
+	defer env.Close()
 
-	mgr := bundles.NewKeyRotationManagerFromAdapter(ad, bundles.NewKeyring(fx.TrustedKeys...))
-	mgr.Now = func() time.Time { return evalTime }
+	mgr := env.KeyManager
+	sessStore := env.SessionStore
+	revStore := env.RevocationStore
 
 	// Stage 1: Durable Bundle Authority & Anti-Rollback / Anti-Tamper Gate
-	if fx.PreloadBundle != nil {
-		preRes := mgr.ActivateBundle(ctx, *fx.PreloadBundle, fx.EvaluationTime)
-		if preRes.Status == bundles.ActivationStatusRejected {
-			rep.ErrorCode = preRes.ErrorCode
-			rep.ErrorMessage = fmt.Sprintf("preload bundle failed: %s", preRes.Message)
-			rep.StatusCode = http.StatusForbidden
-			return rep, fmt.Errorf("%s: %s", rep.ErrorCode, rep.ErrorMessage)
-		}
-	}
-
 	if fx.CandidateBundle != nil {
 		candReq := *fx.CandidateBundle
 		switch fx.TamperCandidate {
@@ -150,24 +140,6 @@ func EvaluateEnforcementFixture(ctx context.Context, storageDir string, fx Enfor
 	rep.ActiveBundleID = kState.ActiveBundleID
 	rep.ActiveRevision = kState.ActiveRevision
 	rep.HighestRevision = kState.HighestRevision
-
-	// Stage 2: Session & Revocation Store Setup + Gateway Proxy Evaluation
-	sessStore := auth.NewStorageSessionStore(ad)
-	revStore := auth.NewStorageRevocationStore(ad)
-	for _, s := range fx.PreloadSessions {
-		_ = sessStore.SaveSession(ctx, s)
-	}
-	for _, r := range fx.PreloadRevocations {
-		if r.SessionID != "" {
-			_ = revStore.SaveSessionRevocation(ctx, r)
-		}
-		if r.SubjectID != "" && r.MinRequiredEpoch > 0 {
-			_ = revStore.SaveSubjectRevocation(ctx, r)
-		}
-		if r.OwnerScope != "" {
-			_ = revStore.SaveScopeRevocation(ctx, r)
-		}
-	}
 
 	cfg := DefaultUpstreamConfig()
 	if fx.UpstreamConfig != nil {

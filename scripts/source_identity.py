@@ -6,7 +6,7 @@ r=Path(__file__).resolve().parents[1]
 paths=subprocess.check_output(['git','ls-files','-z','--cached','--others','--exclude-standard'],cwd=r).decode().split('\0')
 h=hashlib.sha256()
 for path in sorted(set(paths)-{''}):
-    if path=='SHA256SUMS.txt' or path.startswith('docs/evidence/'):continue
+    if path=='SHA256SUMS.txt' or path.startswith('docs/evidence/') or path=='plans/progress.json' or path=='docs/agents/SESSION_HANDOFF.json':continue
     p=r/path
     if p.is_file():h.update(path.encode()+b'\0'+hashlib.sha256(p.read_bytes()).digest())
 value='sha256:'+h.hexdigest()

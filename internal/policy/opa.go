@@ -130,6 +130,12 @@ func (e *BundleError) Error() string {
 	return fmt.Sprintf("%s: %s", e.Code, e.Message)
 }
 
+// ResourceInput represents structured resource identity and classification.
+type ResourceInput struct {
+	ID             string        `json:"id,omitempty"`
+	Classification ResourceClass `json:"classification,omitempty"`
+}
+
 // BundleEvalInput defines the strongly typed request for evaluating a decision against a bounded bundle.
 type BundleEvalInput struct {
 	RequestID        string             `json:"request_id"`
@@ -137,6 +143,7 @@ type BundleEvalInput struct {
 	Action           string             `json:"action"`
 	Subject          SubjectIdentity    `json:"subject"`
 	ResourceID       string             `json:"resource_id,omitempty"`
+	Resource         *ResourceInput     `json:"resource,omitempty"`
 	DeadlineMS       int                `json:"deadline_ms"`
 	SimulatedDelayMS int                `json:"simulated_delay_ms,omitempty"`
 	EvalTime         string             `json:"eval_time,omitempty"`
