@@ -1228,6 +1228,56 @@ func setupRouter() *http.ServeMux {
 		_ = json.NewEncoder(w).Encode(rep)
 	})
 
+	// C27: Security & Abuse Boundary Verification Endpoint (POST /api/v1/security/verify)
+	mux.HandleFunc("/api/v1/security/verify", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", "POST")
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 1048576))
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"passed":     false,
+				"error_code": "PAYLOAD_TOO_LARGE",
+				"message":    "Failed to read request body or exceeded 1MB",
+			})
+			return
+		}
+		var fx gateway.SecurityBoundaryFixture
+		if err := json.Unmarshal(body, &fx); err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"passed":     false,
+				"error_code": "MALFORMED_FIXTURE",
+				"message":    fmt.Sprintf("Malformed security boundary fixture JSON: %v", err),
+			})
+			return
+		}
+		tmpDir, err := os.MkdirTemp("", "policyhelix-sec-http-*")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if err != nil {
+			w.WriteHeader(http.StatusServiceUnavailable)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"passed":     false,
+				"error_code": bundles.ErrCodeActivationStoreUnavail,
+				"message":    err.Error(),
+			})
+			return
+		}
+		defer os.RemoveAll(tmpDir)
+		rep, runErr := gateway.EvaluateSecurityBoundaryFixture(r.Context(), tmpDir, fx)
+		status := http.StatusOK
+		if !rep.Passed || runErr != nil {
+			status = http.StatusForbidden
+		}
+		w.WriteHeader(status)
+		_ = json.NewEncoder(w).Encode(rep)
+	})
+
 	return mux
 }
 
@@ -1322,6 +1372,7 @@ func main() {
 	evaluateCacheFlag := flag.String("evaluate-cache", "", "Path to C24 policy decision cache fixture JSON")
 	rotateKeysFlag := flag.String("rotate-keys", "", "Path to C25 trust key rotation fixture JSON")
 	verifyEnforcementFlag := flag.String("verify-enforcement", "", "Path to C26 enforcement matrix fixture JSON")
+	verifySecurityFlag := flag.String("verify-security", "", "Path to C27 security boundary fixture JSON")
 	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	flag.Parse()
@@ -2093,6 +2144,35 @@ func main() {
 			dir = tmp
 		}
 		rep, runErr := gateway.EvaluateEnforcementFixture(context.Background(), dir, fx)
+		_ = json.NewEncoder(os.Stdout).Encode(rep)
+		if runErr != nil || !rep.Passed {
+			os.Exit(1)
+		}
+		return
+	}
+
+	if *verifySecurityFlag != "" {
+		raw, err := os.ReadFile(*verifySecurityFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Security fixture read error: %v\n", err)
+			os.Exit(1)
+		}
+		var fx gateway.SecurityBoundaryFixture
+		if err := json.Unmarshal(raw, &fx); err != nil {
+			fmt.Fprintf(os.Stderr, "Security fixture JSON error: %v\n", err)
+			os.Exit(1)
+		}
+		dir := strings.TrimSpace(*storageDirFlag)
+		if dir == "" {
+			tmp, err := os.MkdirTemp("", "policyhelix-sec-*")
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Security temp dir error: %v\n", err)
+				os.Exit(1)
+			}
+			defer os.RemoveAll(tmp)
+			dir = tmp
+		}
+		rep, runErr := gateway.EvaluateSecurityBoundaryFixture(context.Background(), dir, fx)
 		_ = json.NewEncoder(os.Stdout).Encode(rep)
 		if runErr != nil || !rep.Passed {
 			os.Exit(1)

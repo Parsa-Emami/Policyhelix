@@ -1,0 +1,180 @@
+{
+  "fixture_id": "negative-private-resource-fail-closed",
+  "commit_id": "C27",
+  "description": "Caller with viewer role attempting restricted admin export action fails closed with WIDENED_PERMISSION_DENIED and PRIVATE_RESOURCE_FAIL_CLOSED on storage.",
+  "schema_version": "1",
+  "vector": "private_resource_fail_closed",
+  "surface": "gateway_and_storage",
+  "evaluation_time": "2026-11-04T12:00:00Z",
+  "trusted_keys": [
+    {
+      "signer_key_id": "ed25519-primary-2026",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    }
+  ],
+  "preload_bundle": {
+    "schema_version": "1",
+    "operation_id": "op-preload-c27-rev2",
+    "identity": {
+      "subject_id": "alice-operator",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 1793793600,
+      "min_required_epoch": 1710000000,
+      "untrusted_headers_stripped": true,
+      "provider_state": "available"
+    },
+    "bundle": {
+      "schema_version": "1",
+      "bundle_id": "bundle-sec-c27-rev2",
+      "package": "policyhelix.authz",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "signer_key_id": "ed25519-primary-2026",
+      "signature": "ed25519:f5c8c81fbd5203079101b0550b4e84d59c45202fc8a6453d91f6a373722cb082cd3975cb08022052cb96cb76ce12f37ce30e314c2da2013191f0c85fe4901709",
+      "signature_verified": true,
+      "revision": 2,
+      "issued_at": "2026-11-04T10:00:00Z",
+      "expires_at": "2026-11-05T10:00:00Z",
+      "digest": "sha256:794fde71ea73951cb0e2cd17f6cd2faf141ba39104f11ca8a0bc804b973af70e",
+      "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+      "routes": [
+        {
+          "pattern": "/api/v1/analytics/reports",
+          "action": "read",
+          "classification": "private",
+          "allow_unauthenticated": false,
+          "required_roles": [
+            "operator",
+            "admin"
+          ],
+          "description": "Private analytics reports endpoint"
+        },
+        {
+          "pattern": "/api/v1/analytics/exports",
+          "action": "write",
+          "classification": "restricted",
+          "allow_unauthenticated": false,
+          "required_roles": [
+            "admin"
+          ],
+          "description": "Restricted analytics export endpoint"
+        },
+        {
+          "pattern": "/health",
+          "action": "read",
+          "classification": "public",
+          "allow_unauthenticated": true,
+          "description": "Public health endpoint"
+        }
+      ],
+      "rules": [
+        {
+          "id": "rule-operator-analytics-read",
+          "effect": "allow",
+          "path_pattern": "/api/v1/analytics/reports",
+          "actions": [
+            "read"
+          ],
+          "roles": [
+            "operator",
+            "admin"
+          ],
+          "resource_class": "private",
+          "reason_code": "policy_allow_role_operator",
+          "reason_message": "Operator granted read access to analytics reports"
+        },
+        {
+          "id": "rule-admin-analytics-export",
+          "effect": "allow",
+          "path_pattern": "/api/v1/analytics/exports",
+          "actions": [
+            "write"
+          ],
+          "roles": [
+            "admin"
+          ],
+          "resource_class": "restricted",
+          "reason_code": "policy_allow_role_admin",
+          "reason_message": "Admin granted write access to analytics exports"
+        }
+      ]
+    }
+  },
+  "preload_sessions": [
+    {
+      "session_id": "sess-c27-viewer-01",
+      "subject_id": "bob-viewer",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "roles": [
+        "viewer"
+      ],
+      "owner_scope": "tenant:default",
+      "fingerprint": {
+        "ip_hash": "",
+        "user_agent_hash": "",
+        "composite_hash": ""
+      },
+      "credentials": {
+        "has_access_token": false,
+        "has_refresh_token": false
+      },
+      "session_epoch": 1793793600,
+      "created_at": "2026-11-04T11:00:00Z",
+      "expires_at": "2026-11-04T15:00:00Z",
+      "last_seen_at": "0001-01-01T00:00:00Z",
+      "status": "ACTIVE"
+    }
+  ],
+  "attempted_write": {
+    "schema_version": "1",
+    "operation_id": "op-c27-viewer-write-01",
+    "record_id": "bob-viewer:export-01",
+    "owner_scope": "bob-viewer",
+    "classification": "restricted",
+    "identity": {
+      "subject_id": "bob-viewer",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "roles": [
+        "viewer"
+      ],
+      "authenticated": true,
+      "session_epoch": 1793793600,
+      "untrusted_headers_stripped": true,
+      "provider_state": "available"
+    },
+    "payload": {
+      "export": "all"
+    }
+  },
+  "proxy_request": {
+    "request_id": "req-c27-viewer-export",
+    "target_upstream_id": "service:analytics",
+    "method": "POST",
+    "path": "/api/v1/analytics/exports",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "session_id": "sess-c27-viewer-01",
+    "client_ip": "10.0.0.5",
+    "user_agent": "PolicyHelix-Client/1.0",
+    "untrusted_headers_stripped": true,
+    "resource_classification": "restricted",
+    "target_owner_scope": "tenant:default",
+    "required_roles": [
+      "admin"
+    ],
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "allow": false,
+    "forwarded_to_upstream": false,
+    "side_effects_executed": false,
+    "status_code": 403,
+    "error_code": "WIDENED_PERMISSION_DENIED",
+    "storage_error_code": "PRIVATE_RESOURCE_FAIL_CLOSED"
+  }
+}

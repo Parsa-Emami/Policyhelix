@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-07",
   "base_commit": "7b57646",
-  "scope": "Task C26: test(enforcement): verify origin bypass outage and replay; direct origin, forged header, revoked session, expired bundle and policy outage all fail as specified (Requirement F20)",
+  "scope": "Task C27: test(security): prove project abuse and authorization boundaries; execute negative UAT, XSS/import and object/provider authorization tests across every enabled surface (Requirement N27)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -29,23 +29,25 @@
     "C23",
     "C24",
     "C25",
-    "C26"
+    "C26",
+    "C27"
   ],
   "commands": [
     "npm run validate:plan",
-    "go test -v -run TestC26 ./tests",
+    "go test -v -run TestC27 ./tests",
     "go test ./...",
     "npm test",
+    "npm run test:browser",
     "npm run build",
     "npm run build:engine",
     "python3 scripts/validate_repo.py",
     "python3 scripts/source_identity.py"
   ],
-  "validation_results": "docs/evidence/C26.json",
-  "final_source_identity": "sha256:1802f53e6b9df01e2d49a001273b601e442e51b70df67f93055793f8df03d0ea",
+  "validation_results": "docs/evidence/C27.json",
+  "final_source_identity": "sha256:45518938829df3eb3971b0b7a1ccdbedbfcec281dd95ed890c7e1ba727abf351",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C27",
+  "next_task": "C28",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C26 verified. End-to-end enforcement matrix verification implemented in internal/gateway/enforcement.go, tests/enforcement_matrix_test.go, docs/evidence/enforcement-template.md, and tests/fixtures/policyhelix/C26/. CLI flag -verify-enforcement and HTTP endpoint /api/v1/gateway/enforcement/verify registered in cmd/policyhelix/main.go and proxied through scripts/serve-web.mjs. Requirement F20 verified. Ready for C27 (test(security): run negative uat xss import and idor suite)."
+  "continuation": "Task C27 verified. Negative UAT, XSS/import prototype-pollution guards, and object/provider authorization (IDOR) boundary suite implemented in internal/gateway/security.go, tests/security_suite_test.go, tests/browser/security.spec.ts, tests/release/security-matrix.md, docs/security/THREAT_MODEL.md, and tests/fixtures/policyhelix/C27/. CLI flag -verify-security and HTTP endpoint /api/v1/security/verify registered in cmd/policyhelix/main.go and proxied through scripts/serve-web.mjs. Requirement N27 verified. Ready for C28 (perf(engine): measure 200ms decision latency and resource bounds)."
 }

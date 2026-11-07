@@ -1,0 +1,78 @@
+{
+  "commit_id": "C27",
+  "description": "Synthetic licensed fixtures for PolicyHelix C27: negative UAT, XSS/import and object/provider authorization tests across every enabled surface (Requirement N27).",
+  "fixtures": [
+    {
+      "fixture_id": "positive-authorized-owner-scope-access",
+      "path": "tests/fixtures/policyhelix/C27/positive-authorized-owner-scope-access.json",
+      "sha256": "a79af62ec472300e6c51ee6dd8dac7a8008049c6ea1fa930aacd95fd7ffe5a9b",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-missing-identity-denied",
+      "path": "tests/fixtures/policyhelix/C27/negative-missing-identity-denied.json",
+      "sha256": "ccda9fd769ab8f41b164e80999ad92996e77807545642e6c10ccbc25a6f3b0a7",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-expired-replayed-identity-denied",
+      "path": "tests/fixtures/policyhelix/C27/negative-expired-replayed-identity-denied.json",
+      "sha256": "10dbdd02c656a9346e62306d3481c0ab14801f7ba75afa102ef0aeee21ab6b68",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-idor-unrelated-owner-scope",
+      "path": "tests/fixtures/policyhelix/C27/negative-idor-unrelated-owner-scope.json",
+      "sha256": "74c2e84904a3852d303105a0ba5fea93f72dcf0818f167830e3c951104fdca03",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-forged-header-privilege-escalation",
+      "path": "tests/fixtures/policyhelix/C27/negative-forged-header-privilege-escalation.json",
+      "sha256": "ef0457bd004aafb21bd906e61a71baa2499b42e32668f19988d9ce388bfee0a5",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-widened-path-traversal-denied",
+      "path": "tests/fixtures/policyhelix/C27/negative-widened-path-traversal-denied.json",
+      "sha256": "dd6185d4ce22fac52b6f1cea970754e3d98a84de5f71da4e011b183e2d4a9cc0",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-widened-provider-upstream-denied",
+      "path": "tests/fixtures/policyhelix/C27/negative-widened-provider-upstream-denied.json",
+      "sha256": "e30d939580ed40aa85ba0972abab62e6b2242828317fda1d1591275b3e38da4a",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-idp-unavailable-sensitive-deny",
+      "path": "tests/fixtures/policyhelix/C27/negative-idp-unavailable-sensitive-deny.json",
+      "sha256": "ece0ee93393914a678e0cb7a1f53319db3872592c22d04c9ebafb2bfb389cc0a",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-xss-import-prototype-pollution-rejected",
+      "path": "tests/fixtures/policyhelix/C27/negative-xss-import-prototype-pollution-rejected.json",
+      "sha256": "3b87c3bb9dd4ab0d1457d39303f24a2377655e52b41a5a965a314b8e2b237656",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-private-resource-fail-closed",
+      "path": "tests/fixtures/policyhelix/C27/negative-private-resource-fail-closed.json",
+      "sha256": "2be8e853f9005b0ebde9ae0380337686cff64576ee1cf74f33da40de45c7002c",
+      "type": "negative",
+      "license": "Apache-2.0"
+    }
+  ],
+  "license": "Apache-2.0",
+  "schema_version": "1"
+}

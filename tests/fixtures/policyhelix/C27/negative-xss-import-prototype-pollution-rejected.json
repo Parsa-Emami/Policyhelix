@@ -1,0 +1,19 @@
+{
+  "fixture_id": "negative-xss-import-prototype-pollution-rejected",
+  "commit_id": "C27",
+  "description": "Untrusted JSON import containing prototype-pollution keys (__proto__) and XSS script sentinels is rejected and rendered strictly inert.",
+  "schema_version": "1",
+  "vector": "xss_import_abuse",
+  "surface": "web_import_and_engine",
+  "evaluation_time": "2026-11-04T12:00:00Z",
+  "untrusted_import_raw": "{\"fixture_id\":\"xss-\u003cscript\u003ealert('c27')\u003c/script\u003e\",\"__proto__\":{\"polluted\":true},\"note\":\"\u003cimg src=x onerror=alert(1)\u003e\"}",
+  "expected": {
+    "allow": false,
+    "forwarded_to_upstream": false,
+    "side_effects_executed": false,
+    "status_code": 422,
+    "error_code": "UNSAFE_IMPORT_PAYLOAD_REJECTED",
+    "import_rejected": true,
+    "xss_inert": true
+  }
+}

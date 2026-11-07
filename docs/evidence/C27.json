@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "commit_id": "C27",
+  "project": "PolicyHelix",
+  "date": "2026-11-07",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix security and abuse boundaries: execute negative UAT, XSS/import and object/provider authorization tests for every enabled surface (Requirement N27)",
+  "source_identity": "sha256:45518938829df3eb3971b0b7a1ccdbedbfcec281dd95ed890c7e1ba727abf351",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml; local run used Go 1.26.2 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "development host verified against C27 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    },
+    {
+      "tool": "Playwright",
+      "version": "1.64.1",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C27/positive-authorized-owner-scope-access.json",
+      "sha256": "a79af62ec472300e6c51ee6dd8dac7a8008049c6ea1fa930aacd95fd7ffe5a9b",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C27 authorized owner scope access and scoped storage write"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C27/negative-missing-identity-denied.json",
+      "sha256": "ccda9fd769ab8f41b164e80999ad92996e77807545642e6c10ccbc25a6f3b0a7",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C27 missing identity rejection before sensitive side effects"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C27/negative-expired-replayed-identity-denied.json",
+      "sha256": "10dbdd02c656a9346e62306d3481c0ab14801f7ba75afa102ef0aeee21ab6b68",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C27 expired and superseded/replayed identity rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C27/negative-idor-unrelated-owner-scope.json",
+      "sha256": "74c2e84904a3852d303105a0ba5fea93f72dcf0818f167830e3c951104fdca03",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C27 cross-tenant/unrelated owner scope (IDOR) rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C27/negative-forged-header-privilege-escalation.json",
+      "sha256": "ef0457bd004aafb21bd906e61a71baa2499b42e32668f19988d9ce388bfee0a5",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C27 forged identity header rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C27/negative-widened-path-traversal-denied.json",
+      "sha256": "dd6185d4ce22fac52b6f1cea970754e3d98a84de5f71da4e011b183e2d4a9cc0",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C27 widened path traversal rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C27/negative-widened-provider-upstream-denied.json",
+      "sha256": "e30d939580ed40aa85ba0972abab62e6b2242828317fda1d1591275b3e38da4a",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C27 widened upstream provider / SSRF target rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C27/negative-idp-unavailable-sensitive-deny.json",
+      "sha256": "ece0ee93393914a678e0cb7a1f53319db3872592c22d04c9ebafb2bfb389cc0a",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C27 unavailable identity provider fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C27/negative-xss-import-prototype-pollution-rejected.json",
+      "sha256": "3b87c3bb9dd4ab0d1457d39303f24a2377655e52b41a5a965a314b8e2b237656",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C27 XSS sentinel and prototype-pollution JSON import rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C27/negative-private-resource-fail-closed.json",
+      "sha256": "2be8e853f9005b0ebde9ae0380337686cff64576ee1cf74f33da40de45c7002c",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C27 insufficient role / private resource fail-closed rejection"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "go test -v -run TestC27 ./tests",
+      "exit_code": 0,
+      "output": "PASS: TestC27_ManifestIntegrityAndFixtureEvaluation, TestC27_IdentityAndIDOROwnerScopeIsolation, TestC27_ForgedHeaderWidenedPermissionIdPOutageAndImportAbuse, TestC27_CLIAndHTTPSecurityVerify"
+    },
+    {
+      "command": "go test -count=1 ./...",
+      "exit_code": 0,
+      "output": "ok cmd/policyhelix, internal/contracts, internal/policy, internal/storage, tests"
+    },
+    {
+      "command": "npm run test:browser",
+      "exit_code": 0,
+      "output": "25 passed (9.0s): enforces strict HTTP security headers, blocks path traversal, and rejects disallowed methods; overview JSON import blocks prototype pollution, oversized files, and XSS sentinels; simulator and gateway surfaces enforce XSS inertness, schema validation, and zero token exposure; executes C27 object/provider authorization (IDOR) and abuse fixtures against loopback engine; plus all C21, C22 and workspace regressions"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "16 passed, 0 failed"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED: Checked JSON files and repository contract invariants."
+    }
+  ],
+  "results": [
+    "Requirement N27 fully implemented and verified: Negative UAT, XSS/import and object/provider authorization tests executed and passed across every enabled surface.",
+    "STRIDE threat model documented in docs/security/THREAT_MODEL.md and release security matrix documented in tests/release/security-matrix.md.",
+    "EvaluateSecurityBoundaryFixture implemented in internal/gateway/security.go verifying missing/expired/replayed identity, cross-tenant owner/object scope isolation (IDOR), forged headers, widened path/provider permissions, IdP unavailability, XSS/prototype-pollution imports, and fail-closed private resource enforcement with zero side effects.",
+    "Browser Playwright suite (tests/browser/security.spec.ts) verifies CSP and security headers, dot-segment path traversal rejection, prototype-pollution (__proto__, constructor.prototype) rejection, >1 MiB preview limit, XSS sentinel inertness on Overview, Simulator, and Gateway surfaces, zero token exposure, and live loopback /api/v1/security/verify execution.",
+    "Engine CLI flag -verify-security and HTTP endpoint POST /api/v1/security/verify registered in cmd/policyhelix/main.go and proxied through scripts/serve-web.mjs.",
+    "Ten Apache-2.0 synthetic fixtures cataloged with SHA-256 digests in tests/fixtures/policyhelix/C27/manifest.json."
+  ],
+  "observed_limitations": [
+    "Engine 200ms decision latency, saturation, cancellation, and hardware resource bound measurements are scheduled for downstream task C28."
+  ],
+  "rollback_or_recovery_observation": "Revert docs/security/THREAT_MODEL.md, tests/release/security-matrix.md, internal/gateway/security.go, tests/security_suite_test.go, tests/browser/security.spec.ts, tests/fixtures/policyhelix/C27/, cmd/policyhelix/main.go security additions, scripts/serve-web.mjs proxy additions, and docs/evidence/C27.json. Existing C01-C26 components remain intact."
+}
