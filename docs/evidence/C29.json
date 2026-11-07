@@ -147,7 +147,17 @@
       "output": "VALIDATION PASSED"
     }
   ],
-
+  "results": [
+    "Requirement N29 fully implemented and verified: web health separated from engine, authoritative storage, and required provider readiness.",
+    "Real engine readiness evaluated across authoritative storage (adapter write, manifest integrity, disk space) and required providers (local_opa, self_hosted_keycloak, owned_synthetic_upstream); component outages return visible HTTP 503 errors and structured reason codes without placeholder success.",
+    "Diagnostics telemetry ring buffer implemented in internal/gateway/diagnostics.go bounded to 100 entries and max 4096 bytes per message, preventing log/memory bloat.",
+    "Credential and token scrubber implemented across engine and web supervisor, strictly redacting Bearer tokens, JWTs, sensitive session cookies, passwords, and synthetic test sentinels (*_SENTINEL).",
+    "Private diagnostic endpoints enforce fail-closed authorization rejecting unauthenticated requests with HTTP 401.",
+    "Operational guide ops/diagnostics.md created documenting liveness vs readiness separation, runbook troubleshooting, and sentinel redaction policies.",
+    "Web server readiness in scripts/serve-web.mjs enhanced to proxy /api/v1/runtime/readiness and /api/v1/runtime/diagnostics and support deep engine inspection.",
+    "Dedicated test suite tests/web/engine-readiness.test.mjs and Go integration test tests/readiness_test.go pass all assertions.",
+    "Ten Apache-2.0 synthetic fixtures cataloged with SHA-256 digests in tests/fixtures/policyhelix/C29/manifest.json."
+  ],
   "observed_behavior": {
     "web_health_scope": "web-shell",
     "engine_readiness_scope": "web-and-engine",
@@ -165,5 +175,10 @@
       "self_hosted_keycloak",
       "owned_synthetic_upstream"
     ]
-  }
+  },
+  "observed_limitations": [
+    "Full clean-host core workflow, restart, and restore certification is scheduled for downstream task C30.",
+    "Real external network partitions are simulated locally via deterministic connection states and error payloads."
+  ],
+  "rollback_or_recovery_observation": "Revert internal/gateway/diagnostics.go, ops/diagnostics.md, tests/web/engine-readiness.test.mjs, tests/readiness_test.go, tests/fixtures/policyhelix/C29/, cmd/policyhelix additions, scripts/serve-web.mjs additions, and docs/evidence/C29.json. Existing C01-C28 components remain intact."
 }
