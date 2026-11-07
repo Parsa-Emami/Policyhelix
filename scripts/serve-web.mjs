@@ -44,15 +44,19 @@ export function createWebServer({ root, config, projectId, engineUrl }) {
         reqBody = chunks.length > 0 ? Buffer.concat(chunks) : undefined;
       }
       try {
+        const upstreamHeaders = {};
+        if (reqBody) upstreamHeaders['Content-Type'] = 'application/json';
+        if (req.headers['authorization']) upstreamHeaders['Authorization'] = req.headers['authorization'];
         const upstream = await fetch(targetUrl, {
           method: req.method,
-          headers: reqBody ? { 'Content-Type': 'application/json' } : undefined,
+          headers: upstreamHeaders,
           body: reqBody,
           signal: AbortSignal.timeout(options.timeoutMs ?? 5000),
         });
         const bodyText = await upstream.text();
         send(upstream.status, bodyText);
       } catch {
+
         send(503, '{"error":"engine_unavailable"}');
       }
     };
@@ -87,6 +91,17 @@ export function createWebServer({ root, config, projectId, engineUrl }) {
     if (path === '/api/v1/rollout/shadow/divergence' && engineUrl) {
       return await proxyToEngine(`${engineUrl}/api/v1/rollout/shadow/divergence${search}`, { methods: ['GET', 'POST'] });
     }
+    const redactLog = text => {
+      if (!text) return '';
+      let s = String(text);
+      s = s.replace(/\bBearer\s+[A-Za-z0-9\-._~+/]+=*/gi, 'Bearer [REDACTED]');
+      s = s.replace(/\bey[A-Za-z0-9_-]+\.ey[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)?\b/g, '[REDACTED_JWT]');
+      s = s.replace(/\b(policyhelix_session|session|session_id|session_token|auth_token|token|access_token|refresh_token|id_token)\s*=\s*[^;\s,]+/gi, '$1=[REDACTED]');
+      s = s.replace(/[a-z0-9_-]*sentinel[a-z0-9_-]*/gi, '[REDACTED_SENTINEL]');
+      if (s.length > 4096) s = s.slice(0, 4084) + '...[TRUNCATED]';
+      return s;
+    };
+
     if (path.startsWith('/api/v1/policy/cache/') && engineUrl) {
       return await proxyToEngine(`${engineUrl}${path}${search}`, { methods: ['GET', 'POST'] });
     }
@@ -99,13 +114,36 @@ export function createWebServer({ root, config, projectId, engineUrl }) {
     if (path === '/api/v1/runtime/gateway/health' && engineUrl) {
       return await proxyToEngine(`${engineUrl}/api/v1/runtime/gateway/health${search}`, { methods: ['GET', 'HEAD'], timeoutMs: 3000 });
     }
+    if (path === '/api/v1/runtime/readiness' && engineUrl) {
+      return await proxyToEngine(`${engineUrl}/api/v1/runtime/readiness${search}`, { methods: ['GET', 'HEAD'], timeoutMs: 3000 });
+    }
+    if (path === '/api/v1/runtime/diagnostics' && engineUrl) {
+      return await proxyToEngine(`${engineUrl}/api/v1/runtime/diagnostics${search}`, { methods: ['GET', 'HEAD'], timeoutMs: 3000 });
+    }
     if (!['GET', 'HEAD'].includes(req.method ?? '')) { res.setHeader('Allow', 'GET, HEAD'); send(405, '{"error":"method_not_allowed"}'); return; }
     if (path === '/healthz') { send(200, '{"status":"ok","scope":"web-shell"}'); return; }
     if (path === '/readyz') {
-      try { await stat(resolve(publicRoot, 'index.html')); send(200, '{"status":"ready","scope":"web-shell","engineReady":false}'); }
+      try {
+        await stat(resolve(publicRoot, 'index.html'));
+        const check = new URL(req.url, 'http://127.0.0.1').searchParams.get('check');
+        if (engineUrl && (check === 'engine' || check === 'all' || check === 'deep')) {
+          try {
+            const up = await fetch(`${engineUrl}/readyz${search}`, { signal: AbortSignal.timeout(3000) });
+            const data = await up.json();
+            const ready = up.status === 200 && data.status === 'ready';
+            send(ready ? 200 : 503, JSON.stringify({ status: ready ? 'ready' : 'not_ready', scope: 'web-and-engine', engineReady: ready, engine: data }));
+            return;
+          } catch {
+            send(503, '{"status":"not_ready","scope":"web-and-engine","engineReady":false,"error":"engine_unreachable"}');
+            return;
+          }
+        }
+        send(200, '{"status":"ready","scope":"web-shell","engineReady":false}');
+      }
       catch { send(503, '{"status":"not_ready","scope":"web-shell"}'); }
       return;
     }
+
     if (path === '/api' || path.startsWith('/api/')) { send(503, '{"error":"engine_not_integrated"}'); return; }
     if (path === '/runtime-config.json') { send(200, JSON.stringify(valid)); return; }
     const asset = path.startsWith('/assets/');

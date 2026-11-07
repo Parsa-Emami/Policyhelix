@@ -1,0 +1,19 @@
+{
+  "fixture_id": "positive-restart-readiness-invariant",
+  "commit_id": "C29",
+  "description": "Deterministic readiness invariant restoration after restart with intact storage manifest.",
+  "schema_version": "1",
+  "storage_state": "ready",
+  "provider_states": {
+    "local_opa": "connected",
+    "self_hosted_keycloak": "connected",
+    "owned_synthetic_upstream": "connected"
+  },
+  "raw_log_messages": [
+    "Engine restart initiated",
+    "Storage reconciled clean startup state with 0 orphans",
+    "Engine restored operational readiness successfully"
+  ],
+  "expected_status_code": 200,
+  "expected_ready": true
+}

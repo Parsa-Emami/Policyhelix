@@ -258,11 +258,14 @@
     },
     {
       "id": "C29",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C29.json"
+      ],
+      "source_identity": "sha256:1fe0d85e823483e92d2990a39240a7e104fe99ed1dd353c8af54d7f22f64e71f",
+      "notes": "Engine readiness and redacted diagnostics implemented in internal/gateway/diagnostics.go; storage and required provider (OPA, Keycloak, Upstream) outage visibility and fail-closed 503 errors; ring-buffered telemetry bounded at 100 entries and 4KB message limit; automatic Bearer/JWT/cookie/sentinel credential scrubbing; /readyz and /api/v1/runtime/readiness deep inspection; ops/diagnostics.md, tests/web/engine-readiness.test.mjs, and tests/readiness_test.go verified; Requirement N29 verified."
     },
+
     {
       "id": "C30",
       "status": "planned",

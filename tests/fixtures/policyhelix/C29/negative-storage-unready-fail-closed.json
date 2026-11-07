@@ -1,0 +1,19 @@
+{
+  "fixture_id": "negative-storage-unready-fail-closed",
+  "commit_id": "C29",
+  "description": "Uninitialized storage directory fails closed and returns explicit 503 rather than false success.",
+  "schema_version": "1",
+  "storage_state": "uninitialized",
+  "provider_states": {
+    "local_opa": "connected",
+    "self_hosted_keycloak": "connected",
+    "owned_synthetic_upstream": "connected"
+  },
+  "raw_log_messages": [
+    "Storage port failed initialization: directory missing",
+    "Failing readiness check closed with HTTP 503"
+  ],
+  "expected_status_code": 503,
+  "expected_ready": false,
+  "expected_error_code": "STORAGE_PORT_UNREADY"
+}

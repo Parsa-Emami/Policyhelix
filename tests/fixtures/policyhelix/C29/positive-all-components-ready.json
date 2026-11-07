@@ -1,0 +1,19 @@
+{
+  "fixture_id": "positive-all-components-ready",
+  "commit_id": "C29",
+  "description": "All authoritative storage and required providers (OPA, Keycloak, Upstream) are healthy and ready.",
+  "schema_version": "1",
+  "storage_state": "ready",
+  "provider_states": {
+    "local_opa": "connected",
+    "self_hosted_keycloak": "connected",
+    "owned_synthetic_upstream": "connected"
+  },
+  "raw_log_messages": [
+    "Storage port initialized at revision 1",
+    "Connected to local OPA provider at loopback",
+    "OIDC provider Keycloak responsive with valid JWKS"
+  ],
+  "expected_status_code": 200,
+  "expected_ready": true
+}

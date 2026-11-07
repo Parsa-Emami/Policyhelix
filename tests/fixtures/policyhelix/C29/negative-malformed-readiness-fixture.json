@@ -1,0 +1,10 @@
+{
+  "fixture_id": "negative-malformed-readiness-fixture",
+  "commit_id": "C29",
+  "description": "Malformed readiness fixture missing required schema and fixture ID fields fails with typed error.",
+  "schema_version": "invalid-schema",
+  "storage_state": "unknown_state",
+  "expected_status_code": 500,
+  "expected_ready": false,
+  "expected_error_code": "MALFORMED_READINESS_FIXTURE"
+}

@@ -1,0 +1,21 @@
+{
+  "fixture_id": "negative-private-resource-fail-closed",
+  "commit_id": "C29",
+  "description": "Unauthenticated diagnostic access fails closed with HTTP 401 Unauthorized.",
+  "schema_version": "1",
+  "storage_state": "ready",
+  "provider_states": {
+    "local_opa": "connected",
+    "self_hosted_keycloak": "connected",
+    "owned_synthetic_upstream": "connected"
+  },
+  "raw_log_messages": [
+    "Unauthenticated request to diagnostics endpoint rejected",
+    "Private resource fails closed"
+  ],
+  "expected_status_code": 401,
+  "expected_ready": false,
+  "expected_error_code": "PRIVATE_RESOURCE_FAIL_CLOSED",
+  "unauthenticated": true
+}
+

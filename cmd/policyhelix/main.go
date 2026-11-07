@@ -281,6 +281,7 @@ func main() {
 	verifyEnforcementFlag := flag.String("verify-enforcement", "", "Path to C26 enforcement matrix fixture JSON")
 	verifySecurityFlag := flag.String("verify-security", "", "Path to C27 security boundary fixture JSON")
 	benchmarkWorkloadFlag := flag.String("benchmark-workload", "", "Path to C28 benchmark workload fixture JSON")
+	verifyReadinessFlag := flag.String("verify-readiness", "", "Path to C29 readiness fixture JSON")
 	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	flag.Parse()
@@ -1110,6 +1111,37 @@ func main() {
 			dir = tmp
 		}
 		rep, runErr := gateway.EvaluateBenchmarkFixture(context.Background(), dir, fx)
+		if rep != nil {
+			_ = json.NewEncoder(os.Stdout).Encode(rep)
+		}
+		if runErr != nil || (rep != nil && !rep.Passed) {
+			os.Exit(1)
+		}
+		return
+	}
+
+	if *verifyReadinessFlag != "" {
+		raw, err := os.ReadFile(*verifyReadinessFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Readiness fixture read error: %v\n", err)
+			os.Exit(1)
+		}
+		var fx gateway.ReadinessFixture
+		if err := json.Unmarshal(raw, &fx); err != nil {
+			fmt.Fprintf(os.Stderr, "Readiness fixture JSON error: %v\n", err)
+			os.Exit(1)
+		}
+		dir := strings.TrimSpace(*storageDirFlag)
+		if dir == "" {
+			tmp, err := os.MkdirTemp("", "policyhelix-ready-*")
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Readiness temp dir error: %v\n", err)
+				os.Exit(1)
+			}
+			defer os.RemoveAll(tmp)
+			dir = tmp
+		}
+		rep, runErr := gateway.EvaluateReadinessFixture(context.Background(), dir, fx)
 		if rep != nil {
 			_ = json.NewEncoder(os.Stdout).Encode(rep)
 		}

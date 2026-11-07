@@ -260,8 +260,9 @@
       "mandatory": true,
       "planned_commit": "C29",
       "evidence_path": "docs/evidence/C29.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
+
     {
       "id": "N30",
       "kind": "engineering-release",

@@ -670,3 +670,12 @@ func (a *Adapter) GetManifest() (*Manifest, *StorageError) {
 	}
 	return m, nil
 }
+
+// RootDir returns the root storage directory path.
+func (a *Adapter) RootDir() string {
+	if a == nil {
+		return ""
+	}
+	return a.rootDir
+}
+

@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-07",
   "base_commit": "7b57646",
-  "scope": "Task C28: perf(local): measure bounded target and overload workloads; record hardware, OS, source and fixture identities, latency/CPU/RSS/disk, cancellation and saturation for target and over-limit workloads (Requirement N28)",
+  "scope": "Task C29: feat(operations): expose real engine readiness and redacted diagnostics; separate web health from engine, storage and provider readiness with visible failures and secret-scrubbed logs (Requirement N29)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -31,25 +31,26 @@
     "C25",
     "C26",
     "C27",
-    "C28"
+    "C28",
+    "C29"
   ],
   "commands": [
     "npm run validate:plan",
-    "go test -v -run TestC28 ./tests",
+    "go test -v -run TestC29 ./tests",
     "go test -count=1 ./...",
-    "node scripts/benchmark-local.mjs --verify",
+    "node --test tests/web/engine-readiness.test.mjs",
     "npm test",
     "npm run test:browser",
     "npm run build",
     "npm run build:engine",
     "python3 scripts/validate_repo.py",
-    "python3 scripts/source_identity.py"
+    "python3 scripts/source_identity.py --check docs/evidence/C29.json"
   ],
-  "validation_results": "docs/evidence/C28.json",
-  "final_source_identity": "sha256:e1e53292314cf0b7cf080f2f3b33f7c22cd01f2ca939a0191ea576bbecb2a899",
+  "validation_results": "docs/evidence/C29.json",
+  "final_source_identity": "sha256:1fe0d85e823483e92d2990a39240a7e104fe99ed1dd353c8af54d7f22f64e71f",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C29",
+  "next_task": "C30",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C28 verified. Bounded target and overload workload evaluation engine implemented in internal/gateway/benchmark.go; scripts/benchmark-local.mjs, tests/scenarios/target-workload.json, tests/workload_test.go, tests/browser/benchmark.spec.ts, docs/evidence/performance.json, and tests/fixtures/policyhelix/C28/. Engine CLI flag -benchmark-workload and HTTP endpoints /api/v1/benchmark/run and /api/v1/benchmark/evaluate registered in cmd/policyhelix/main.go and proxied through scripts/serve-web.mjs. Decision deadline <= 200ms SLO met with zero errors, payload bounded at 64 KiB, worker saturation rejected HTTP 429, client cancellation handled HTTP 499, and restart recovery verified. Requirement N28 verified. Ready for C29 (observability: separate web health from engine, storage and provider readiness with secret-redacted logging)."
+  "continuation": "Task C29 verified. Real engine readiness and secret-redacted diagnostics implemented in internal/gateway/diagnostics.go; storage and required provider (OPA, Keycloak, Upstream) outage visibility and fail-closed 503 errors; ring-buffered telemetry bounded at 100 entries and 4KB message limit; automatic Bearer/JWT/cookie/sentinel credential scrubbing; /readyz and /api/v1/runtime/readiness deep inspection; ops/diagnostics.md, tests/web/engine-readiness.test.mjs, and tests/readiness_test.go verified; Requirement N29 verified. Ready for C30 (clean host full reference workflow, restart/restore and local core readiness)."
 }

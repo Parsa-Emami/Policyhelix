@@ -1,0 +1,20 @@
+{
+  "fixture_id": "negative-provider-opa-outage",
+  "commit_id": "C29",
+  "description": "OPA provider unavailable produces explicit 503 and visible component outage.",
+  "schema_version": "1",
+  "storage_state": "ready",
+  "provider_states": {
+    "local_opa": "offline",
+    "self_hosted_keycloak": "connected",
+    "owned_synthetic_upstream": "connected"
+  },
+  "raw_log_messages": [
+    "Storage port ready",
+    "OPA connection refused on loopback:8181",
+    "Marking engine readiness not_ready"
+  ],
+  "expected_status_code": 503,
+  "expected_ready": false,
+  "expected_error_code": "OPA_PROVIDER_UNAVAILABLE"
+}

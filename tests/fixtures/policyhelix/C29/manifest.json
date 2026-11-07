@@ -1,0 +1,78 @@
+{
+  "commit_id": "C29",
+  "description": "Synthetic licensed fixtures for PolicyHelix C29: separate web health from engine, authoritative storage and required provider readiness, visible failures without false success, and bounded secret-redacted diagnostics (Requirement N29).",
+  "fixtures": [
+    {
+      "fixture_id": "positive-all-components-ready",
+      "path": "tests/fixtures/policyhelix/C29/positive-all-components-ready.json",
+      "sha256": "417b6465794cbb1339adcd09a7d320314ca8ac20470f27250b17a9c00cd640d9",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-restart-readiness-invariant",
+      "path": "tests/fixtures/policyhelix/C29/positive-restart-readiness-invariant.json",
+      "sha256": "17e0b2324f76cd9f1630746b77ebed2e463813f16ad47ff556bc93f3377c19cc",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-storage-unready-fail-closed",
+      "path": "tests/fixtures/policyhelix/C29/negative-storage-unready-fail-closed.json",
+      "sha256": "82c2970f6c90715c859fb89661839c1d1c55684f8c2080d667db129113f34cfb",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-provider-opa-outage",
+      "path": "tests/fixtures/policyhelix/C29/negative-provider-opa-outage.json",
+      "sha256": "4b9455dbad379ba10c21a780b5c9b133322c737f6545d8b229e4c85cb627fc55",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-provider-idp-outage",
+      "path": "tests/fixtures/policyhelix/C29/negative-provider-idp-outage.json",
+      "sha256": "70a863d5fd32d6598fef7edfa9a073163c978f86fb00dbc14dbabec1c835e7db",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-secret-sentinels-redacted",
+      "path": "tests/fixtures/policyhelix/C29/negative-secret-sentinels-redacted.json",
+      "sha256": "66f54cf44c84c791e2534294021ab1c90a94b1b2cba5887b5980779c9d96856e",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-bounded-log-truncation",
+      "path": "tests/fixtures/policyhelix/C29/negative-bounded-log-truncation.json",
+      "sha256": "90f39f81d1f1e042aabdbb42d7d325f85fc9948eb97bd320ab88256233dfc5b4",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-malformed-readiness-fixture",
+      "path": "tests/fixtures/policyhelix/C29/negative-malformed-readiness-fixture.json",
+      "sha256": "3c0f38c7194c1e0fde020fae866848a691218c799c73db1244e632a1d72eef69",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-private-resource-fail-closed",
+      "path": "tests/fixtures/policyhelix/C29/negative-private-resource-fail-closed.json",
+      "sha256": "9499036a71414a1b12345153134548ac23c75d07a9cd957f38e5ebe73bfa89ea",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-storage-locked-fail-closed",
+      "path": "tests/fixtures/policyhelix/C29/negative-storage-locked-fail-closed.json",
+      "sha256": "c74907de05745568cf7105a90b1b867a595754047490f0082ff044f62b575db3",
+      "type": "negative",
+      "license": "Apache-2.0"
+    }
+  ],
+  "license": "Apache-2.0",
+  "schema_version": "1"
+}

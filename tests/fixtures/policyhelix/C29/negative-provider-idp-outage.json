@@ -1,0 +1,20 @@
+{
+  "fixture_id": "negative-provider-idp-outage",
+  "commit_id": "C29",
+  "description": "Keycloak identity provider outage fails readiness with explicit 503 and visible IDP outage code.",
+  "schema_version": "1",
+  "storage_state": "ready",
+  "provider_states": {
+    "local_opa": "connected",
+    "self_hosted_keycloak": "offline",
+    "owned_synthetic_upstream": "connected"
+  },
+  "raw_log_messages": [
+    "Storage port ready",
+    "Keycloak JWKS endpoint unreachable",
+    "Authentication provider offline: readiness failed"
+  ],
+  "expected_status_code": 503,
+  "expected_ready": false,
+  "expected_error_code": "IDP_PROVIDER_UNAVAILABLE"
+}

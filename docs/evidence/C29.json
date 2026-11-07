@@ -1,0 +1,169 @@
+{
+  "schema_version": 1,
+  "commit_id": "C29",
+  "project": "PolicyHelix",
+  "date": "2026-11-07",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix operations: expose real engine readiness and redacted diagnostics; separate web health from engine, storage and provider readiness with visible failures and secret-scrubbed logs (Requirement N29)",
+  "source_identity": "sha256:1fe0d85e823483e92d2990a39240a7e104fe99ed1dd353c8af54d7f22f64e71f",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence, SHA256SUMS.txt, plans/progress.json and docs/agents/SESSION_HANDOFF.json",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml; local run used Go 1.26.2 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 16,
+      "ram_mib": 30829,
+      "free_disk_mib": 92216,
+      "target_hardware_budget": "2 vCPU / 4096 MiB RAM / 10240 MiB free disk",
+      "status": "development host measured against C28/C29 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    },
+    {
+      "tool": "Playwright",
+      "version": "1.64.1",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C29/positive-all-components-ready.json",
+      "sha256": "417b6465794cbb1339adcd09a7d320314ca8ac20470f27250b17a9c00cd640d9",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C29 all components ready probe"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C29/positive-restart-readiness-invariant.json",
+      "sha256": "17e0b2324f76cd9f1630746b77ebed2e463813f16ad47ff556bc93f3377c19cc",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C29 restart readiness restoration"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C29/negative-storage-unready-fail-closed.json",
+      "sha256": "82c2970f6c90715c859fb89661839c1d1c55684f8c2080d667db129113f34cfb",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C29 uninitialized storage fail-closed probe"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C29/negative-provider-opa-outage.json",
+      "sha256": "4b9455dbad379ba10c21a780b5c9b133322c737f6545d8b229e4c85cb627fc55",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C29 OPA provider outage probe"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C29/negative-provider-idp-outage.json",
+      "sha256": "70a863d5fd32d6598fef7edfa9a073163c978f86fb00dbc14dbabec1c835e7db",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C29 Keycloak IdP outage probe"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C29/negative-secret-sentinels-redacted.json",
+      "sha256": "66f54cf44c84c791e2534294021ab1c90a94b1b2cba5887b5980779c9d96856e",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C29 synthetic secret and sentinel redaction"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C29/negative-bounded-log-truncation.json",
+      "sha256": "90f39f81d1f1e042aabdbb42d7d325f85fc9948eb97bd320ab88256233dfc5b4",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C29 bounded diagnostic log truncation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C29/negative-malformed-readiness-fixture.json",
+      "sha256": "3c0f38c7194c1e0fde020fae866848a691218c799c73db1244e632a1d72eef69",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C29 malformed fixture typed error rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C29/negative-private-resource-fail-closed.json",
+      "sha256": "5c9e2b17a0224bf19d67562095f93f6b412b1a134a65ee9ea67e893eec603411",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C29 unauthenticated diagnostic access fail-closed"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C29/negative-storage-locked-fail-closed.json",
+      "sha256": "c74907de05745568cf7105a90b1b867a595754047490f0082ff044f62b575db3",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C29 storage lock contention probe"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "go test -v -run TestC29 ./tests",
+      "exit_code": 0,
+      "output": "PASS: TestC29_ManifestIntegrityAndFixtureEvaluation, TestC29_RealEngineAndStorageReadinessSeparation, TestC29_ProviderOutageVisibleFailClosed, TestC29_BoundedLogsAndSecretSentinelRedaction, TestC29_DiagnosticsHTTPAndPrivateFailClosed"
+    },
+    {
+      "command": "go test -count=1 ./...",
+      "exit_code": 0,
+      "output": "ok cmd/policyhelix, internal/contracts, internal/gateway, internal/policy, internal/storage, tests"
+    },
+    {
+      "command": "node --test tests/web/engine-readiness.test.mjs",
+      "exit_code": 0,
+      "output": "pass 1, fail 0"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "pass 17, fail 0"
+    },
+    {
+      "command": "npm run test:browser",
+      "exit_code": 0,
+      "output": "31 passed"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED"
+    }
+  ],
+
+  "observed_behavior": {
+    "web_health_scope": "web-shell",
+    "engine_readiness_scope": "web-and-engine",
+    "deep_readiness_endpoints": [
+      "/readyz?check=engine",
+      "/api/v1/runtime/readiness"
+    ],
+    "diagnostics_endpoint": "/api/v1/runtime/diagnostics",
+    "diagnostics_redaction_verified": true,
+    "diagnostics_buffer_max_events": 100,
+    "diagnostics_message_max_bytes": 4096,
+    "fail_closed_private_resources": true,
+    "required_providers_checked": [
+      "local_opa",
+      "self_hosted_keycloak",
+      "owned_synthetic_upstream"
+    ]
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "fixture_id": "negative-storage-locked-fail-closed",
+  "commit_id": "C29",
+  "description": "Storage port with lock held by another process fails readiness probe with STORAGE_PORT_LOCKED.",
+  "schema_version": "1",
+  "storage_state": "locked",
+  "provider_states": {
+    "local_opa": "connected",
+    "self_hosted_keycloak": "connected",
+    "owned_synthetic_upstream": "connected"
+  },
+  "raw_log_messages": [
+    "Storage port lock contention detected",
+    "Single-writer lock busy"
+  ],
+  "expected_status_code": 503,
+  "expected_ready": false,
+  "expected_error_code": "STORAGE_PORT_LOCKED"
+}

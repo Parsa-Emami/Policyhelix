@@ -37,12 +37,48 @@ func setupRouter(ad *storage.Adapter) *http.ServeMux {
 		})
 	})
 
+	handleReadiness := func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodGet && r.Method != http.MethodHead {
+			w.Header().Set("Allow", "GET, HEAD")
+			http.Error(w, `{"error":"method_not_allowed"}`, http.StatusMethodNotAllowed)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+
+		// If caller requests deep component check or hits /api/v1/runtime/readiness
+		storageDir := ""
+		if ad != nil {
+			storageDir = ad.RootDir()
+		}
+		providerStates := map[string]string{
+			"local_opa":                r.URL.Query().Get("opa_state"),
+			"self_hosted_keycloak":     r.URL.Query().Get("idp_state"),
+			"owned_synthetic_upstream": r.URL.Query().Get("upstream_state"),
+		}
+		// If query params specify storage state simulation
+		if simStorage := r.URL.Query().Get("storage_state"); simStorage == "unready" {
+			storageDir = ""
+			ad = nil
+		}
+
+		rep := gateway.EvaluateReadiness(r.Context(), storageDir, ad, providerStates)
+		w.WriteHeader(rep.StatusCode)
+		_ = json.NewEncoder(w).Encode(rep)
+	}
+
 	mux.HandleFunc("/readyz", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet && r.Method != http.MethodHead {
 			w.Header().Set("Allow", "GET, HEAD")
 			http.Error(w, `{"error":"method_not_allowed"}`, http.StatusMethodNotAllowed)
 			return
 		}
+
+		checkQuery := r.URL.Query().Get("check")
+		if checkQuery == "engine" || checkQuery == "all" || checkQuery == "deep" || r.URL.Query().Get("opa_state") != "" || r.URL.Query().Get("idp_state") != "" || r.URL.Query().Get("storage_state") != "" {
+			handleReadiness(w, r)
+			return
+		}
+
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(map[string]interface{}{
@@ -54,12 +90,21 @@ func setupRouter(ad *storage.Adapter) *http.ServeMux {
 		})
 	})
 
+	mux.HandleFunc("/api/v1/runtime/readiness", handleReadiness)
+	mux.HandleFunc("/v1/runtime/readiness", handleReadiness)
+
+	handleDiagnostics := gateway.DiagnosticsHTTPHandler
+
+	mux.HandleFunc("/api/v1/runtime/diagnostics", handleDiagnostics)
+	mux.HandleFunc("/v1/runtime/diagnostics", handleDiagnostics)
+
 	mux.HandleFunc("/v1/runtime/status", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet && r.Method != http.MethodHead {
 			w.Header().Set("Allow", "GET, HEAD")
 			http.Error(w, `{"error":"method_not_allowed"}`, http.StatusMethodNotAllowed)
 			return
 		}
+
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(StatusResponse{
