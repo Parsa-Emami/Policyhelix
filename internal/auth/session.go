@@ -287,7 +287,11 @@ func (s *StorageSessionStore) SaveSession(ctx context.Context, session SessionRe
 		ProviderState:            "available",
 	}
 
-	opID := fmt.Sprintf("op-sess-%s-%d", session.SessionID[:16], session.LastSeenAt.UnixNano())
+	sessPrefix := session.SessionID
+	if len(sessPrefix) > 16 {
+		sessPrefix = sessPrefix[:16]
+	}
+	opID := fmt.Sprintf("op-sess-%s-%d", sessPrefix, session.LastSeenAt.UnixNano())
 	if len(opID) > 64 {
 		opID = opID[:64]
 	}

@@ -231,10 +231,12 @@
     },
     {
       "id": "C26",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C26.json"
+      ],
+      "source_identity": "sha256:1802f53e6b9df01e2d49a001273b601e442e51b70df67f93055793f8df03d0ea",
+      "notes": "End-to-end enforcement matrix verification implemented in internal/gateway/enforcement.go, tests/enforcement_matrix_test.go and docs/evidence/enforcement-template.md; F20 direct origin, forged header, revoked session, expired bundle and policy outage enforcement verified."
     },
     {
       "id": "C27",

@@ -323,7 +323,7 @@
       "id": "C26",
       "title": "test(enforcement): verify origin bypass outage and replay",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Direct origin, forged header, revoked session, expired bundle and policy outage all fail as specified."
       ],

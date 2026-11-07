@@ -1,0 +1,200 @@
+{
+  "fixture_id": "negative-untrusted-signer-rejected",
+  "commit_id": "C26",
+  "description": "Candidate bundle signed by an untrusted or wrong signer is rejected with UNTRUSTED_OR_MISSING_SIGNER while retaining valid rev 2.",
+  "schema_version": "1",
+  "vector": "untrusted_signer",
+  "evaluation_time": "2026-11-04T12:00:00Z",
+  "trusted_keys": [
+    {
+      "signer_key_id": "ed25519-primary-2026",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    }
+  ],
+  "preload_bundle": {
+    "schema_version": "1",
+    "operation_id": "op-preload-rev2",
+    "identity": {
+      "subject_id": "alice-operator",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 1793793600,
+      "min_required_epoch": 1710000000,
+      "untrusted_headers_stripped": true,
+      "provider_state": "available"
+    },
+    "bundle": {
+      "schema_version": "1",
+      "bundle_id": "bundle-enf-rev2",
+      "package": "policyhelix.authz",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "signer_key_id": "ed25519-primary-2026",
+      "signature": "ed25519:e85fa2fbb01de4c3dc134fd189f4e4376c6c5f2bc5ece7581d1a5d433e016314dceef99b4267f696f22a65e0be591ca105f9d393e6809350b431390f0e819a02",
+      "signature_verified": true,
+      "revision": 2,
+      "issued_at": "2026-11-04T10:00:00Z",
+      "expires_at": "2026-11-05T10:00:00Z",
+      "digest": "sha256:12517cd05213460b5bc4edcbc4542d17080106310dc8aee2a56bbd1cdb1b905e",
+      "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+      "routes": [
+        {
+          "pattern": "/api/v1/analytics/reports",
+          "action": "read",
+          "classification": "private",
+          "allow_unauthenticated": false,
+          "required_roles": [
+            "operator",
+            "admin"
+          ],
+          "description": "Private analytics reports endpoint"
+        },
+        {
+          "pattern": "/health",
+          "action": "read",
+          "classification": "public",
+          "allow_unauthenticated": true,
+          "description": "Public health endpoint"
+        }
+      ],
+      "rules": [
+        {
+          "id": "rule-operator-analytics-read",
+          "effect": "allow",
+          "path_pattern": "/api/v1/analytics/reports",
+          "actions": [
+            "read"
+          ],
+          "roles": [
+            "operator",
+            "admin"
+          ],
+          "resource_class": "private",
+          "reason_code": "policy_allow_role_operator",
+          "reason_message": "Operator granted read access to analytics reports"
+        }
+      ]
+    }
+  },
+  "candidate_bundle": {
+    "schema_version": "1",
+    "operation_id": "op-activate-rogue-rev3",
+    "identity": {
+      "subject_id": "alice-operator",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 1793793600,
+      "min_required_epoch": 1710000000,
+      "untrusted_headers_stripped": true,
+      "provider_state": "available"
+    },
+    "bundle": {
+      "schema_version": "1",
+      "bundle_id": "bundle-enf-rogue-rev3",
+      "package": "policyhelix.authz",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "signer_key_id": "ed25519-untrusted-rogue",
+      "signature": "ed25519:1924ef8d2ddc95b5f2db325135cf6d05479314b858b8546c21715e816cd18dd212d0fe5d94b3609fde8f7856346ec4ec2303b0d8a5d4e82ca38979d40222920f",
+      "signature_verified": true,
+      "revision": 3,
+      "issued_at": "2026-11-04T10:00:00Z",
+      "expires_at": "2026-11-05T10:00:00Z",
+      "digest": "sha256:416b6dbe82f6b72ef0f239ce6ebecff54251785af0ad590e223ddb3451811600",
+      "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+      "routes": [
+        {
+          "pattern": "/api/v1/analytics/reports",
+          "action": "read",
+          "classification": "private",
+          "allow_unauthenticated": false,
+          "required_roles": [
+            "operator",
+            "admin"
+          ],
+          "description": "Private analytics reports endpoint"
+        },
+        {
+          "pattern": "/health",
+          "action": "read",
+          "classification": "public",
+          "allow_unauthenticated": true,
+          "description": "Public health endpoint"
+        }
+      ],
+      "rules": [
+        {
+          "id": "rule-operator-analytics-read",
+          "effect": "allow",
+          "path_pattern": "/api/v1/analytics/reports",
+          "actions": [
+            "read"
+          ],
+          "roles": [
+            "operator",
+            "admin"
+          ],
+          "resource_class": "private",
+          "reason_code": "policy_allow_role_operator",
+          "reason_message": "Operator granted read access to analytics reports"
+        }
+      ]
+    }
+  },
+  "preload_sessions": [
+    {
+      "session_id": "sess-c26-active",
+      "subject_id": "alice-operator",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "roles": [
+        "operator",
+        "auditor"
+      ],
+      "owner_scope": "tenant:default",
+      "fingerprint": {
+        "ip_hash": "",
+        "user_agent_hash": "",
+        "composite_hash": ""
+      },
+      "credentials": {
+        "has_access_token": false,
+        "has_refresh_token": false
+      },
+      "session_epoch": 1793793600,
+      "created_at": "2026-11-04T11:00:00Z",
+      "expires_at": "2026-11-04T15:00:00Z",
+      "last_seen_at": "0001-01-01T00:00:00Z",
+      "status": "ACTIVE"
+    }
+  ],
+  "proxy_request": {
+    "request_id": "req-c26-untrusted-signer",
+    "target_upstream_id": "service:analytics",
+    "method": "GET",
+    "path": "/api/v1/analytics/reports",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "session_id": "sess-c26-active",
+    "client_ip": "10.0.0.1",
+    "user_agent": "PolicyHelix-Client/1.0",
+    "untrusted_headers_stripped": true,
+    "resource_classification": "private",
+    "target_owner_scope": "tenant:default",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "allow": true,
+    "forwarded_to_upstream": true,
+    "status_code": 200,
+    "candidate_bundle_status": "rejected",
+    "candidate_error_code": "UNTRUSTED_OR_MISSING_SIGNER",
+    "active_bundle_retained": true,
+    "retained_revision": 2
+  }
+}

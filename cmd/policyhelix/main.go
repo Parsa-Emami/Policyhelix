@@ -1193,6 +1193,41 @@ func setupRouter() *http.ServeMux {
 		_ = json.NewEncoder(w).Encode(defaultKeyRotationManager.State())
 	})
 
+	mux.HandleFunc("/api/v1/gateway/enforcement/verify", func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", "POST")
+			http.Error(w, `{"error":"method_not_allowed"}`, http.StatusMethodNotAllowed)
+			return
+		}
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		body, err := io.ReadAll(io.LimitReader(r.Body, 131072))
+		if err != nil || len(body) == 0 {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{"error": "empty_or_unreadable_body"})
+			return
+		}
+		var fx gateway.EnforcementMatrixFixture
+		if err := json.Unmarshal(body, &fx); err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{"error": "invalid_json", "message": err.Error()})
+			return
+		}
+		tmpDir, mErr := os.MkdirTemp("", "policyhelix-enf-http-*")
+		if mErr != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{"error": mErr.Error()})
+			return
+		}
+		defer os.RemoveAll(tmpDir)
+		rep, runErr := gateway.EvaluateEnforcementFixture(r.Context(), tmpDir, fx)
+		status := http.StatusOK
+		if !rep.Passed || runErr != nil {
+			status = http.StatusForbidden
+		}
+		w.WriteHeader(status)
+		_ = json.NewEncoder(w).Encode(rep)
+	})
+
 	return mux
 }
 
@@ -1286,6 +1321,7 @@ func main() {
 	evaluateShadowFlag := flag.String("evaluate-shadow", "", "Path to C23 shadow evaluation fixture JSON")
 	evaluateCacheFlag := flag.String("evaluate-cache", "", "Path to C24 policy decision cache fixture JSON")
 	rotateKeysFlag := flag.String("rotate-keys", "", "Path to C25 trust key rotation fixture JSON")
+	verifyEnforcementFlag := flag.String("verify-enforcement", "", "Path to C26 enforcement matrix fixture JSON")
 	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	flag.Parse()
@@ -2030,6 +2066,35 @@ func main() {
 		rep, runErr := bundles.RunKeyRotationFixture(context.Background(), dir, fx)
 		_ = json.NewEncoder(os.Stdout).Encode(rep)
 		if runErr != nil || !rep.Passed || rep.ErrorCode != "" {
+			os.Exit(1)
+		}
+		return
+	}
+
+	if *verifyEnforcementFlag != "" {
+		raw, err := os.ReadFile(*verifyEnforcementFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Enforcement fixture read error: %v\n", err)
+			os.Exit(1)
+		}
+		var fx gateway.EnforcementMatrixFixture
+		if err := json.Unmarshal(raw, &fx); err != nil {
+			fmt.Fprintf(os.Stderr, "Enforcement fixture JSON error: %v\n", err)
+			os.Exit(1)
+		}
+		dir := strings.TrimSpace(*storageDirFlag)
+		if dir == "" {
+			tmp, err := os.MkdirTemp("", "policyhelix-enf-*")
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Enforcement temp dir error: %v\n", err)
+				os.Exit(1)
+			}
+			defer os.RemoveAll(tmp)
+			dir = tmp
+		}
+		rep, runErr := gateway.EvaluateEnforcementFixture(context.Background(), dir, fx)
+		_ = json.NewEncoder(os.Stdout).Encode(rep)
+		if runErr != nil || !rep.Passed {
 			os.Exit(1)
 		}
 		return

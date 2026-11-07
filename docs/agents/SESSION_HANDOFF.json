@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-07",
   "base_commit": "7b57646",
-  "scope": "Task C25: feat(rotation): rotate trust keys without rollback gap; new trust set is operator-controlled and removed key cannot activate an old signed bundle (Requirement F19)",
+  "scope": "Task C26: test(enforcement): verify origin bypass outage and replay; direct origin, forged header, revoked session, expired bundle and policy outage all fail as specified (Requirement F20)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -28,11 +28,12 @@
     "C22",
     "C23",
     "C24",
-    "C25"
+    "C25",
+    "C26"
   ],
   "commands": [
     "npm run validate:plan",
-    "go test -v -run TestC25 ./tests",
+    "go test -v -run TestC26 ./tests",
     "go test ./...",
     "npm test",
     "npm run build",
@@ -40,11 +41,11 @@
     "python3 scripts/validate_repo.py",
     "python3 scripts/source_identity.py"
   ],
-  "validation_results": "docs/evidence/C25.json",
-  "final_source_identity": "sha256:9411ba51cff66f427360e07d3f4f3ffb939cdc8c79ba62faa57f6501a96babc9",
+  "validation_results": "docs/evidence/C26.json",
+  "final_source_identity": "sha256:1802f53e6b9df01e2d49a001273b601e442e51b70df67f93055793f8df03d0ea",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C26",
+  "next_task": "C27",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C25 verified. Operator-controlled trust key rotation without rollback gap and removed-key rejection implemented in internal/bundles/keys.go and tests/key_rotation_test.go, CLI flag -rotate-keys and HTTP endpoints registered in cmd/policyhelix/main.go and proxied through scripts/serve-web.mjs. Requirement F19 verified. Ready for C26 (test(enforcement): verify origin bypass outage and replay)."
+  "continuation": "Task C26 verified. End-to-end enforcement matrix verification implemented in internal/gateway/enforcement.go, tests/enforcement_matrix_test.go, docs/evidence/enforcement-template.md, and tests/fixtures/policyhelix/C26/. CLI flag -verify-enforcement and HTTP endpoint /api/v1/gateway/enforcement/verify registered in cmd/policyhelix/main.go and proxied through scripts/serve-web.mjs. Requirement F20 verified. Ready for C27 (test(security): run negative uat xss import and idor suite)."
 }

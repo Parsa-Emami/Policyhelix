@@ -124,6 +124,30 @@ export function createWebServer({ root, config, projectId, engineUrl }) {
         return;
       }
     }
+    if (path === '/api/v1/gateway/enforcement/verify' && engineUrl) {
+      if (req.method !== 'POST') {
+        res.setHeader('Allow', 'POST');
+        send(405, '{"error":"method_not_allowed"}');
+        return;
+      }
+      try {
+        const chunks = [];
+        for await (const chunk of req) chunks.push(chunk);
+        const reqBody = Buffer.concat(chunks);
+        const upstream = await fetch(`${engineUrl}/api/v1/gateway/enforcement/verify`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: reqBody,
+          signal: AbortSignal.timeout(5000),
+        });
+        const bodyText = await upstream.text();
+        send(upstream.status, bodyText);
+        return;
+      } catch {
+        send(503, '{"error":"engine_unavailable"}');
+        return;
+      }
+    }
     if (path === '/api/v1/rollout/shadow/evaluate' && engineUrl) {
       if (req.method !== 'POST') {
         res.setHeader('Allow', 'POST');

@@ -1,0 +1,85 @@
+{
+  "commit_id": "C26",
+  "description": "Synthetic licensed fixtures for PolicyHelix C26: verify origin bypass, forged header, revoked session, expired bundle and policy outage enforcement matrix (Requirement F20).",
+  "fixtures": [
+    {
+      "fixture_id": "positive-authenticated-gateway-enforcement",
+      "path": "tests/fixtures/policyhelix/C26/positive-authenticated-gateway-enforcement.json",
+      "sha256": "292b5d2becf1c4c58e58151f56a56bd3cb7ef4957fa9a57b20e20f7ea1eedcd3",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-public-route-outage-bypass",
+      "path": "tests/fixtures/policyhelix/C26/positive-public-route-outage-bypass.json",
+      "sha256": "acec77076f390e34074c4955afa7a240ddee0050f66f15005ed569b6153891e2",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-direct-origin-bypass",
+      "path": "tests/fixtures/policyhelix/C26/negative-direct-origin-bypass.json",
+      "sha256": "ddafc1034aa8c077fd3799fa0a940173ccdf41d8e2a6e02110ab02ddf90d7c80",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-forged-identity-header",
+      "path": "tests/fixtures/policyhelix/C26/negative-forged-identity-header.json",
+      "sha256": "3a564405f154d9da47923f17ef73a4167c676b935270a21c8b428fb139b97c61",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-revoked-session-denied",
+      "path": "tests/fixtures/policyhelix/C26/negative-revoked-session-denied.json",
+      "sha256": "b5e0269723b4a40b78260671d0571954ecda7a70c75b0cbbd8c7b7aa0b3d8b91",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-expired-bundle-denied",
+      "path": "tests/fixtures/policyhelix/C26/negative-expired-bundle-denied.json",
+      "sha256": "61719774df7c0df56d15a471606004a5ef584daeb91523ec13793fe63fa6108e",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-policy-outage-private-deny",
+      "path": "tests/fixtures/policyhelix/C26/negative-policy-outage-private-deny.json",
+      "sha256": "16ee66bbecc77531218803031f934714dfd26a8c204f8db295c46fd938663204",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-tampered-byte-rejected",
+      "path": "tests/fixtures/policyhelix/C26/negative-tampered-byte-rejected.json",
+      "sha256": "aca450d7946bed0c73c940fb0eac10f71fd66c2390dbae4e7c79e055a7a490e0",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-untrusted-signer-rejected",
+      "path": "tests/fixtures/policyhelix/C26/negative-untrusted-signer-rejected.json",
+      "sha256": "0198d1252a29e1145d9c44423c0e28dec7c35d213236666c1a7ca74cbc33a137",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-stale-replayed-revision-retained",
+      "path": "tests/fixtures/policyhelix/C26/negative-stale-replayed-revision-retained.json",
+      "sha256": "dd8c32403090e9d4a14b6e130aea6a8c33346335db23c588851cd21875d0e2cf",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-private-resource-fail-closed",
+      "path": "tests/fixtures/policyhelix/C26/negative-private-resource-fail-closed.json",
+      "sha256": "28358c14e27180e735335cf64c19c2226c8aae2be737eff229b0f546bd0faecc",
+      "type": "negative",
+      "license": "Apache-2.0"
+    }
+  ],
+  "license": "Apache-2.0",
+  "schema_version": "1"
+}

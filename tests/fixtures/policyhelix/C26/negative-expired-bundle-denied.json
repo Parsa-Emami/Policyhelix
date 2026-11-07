@@ -1,0 +1,133 @@
+{
+  "fixture_id": "negative-expired-bundle-denied",
+  "commit_id": "C26",
+  "description": "Expired policy bundle is rejected with EXPIRED_POLICY_BUNDLE and private resource access fails closed.",
+  "schema_version": "1",
+  "vector": "expired_bundle",
+  "evaluation_time": "2026-11-04T12:00:00Z",
+  "trusted_keys": [
+    {
+      "signer_key_id": "ed25519-primary-2026",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    }
+  ],
+  "candidate_bundle": {
+    "schema_version": "1",
+    "operation_id": "op-activate-expired-rev1",
+    "identity": {
+      "subject_id": "alice-operator",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 1793793600,
+      "min_required_epoch": 1710000000,
+      "untrusted_headers_stripped": true,
+      "provider_state": "available"
+    },
+    "bundle": {
+      "schema_version": "1",
+      "bundle_id": "bundle-enf-expired-rev1",
+      "package": "policyhelix.authz",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "signer_key_id": "ed25519-primary-2026",
+      "signature": "ed25519:0b4a6cc590613e02fb74cdb1c79b025ea279741a8243eb06b41053e2646c13908693a02544561cca5b9f14c7fe2959e3892e477f5b9ee328523c3b2c947ce507",
+      "signature_verified": true,
+      "revision": 1,
+      "issued_at": "2026-11-01T10:00:00Z",
+      "expires_at": "2026-11-02T10:00:00Z",
+      "digest": "sha256:cc4c5b4509bd1590db53c6471d12c60fdd6e1e6a924b7b2beb7ace0aa0d90fc2",
+      "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+      "routes": [
+        {
+          "pattern": "/api/v1/analytics/reports",
+          "action": "read",
+          "classification": "private",
+          "allow_unauthenticated": false,
+          "required_roles": [
+            "operator",
+            "admin"
+          ],
+          "description": "Private analytics reports endpoint"
+        },
+        {
+          "pattern": "/health",
+          "action": "read",
+          "classification": "public",
+          "allow_unauthenticated": true,
+          "description": "Public health endpoint"
+        }
+      ],
+      "rules": [
+        {
+          "id": "rule-operator-analytics-read",
+          "effect": "allow",
+          "path_pattern": "/api/v1/analytics/reports",
+          "actions": [
+            "read"
+          ],
+          "roles": [
+            "operator",
+            "admin"
+          ],
+          "resource_class": "private",
+          "reason_code": "policy_allow_role_operator",
+          "reason_message": "Operator granted read access to analytics reports"
+        }
+      ]
+    }
+  },
+  "preload_sessions": [
+    {
+      "session_id": "sess-c26-active",
+      "subject_id": "alice-operator",
+      "issuer": "https://auth.policyhelix.local/realms/policyhelix",
+      "roles": [
+        "operator",
+        "auditor"
+      ],
+      "owner_scope": "tenant:default",
+      "fingerprint": {
+        "ip_hash": "",
+        "user_agent_hash": "",
+        "composite_hash": ""
+      },
+      "credentials": {
+        "has_access_token": false,
+        "has_refresh_token": false
+      },
+      "session_epoch": 1793793600,
+      "created_at": "2026-11-04T11:00:00Z",
+      "expires_at": "2026-11-04T15:00:00Z",
+      "last_seen_at": "0001-01-01T00:00:00Z",
+      "status": "ACTIVE"
+    }
+  ],
+  "proxy_request": {
+    "request_id": "req-c26-expired-bundle",
+    "target_upstream_id": "service:analytics",
+    "method": "GET",
+    "path": "/api/v1/analytics/reports",
+    "headers": {
+      "Accept": "application/json"
+    },
+    "session_id": "sess-c26-active",
+    "client_ip": "10.0.0.1",
+    "user_agent": "PolicyHelix-Client/1.0",
+    "untrusted_headers_stripped": true,
+    "resource_classification": "private",
+    "target_owner_scope": "tenant:default",
+    "evaluation_time": "2026-11-04T12:00:00Z"
+  },
+  "expected": {
+    "allow": false,
+    "forwarded_to_upstream": false,
+    "status_code": 403,
+    "error_code": "EXPIRED_POLICY_BUNDLE",
+    "candidate_bundle_status": "rejected",
+    "candidate_error_code": "EXPIRED_POLICY_BUNDLE",
+    "active_bundle_retained": false
+  }
+}

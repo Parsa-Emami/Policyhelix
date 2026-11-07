@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "commit_id": "C26",
+  "project": "PolicyHelix",
+  "date": "2026-11-07",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix enforcement matrix: verify direct origin bypass, forged header, revoked session, expired bundle and policy outage all fail as specified (Requirement F20)",
+  "source_identity": "sha256:1802f53e6b9df01e2d49a001273b601e442e51b70df67f93055793f8df03d0ea",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml; local run used Go 1.26.2 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "development host verified against C26 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C26/positive-authenticated-gateway-enforcement.json",
+      "sha256": "292b5d2becf1c4c58e58151f56a56bd3cb7ef4957fa9a57b20e20f7ea1eedcd3",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C26 positive authenticated gateway enforcement"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C26/positive-public-route-outage-bypass.json",
+      "sha256": "acec77076f390e34074c4955afa7a240ddee0050f66f15005ed569b6153891e2",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C26 intentional public route outage bypass (/health)"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C26/negative-direct-origin-bypass.json",
+      "sha256": "ddafc1034aa8c077fd3799fa0a940173ccdf41d8e2a6e02110ab02ddf90d7c80",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C26 direct origin bypass rejection (DIRECT_ORIGIN_BYPASS_DENIED)"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C26/negative-forged-identity-header.json",
+      "sha256": "3a564405f154d9da47923f17ef73a4167c676b935270a21c8b428fb139b97c61",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C26 forged identity header rejection (FORGED_HEADER_REJECTED)"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C26/negative-revoked-session-denied.json",
+      "sha256": "b5e0269723b4a40b78260671d0571954ecda7a70c75b0cbbd8c7b7aa0b3d8b91",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C26 revoked session rejection (REVOKED_SESSION_DENIED)"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C26/negative-expired-bundle-denied.json",
+      "sha256": "61719774df7c0df56d15a471606004a5ef584daeb91523ec13793fe63fa6108e",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C26 expired policy bundle rejection (EXPIRED_POLICY_BUNDLE)"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C26/negative-policy-outage-private-deny.json",
+      "sha256": "16ee66bbecc77531218803031f934714dfd26a8c204f8db295c46fd938663204",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C26 policy outage fail-closed denial on private resource (DECISION_LOSS_SENSITIVE_DENY)"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C26/negative-tampered-byte-rejected.json",
+      "sha256": "aca450d7946bed0c73c940fb0eac10f71fd66c2390dbae4e7c79e055a7a490e0",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C26 single-byte bundle tampering rejection (TAMPERED_BUNDLE_DIGEST) while retaining valid authority"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C26/negative-untrusted-signer-rejected.json",
+      "sha256": "0198d1252a29e1145d9c44423c0e28dec7c35d213236666c1a7ca74cbc33a137",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C26 untrusted signer rejection (UNTRUSTED_OR_MISSING_SIGNER) while retaining valid authority"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C26/negative-stale-replayed-revision-retained.json",
+      "sha256": "dd8c32403090e9d4a14b6e130aea6a8c33346335db23c588851cd21875d0e2cf",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C26 stale/replayed revision rejection (STALE_OR_REPLAYED_REVISION) while retaining valid authority"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C26/negative-private-resource-fail-closed.json",
+      "sha256": "28358c14e27180e735335cf64c19c2226c8aae2be737eff229b0f546bd0faecc",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C26 unauthenticated private resource fail-closed denial (PRIVATE_RESOURCE_FAIL_CLOSED)"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "go test -v -run TestC26 ./tests",
+      "exit_code": 0,
+      "output": "PASS: TestC26_ManifestIntegrityAndFixtureEvaluation, TestC26_DirectOriginForgedHeaderRevokedSessionExpiredBundleOutage, TestC26_OneModifiedByteMissingEvidenceUntrustedSignerAndStaleReplayRetainAuthority, TestC26_CLIAndHTTPEnforcementVerify"
+    },
+    {
+      "command": "go test -count=1 ./...",
+      "exit_code": 0,
+      "output": "ok cmd/policyhelix, internal/contracts, internal/policy, internal/storage, tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "16 passed, 0 failed"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED: Checked JSON files and repository contract invariants."
+    }
+  ],
+  "results": [
+    "Requirement F20 fully implemented and verified: Direct origin, forged header, revoked session, expired bundle and policy outage all fail as specified.",
+    "EvaluateEnforcementFixture implemented in internal/gateway/enforcement.go orchestrating durable trust key/bundle activation, session/revocation stores, upstream proxy evaluation, and policy bundle evaluation.",
+    "Direct origin access without gateway proof is rejected with 403 DIRECT_ORIGIN_BYPASS_DENIED.",
+    "Forged identity/privilege headers (X-PolicyHelix-Roles) are rejected with 403 FORGED_HEADER_REJECTED.",
+    "Revoked sessions are rejected within the 30-second revocation window with 403 REVOKED_SESSION_DENIED.",
+    "Expired policy bundles are rejected with 403 EXPIRED_POLICY_BUNDLE and fail closed when no active valid bundle is in force.",
+    "Policy engine outage fails closed with 503 DECISION_LOSS_SENSITIVE_DENY on private routes while allowing intentional public bypass on /health (INTENTIONAL_PUBLIC_BYPASS).",
+    "One modified byte (TAMPERED_BUNDLE_DIGEST), missing signature/untrusted signer (UNTRUSTED_OR_MISSING_SIGNER), and stale/replayed revisions (STALE_OR_REPLAYED_REVISION) fail and preserve the last valid accepted bundle authority across restart.",
+    "Engine CLI flag -verify-enforcement and HTTP endpoint POST /api/v1/gateway/enforcement/verify registered in cmd/policyhelix/main.go and proxied through scripts/serve-web.mjs.",
+    "Eleven Apache-2.0 synthetic fixtures cataloged with SHA-256 digests in tests/fixtures/policyhelix/C26/manifest.json and documented in docs/evidence/enforcement-template.md."
+  ],
+  "observed_limitations": [
+    "Negative UAT, XSS/import and object/provider authorization (IDOR) test suite across all enabled surfaces is scheduled for downstream task C27."
+  ],
+  "rollback_or_recovery_observation": "Revert internal/gateway/enforcement.go, tests/enforcement_matrix_test.go, docs/evidence/enforcement-template.md, tests/fixtures/policyhelix/C26/, cmd/policyhelix/main.go enforcement additions, scripts/serve-web.mjs proxy additions, and docs/evidence/C26.json. Existing C01-C25 components remain intact."
+}
