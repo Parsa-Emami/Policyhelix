@@ -26,6 +26,7 @@ import (
 )
 
 var defaultShadowEngine = rollout.NewShadowEngine(nil, nil, nil)
+var defaultDecisionCache, _ = policy.NewDecisionCache(policy.CacheConfig{})
 
 const (
 	EngineName    = "policyhelix-engine"
@@ -952,6 +953,161 @@ func setupRouter() *http.ServeMux {
 	mux.HandleFunc("/v1/runtime/rollout/shadow", handleShadowEvaluate)
 	mux.HandleFunc("/api/v1/rollout/shadow/divergence", handleShadowDivergence)
 
+	handlePolicyCacheEvaluate := func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", "POST")
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{"error": "method_not_allowed"})
+			return
+		}
+
+		body, err := io.ReadAll(io.LimitReader(r.Body, 131072))
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"error":   "body_read_error",
+				"message": err.Error(),
+			})
+			return
+		}
+
+		type cacheEnvelope struct {
+			TrustedIssuers []string                    `json:"trusted_issuers,omitempty"`
+			TrustedSigners []string                    `json:"trusted_signers,omitempty"`
+			Request        policy.EvaluateCacheRequest `json:"request"`
+		}
+
+		var req policy.EvaluateCacheRequest
+		var env cacheEnvelope
+		var issuers []string
+		var signers []string
+
+		if err := json.Unmarshal(body, &env); err == nil && (env.Request.Path != "" || env.Request.Action != "" || env.Request.ProviderUnavailable) {
+			req = env.Request
+			issuers = env.TrustedIssuers
+			signers = env.TrustedSigners
+		} else {
+			if err := json.Unmarshal(body, &req); err != nil {
+				w.WriteHeader(http.StatusBadRequest)
+				_ = json.NewEncoder(w).Encode(map[string]interface{}{
+					"error":   "malformed_request",
+					"message": fmt.Sprintf("invalid JSON payload: %v", err),
+				})
+				return
+			}
+		}
+
+		var evaluator *policy.BundleEvaluator
+		if len(issuers) > 0 || len(signers) > 0 {
+			evaluator = policy.NewBundleEvaluator(issuers, signers)
+		}
+
+		res, cErr := defaultDecisionCache.EvaluateRequest(r.Context(), evaluator, req)
+		status := http.StatusOK
+		if res.StatusCode > 0 {
+			status = res.StatusCode
+		} else if cErr != nil {
+			status = http.StatusBadRequest
+		}
+
+		w.WriteHeader(status)
+		_ = json.NewEncoder(w).Encode(res)
+	}
+
+	handlePolicyCacheStats := func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if r.Method != http.MethodGet {
+			w.Header().Set("Allow", "GET")
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{"error": "method_not_allowed"})
+			return
+		}
+		stats := defaultDecisionCache.Stats()
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(stats)
+	}
+
+	handlePolicyCacheInvalidate := func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", "POST")
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{"error": "method_not_allowed"})
+			return
+		}
+
+		type invalidateReq struct {
+			SessionID      string `json:"session_id,omitempty"`
+			SubjectID      string `json:"subject_id,omitempty"`
+			OwnerScope     string `json:"owner_scope,omitempty"`
+			MinEpoch       int64  `json:"min_epoch,omitempty"`
+			Revision       int64  `json:"revision,omitempty"`
+			PolicyDigest   string `json:"policy_digest,omitempty"`
+			Clear          bool   `json:"clear,omitempty"`
+			TargetRevision int64  `json:"target_revision,omitempty"`
+		}
+
+		var invReq invalidateReq
+		body, _ := io.ReadAll(io.LimitReader(r.Body, 65536))
+		if len(body) > 0 {
+			_ = json.Unmarshal(body, &invReq)
+		}
+
+		// Also check query params
+		q := r.URL.Query()
+		if q.Get("clear") == "true" {
+			invReq.Clear = true
+		}
+		if sid := q.Get("session_id"); sid != "" {
+			invReq.SessionID = sid
+		}
+		if sub := q.Get("subject_id"); sub != "" {
+			invReq.SubjectID = sub
+		}
+		if sc := q.Get("owner_scope"); sc != "" {
+			invReq.OwnerScope = sc
+		}
+
+		invalidatedCount := 0
+		if invReq.Clear {
+			defaultDecisionCache.Clear()
+			w.WriteHeader(http.StatusOK)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"status": "cleared",
+				"stats":  defaultDecisionCache.Stats(),
+			})
+			return
+		}
+
+		if invReq.SessionID != "" {
+			invalidatedCount += defaultDecisionCache.InvalidateSession(invReq.SessionID)
+		}
+		if invReq.SubjectID != "" {
+			invalidatedCount += defaultDecisionCache.InvalidateSubject(invReq.SubjectID, invReq.MinEpoch)
+		}
+		if invReq.OwnerScope != "" {
+			invalidatedCount += defaultDecisionCache.InvalidateScope(invReq.OwnerScope, invReq.MinEpoch)
+		}
+		if invReq.Revision > 0 || invReq.PolicyDigest != "" {
+			invalidatedCount += defaultDecisionCache.InvalidateRevision(invReq.Revision, invReq.PolicyDigest)
+		}
+		if invReq.TargetRevision > 0 {
+			invalidatedCount += defaultDecisionCache.InvalidateOlderThanRevision(invReq.TargetRevision)
+		}
+
+		w.WriteHeader(http.StatusOK)
+		_ = json.NewEncoder(w).Encode(map[string]interface{}{
+			"status":            "ok",
+			"invalidated_count": invalidatedCount,
+			"stats":             defaultDecisionCache.Stats(),
+		})
+	}
+
+	mux.HandleFunc("/api/v1/policy/cache/evaluate", handlePolicyCacheEvaluate)
+	mux.HandleFunc("/api/v1/policy/cache/stats", handlePolicyCacheStats)
+	mux.HandleFunc("/api/v1/policy/cache/invalidate", handlePolicyCacheInvalidate)
+
 	return mux
 }
 
@@ -1043,6 +1199,7 @@ func main() {
 	evaluateFailureFlag := flag.String("evaluate-failure", "", "Path to C19 resource outage fixture JSON")
 	auditDecisionFlag := flag.String("audit-decision", "", "Path to C20 decision audit fixture JSON to evaluate and log")
 	evaluateShadowFlag := flag.String("evaluate-shadow", "", "Path to C23 shadow evaluation fixture JSON")
+	evaluateCacheFlag := flag.String("evaluate-cache", "", "Path to C24 policy decision cache fixture JSON")
 	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	flag.Parse()
@@ -1688,6 +1845,76 @@ func main() {
 		}
 
 		if err != nil || res.StatusCode >= 400 || !res.Allow {
+			os.Exit(1)
+		}
+		return
+	}
+
+	if *evaluateCacheFlag != "" {
+		raw, err := os.ReadFile(*evaluateCacheFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Cache fixture read error: %v\n", err)
+			os.Exit(1)
+		}
+
+		type cliCacheExpected struct {
+			Allow      *bool  `json:"allow,omitempty"`
+			StatusCode int    `json:"status_code,omitempty"`
+			Cached     *bool  `json:"cached,omitempty"`
+			ErrorCode  string `json:"error_code,omitempty"`
+		}
+
+		type cliCacheEnvelope struct {
+			TrustedIssuers []string                    `json:"trusted_issuers,omitempty"`
+			TrustedSigners []string                    `json:"trusted_signers,omitempty"`
+			Request        policy.EvaluateCacheRequest `json:"request"`
+			Expected       *cliCacheExpected           `json:"expected,omitempty"`
+		}
+
+		var req policy.EvaluateCacheRequest
+		var env cliCacheEnvelope
+		var issuers []string
+		var signers []string
+
+		if err := json.Unmarshal(raw, &env); err == nil && (env.Request.Path != "" || env.Request.Action != "" || env.Request.ProviderUnavailable) {
+			req = env.Request
+			issuers = env.TrustedIssuers
+			signers = env.TrustedSigners
+		} else {
+			if err := json.Unmarshal(raw, &req); err != nil {
+				fmt.Fprintf(os.Stderr, "Cache fixture JSON error: %v\n", err)
+				os.Exit(1)
+			}
+		}
+
+		var evaluator *policy.BundleEvaluator
+		if len(issuers) > 0 || len(signers) > 0 {
+			evaluator = policy.NewBundleEvaluator(issuers, signers)
+		}
+
+		res, cErr := defaultDecisionCache.EvaluateRequest(context.Background(), evaluator, req)
+		_ = json.NewEncoder(os.Stdout).Encode(res)
+
+		if env.Expected != nil {
+			if env.Expected.ErrorCode != "" {
+				os.Exit(1)
+			}
+			if env.Expected.Allow != nil && res.Decision.Allow != *env.Expected.Allow {
+				os.Exit(1)
+			}
+			if env.Expected.StatusCode > 0 && res.StatusCode != env.Expected.StatusCode {
+				os.Exit(1)
+			}
+			if env.Expected.Cached != nil && res.Cached != *env.Expected.Cached {
+				os.Exit(1)
+			}
+			if cErr != nil {
+				os.Exit(1)
+			}
+			return
+		}
+
+		if cErr != nil || res.StatusCode >= 400 || !res.Decision.Allow {
 			os.Exit(1)
 		}
 		return

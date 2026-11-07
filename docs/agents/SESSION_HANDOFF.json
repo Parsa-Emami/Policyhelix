@@ -39,7 +39,7 @@
     "python3 scripts/source_identity.py"
   ],
   "validation_results": "docs/evidence/C23.json",
-  "final_source_identity": "sha256:dfcb4396b9f88570a26af064f0a22ec1f1e33a31fc3c211d3ea7d1782e32f4fa",
+  "final_source_identity": "sha256:836f88b3295e75bb32f94edb0498bd423cac3173d49a73e2e5790d9f6d14f13e",
   "protected_paths_changed": [],
   "current_core_ready": false,
   "next_task": "C24",

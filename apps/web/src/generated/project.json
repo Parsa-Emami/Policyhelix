@@ -299,7 +299,7 @@
       "id": "C24",
       "title": "feat(caches): bound policy decision cache keys and expiry",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "Subject/action/context/revision all bind cache; revoke invalidates stale decisions."
       ],

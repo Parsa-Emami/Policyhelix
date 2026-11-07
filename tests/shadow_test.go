@@ -1159,6 +1159,7 @@ func TestC23_ObligationParameterDivergence(t *testing.T) {
 		},
 		EnforcedBundle:  &bEnf,
 		CandidateBundle: &bCand,
+		EvalTime:        "2026-11-06T12:00:00Z",
 	}
 
 	res, err := engine.Evaluate(context.Background(), req)

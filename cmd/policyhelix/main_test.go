@@ -408,3 +408,112 @@ func TestEngineShadowEndpoints(t *testing.T) {
 	close(stopCh)
 	<-serverDone
 }
+
+func TestPolicyCacheEndpoints(t *testing.T) {
+	listener, err := net.Listen("tcp", "127.0.0.1:0")
+	if err != nil {
+		t.Fatalf("Failed to allocate port: %v", err)
+	}
+	port := listener.Addr().(*net.TCPAddr).Port
+	_ = listener.Close()
+
+	stopCh := make(chan struct{})
+	serverDone := make(chan struct{})
+	go func() {
+		defer close(serverDone)
+		_ = runServer("127.0.0.1", port, stopCh)
+	}()
+
+	client := &http.Client{Timeout: 3 * time.Second}
+	baseURL := fmt.Sprintf("http://127.0.0.1:%d", port)
+
+	for i := 0; i < 50; i++ {
+		resp, err := client.Get(baseURL + "/healthz")
+		if err == nil && resp.StatusCode == http.StatusOK {
+			_ = resp.Body.Close()
+			break
+		}
+		time.Sleep(50 * time.Millisecond)
+	}
+
+	// 1. POST /api/v1/policy/cache/evaluate
+	evalPayload := `{
+		"request": {
+			"request_id": "req-cache-test-01",
+			"path": "/api/v1/workloads/jobs",
+			"action": "read",
+			"subject": {
+				"id": "usr-cache-01",
+				"issuer": "https://issuer.policyhelix.local",
+				"roles": ["operator"],
+				"authenticated": true
+			},
+			"bundle": {
+				"schema_version": "1",
+				"bundle_id": "bundle-cache-test-v1",
+				"package": "policyhelix.authz",
+				"issuer": "https://issuer.policyhelix.local",
+				"signer_key_id": "ed25519-primary-2026",
+				"signature": "ed25519:7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6e7f8a",
+				"signature_verified": true,
+				"revision": 1,
+				"issued_at": "2026-11-06T00:00:00Z",
+				"expires_at": "2026-11-08T00:00:00Z",
+				"rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+				"routes": [
+					{
+						"pattern": "/api/v1/workloads/jobs",
+						"action": "read",
+						"classification": "private",
+						"allow_unauthenticated": false,
+						"required_roles": ["operator"]
+					}
+				],
+				"rules": [
+					{
+						"id": "rule-jobs-1",
+						"effect": "allow",
+						"path_pattern": "/api/v1/workloads/jobs",
+						"actions": ["read"],
+						"roles": ["operator"],
+						"resource_class": "private",
+						"reason_code": "allow_operator"
+					}
+				]
+			}
+		}
+	}`
+
+	resp, err := client.Post(baseURL+"/api/v1/policy/cache/evaluate", "application/json", strings.NewReader(evalPayload))
+	if err != nil || (resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusForbidden) {
+		t.Fatalf("POST /api/v1/policy/cache/evaluate failed: %v, status: %v", err, resp.Status)
+	}
+	var evalData map[string]interface{}
+	_ = json.NewDecoder(resp.Body).Decode(&evalData)
+	_ = resp.Body.Close()
+	if _, ok := evalData["cache_key"]; !ok {
+		t.Errorf("expected cache_key in response: %+v", evalData)
+	}
+
+	// 2. GET /api/v1/policy/cache/stats
+	statsResp, err := client.Get(baseURL + "/api/v1/policy/cache/stats")
+	if err != nil || statsResp.StatusCode != http.StatusOK {
+		t.Fatalf("GET /api/v1/policy/cache/stats failed: %v, status: %v", err, statsResp.Status)
+	}
+	var statsData map[string]interface{}
+	_ = json.NewDecoder(statsResp.Body).Decode(&statsData)
+	_ = statsResp.Body.Close()
+	if _, ok := statsData["capacity"]; !ok {
+		t.Errorf("expected capacity field in stats response: %+v", statsData)
+	}
+
+	// 3. POST /api/v1/policy/cache/invalidate
+	invResp, err := client.Post(baseURL+"/api/v1/policy/cache/invalidate?clear=true", "application/json", nil)
+	if err != nil || invResp.StatusCode != http.StatusOK {
+		t.Fatalf("POST /api/v1/policy/cache/invalidate failed: %v, status: %v", err, invResp.Status)
+	}
+	_ = invResp.Body.Close()
+
+	close(stopCh)
+	<-serverDone
+}

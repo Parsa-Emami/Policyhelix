@@ -1,0 +1,36 @@
+{
+  "schema_version": "1",
+  "fixture_id": "negative-provider-unavailable",
+  "commit_id": "C24",
+  "description": "When policy decision provider is unavailable, engine returns 503 error without polluting the cache.",
+  "license": "Apache-2.0",
+  "trusted_issuers": [
+    "https://issuer.policyhelix.local"
+  ],
+  "trusted_signers": [
+    "ed25519-primary-2026"
+  ],
+  "request": {
+    "request_id": "req-c24-cache-neg-02",
+    "path": "/api/v1/workloads/jobs",
+    "action": "read",
+    "subject": {
+      "id": "usr-op-01",
+      "issuer": "https://issuer.policyhelix.local",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 1793793000
+    },
+    "deadline_ms": 200,
+    "eval_time": "2026-11-06T12:00:00Z",
+    "provider_unavailable": true
+  },
+  "expected": {
+    "allow": false,
+    "status_code": 503,
+    "cached": false,
+    "error_code": "PROVIDER_UNAVAILABLE"
+  }
+}

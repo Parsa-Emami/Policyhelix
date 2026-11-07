@@ -1,0 +1,31 @@
+{
+  "schema_version": "1",
+  "fixture_id": "negative-malformed-request",
+  "commit_id": "C24",
+  "description": "Malformed cache request missing path and action produces an explicit 400 error.",
+  "license": "Apache-2.0",
+  "trusted_issuers": [
+    "https://issuer.policyhelix.local"
+  ],
+  "trusted_signers": [
+    "ed25519-primary-2026"
+  ],
+  "request": {
+    "request_id": "req-c24-cache-neg-03",
+    "path": "",
+    "action": "",
+    "subject": {
+      "id": "",
+      "issuer": "",
+      "roles": null,
+      "authenticated": false,
+      "session_epoch": 0
+    }
+  },
+  "expected": {
+    "allow": false,
+    "status_code": 400,
+    "cached": false,
+    "error_code": "MALFORMED_REQUEST"
+  }
+}

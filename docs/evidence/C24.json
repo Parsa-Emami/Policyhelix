@@ -1,0 +1,149 @@
+{
+  "schema_version": 1,
+  "commit_id": "C24",
+  "project": "PolicyHelix",
+  "date": "2026-11-07",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix policy decision cache: bound policy decision cache keys and expiry (Requirement F18)",
+  "source_identity": "sha256:836f88b3295e75bb32f94edb0498bd423cac3173d49a73e2e5790d9f6d14f13e",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml; local run used Go 1.26.2 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "development host verified against C24 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C24/positive-cache-hit-bound-keys.json",
+      "sha256": "18e58f0ed9e881dc5d5f1548dd871e799196277386636982a7164cbf5944e778",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C24 cache hit on exact four-dimension key match"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C24/positive-cache-miss-on-revision-change.json",
+      "sha256": "ad3235cff7e23fcc3342904711e8650f2fc10990f22d2df69cfde5ea6ea67a04",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C24 cache miss on bundle revision change"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C24/positive-cache-miss-on-context-change.json",
+      "sha256": "9847d45afc3d267979b01ebfeb25a9dcc74347333baf3d457a6f0faa010809d7",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C24 cache miss on context resource ID or scope change"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C24/positive-cache-miss-on-action-change.json",
+      "sha256": "02e2d3a57577ed4e384b5ac840df7c786f8641fffe272040f5ed7c08ac94a562",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C24 cache miss on action change"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C24/positive-revoke-invalidates-session.json",
+      "sha256": "7f35e3ab876c6050f2ed7fcb3efc4c08992b6c098f8a309f04852ad5d904509d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C24 session revocation cache invalidation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C24/positive-revoke-invalidates-subject-epoch.json",
+      "sha256": "04bc57e82a38717fca33d9f00a3166f35933cfc64c82a2e441c4bcb6583a18b1",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C24 subject epoch advancement cache invalidation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C24/positive-restart-invariant.json",
+      "sha256": "c17ef0c36a90e755a7da17215d1d5a7372454b379d1cf783e28481bb6b3fda1f",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C24 restart invariance and fail-closed posture"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C24/negative-private-resource-fail-closed.json",
+      "sha256": "0df7981e653d30496d0ccc3b226c5c33c05bdfae3e2772eae583e6e2b2293c8e",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C24 private resource unauthenticated fail-closed semantics"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C24/negative-provider-unavailable.json",
+      "sha256": "19e56c169c6eb013db2dbc7ebdd16c698b9e25aca429d3e6bb8bee7546f9b8ba",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C24 unavailable provider explicit 503 error"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C24/negative-malformed-request.json",
+      "sha256": "73607c68830eef433d8db07bfdf3477ac7ea9ff8a491ae43764047fe474cc127",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C24 malformed request explicit 400 error"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "go test -v -run TestC24 ./tests",
+      "exit_code": 0,
+      "output": "PASS: TestC24_ManifestIntegrity, TestC24_KeyBindingFourDimensions, TestC24_TTLExpiryAndBounds, TestC24_RevocationInvalidation, TestC24_BoundedLRUEviction, TestC24_ConcurrentAccessRaceSafety, TestC24_ZeroTokenInvariant, TestC24_FailClosedPrivateResources, TestC24_CLIExecution, TestC24_HTTPEndpoints, TestC24_EvaluateWithCache_BundleEvalInput, TestC24_CanonicalizationAndWhitespace, TestC24_RestartInvariance, TestC24_ConcurrentRevocationNonBlocking"
+    },
+    {
+      "command": "go test -race -count=1 ./...",
+      "exit_code": 0,
+      "output": "ok cmd/policyhelix, internal/contracts, internal/policy, internal/storage, tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "16 passed, 0 failed"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED: Checked 326 JSON files and repository contract invariants."
+    }
+  ],
+  "results": [
+    "Requirement F18 fully implemented: Subject/action/context/revision all bind cache; revoke invalidates stale decisions.",
+    "Bounded DecisionCache implemented in internal/policy/cache.go with deterministic O(1) LRU eviction and strict <=30s TTL bound enforcement (satisfying F09/F18).",
+    "Four-dimensional deterministic cache key computation implemented with SHA-256 formatting pk:<64-hex>, binding Subject (ID, Issuer, sorted Roles, Authenticated, SessionEpoch, SessionID), Action (normalized lowercase), Context (Path, ResourceID, OwnerScope), and Revision (Revision, PolicyDigest).",
+    "Revocation invalidation verified: explicit InvalidateSession, InvalidateSubject, and InvalidateScope immediately evict stale cached decisions; live RevocationChecker drops revoked sessions and outdated epochs on cache retrieval.",
+    "Zero-token invariant strictly enforced: CacheKeyComponents and DecisionCache reject raw Bearer tokens, JWTs, and session cookies with ErrCodeTokenLeakDetected.",
+    "Private resources fail closed: unauthenticated requests to private resources strictly fail closed (allow=false, 403 Forbidden) and never cache an unauthorized allow.",
+    "Engine CLI flag -evaluate-cache and HTTP endpoints (/api/v1/policy/cache/evaluate, /api/v1/policy/cache/stats, /api/v1/policy/cache/invalidate) registered in cmd/policyhelix/main.go and proxied through Node supervisor (scripts/serve-web.mjs).",
+    "Ten Apache-2.0 synthetic fixtures cataloged with SHA-256 digests in tests/fixtures/policyhelix/C24/manifest.json.",
+    "Automated regression test coverage established in tests/cache_test.go covering manifest integrity, key binding, TTL expiry, revocation invalidation, bounded LRU eviction, race safety under -race, zero-token invariants, fail-closed semantics, CLI execution, and HTTP endpoints."
+  ],
+  "observed_limitations": [
+    "Operator-controlled bundle activation sets and key removal isolation is scheduled for downstream task C25 (feat(trust): isolate bundle activation sets and key removal)."
+  ],
+  "rollback_or_recovery_observation": "Revert internal/policy/cache.go, tests/cache_test.go, tests/fixtures/policyhelix/C24/, cmd/policyhelix/main.go cache additions, scripts/serve-web.mjs cache proxy additions, and docs/evidence/C24.json. Existing C01-C23 components remain intact."
+}

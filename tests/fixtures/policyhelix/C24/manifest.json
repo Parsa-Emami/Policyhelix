@@ -1,0 +1,78 @@
+{
+  "commit_id": "C24",
+  "description": "Synthetic licensed fixtures for PolicyHelix C24: bound policy decision cache keys and expiry (Requirement F18).",
+  "fixtures": [
+    {
+      "fixture_id": "positive-cache-hit-bound-keys",
+      "path": "tests/fixtures/policyhelix/C24/positive-cache-hit-bound-keys.json",
+      "sha256": "18e58f0ed9e881dc5d5f1548dd871e799196277386636982a7164cbf5944e778",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-cache-miss-on-revision-change",
+      "path": "tests/fixtures/policyhelix/C24/positive-cache-miss-on-revision-change.json",
+      "sha256": "ad3235cff7e23fcc3342904711e8650f2fc10990f22d2df69cfde5ea6ea67a04",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-cache-miss-on-context-change",
+      "path": "tests/fixtures/policyhelix/C24/positive-cache-miss-on-context-change.json",
+      "sha256": "9847d45afc3d267979b01ebfeb25a9dcc74347333baf3d457a6f0faa010809d7",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-cache-miss-on-action-change",
+      "path": "tests/fixtures/policyhelix/C24/positive-cache-miss-on-action-change.json",
+      "sha256": "02e2d3a57577ed4e384b5ac840df7c786f8641fffe272040f5ed7c08ac94a562",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-revoke-invalidates-session",
+      "path": "tests/fixtures/policyhelix/C24/positive-revoke-invalidates-session.json",
+      "sha256": "7f35e3ab876c6050f2ed7fcb3efc4c08992b6c098f8a309f04852ad5d904509d",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-revoke-invalidates-subject-epoch",
+      "path": "tests/fixtures/policyhelix/C24/positive-revoke-invalidates-subject-epoch.json",
+      "sha256": "04bc57e82a38717fca33d9f00a3166f35933cfc64c82a2e441c4bcb6583a18b1",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-restart-invariant",
+      "path": "tests/fixtures/policyhelix/C24/positive-restart-invariant.json",
+      "sha256": "c17ef0c36a90e755a7da17215d1d5a7372454b379d1cf783e28481bb6b3fda1f",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-private-resource-fail-closed",
+      "path": "tests/fixtures/policyhelix/C24/negative-private-resource-fail-closed.json",
+      "sha256": "0df7981e653d30496d0ccc3b226c5c33c05bdfae3e2772eae583e6e2b2293c8e",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-provider-unavailable",
+      "path": "tests/fixtures/policyhelix/C24/negative-provider-unavailable.json",
+      "sha256": "19e56c169c6eb013db2dbc7ebdd16c698b9e25aca429d3e6bb8bee7546f9b8ba",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-malformed-request",
+      "path": "tests/fixtures/policyhelix/C24/negative-malformed-request.json",
+      "sha256": "73607c68830eef433d8db07bfdf3477ac7ea9ff8a491ae43764047fe474cc127",
+      "type": "negative",
+      "license": "Apache-2.0"
+    }
+  ],
+  "license": "Apache-2.0",
+  "schema_version": "1"
+}

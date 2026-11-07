@@ -213,10 +213,12 @@
     },
     {
       "id": "C24",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C24.json"
+      ],
+      "source_identity": "sha256:836f88b3295e75bb32f94edb0498bd423cac3173d49a73e2e5790d9f6d14f13e",
+      "notes": "Bounded policy decision cache keys, expiry TTL, and revocation invalidation implemented in internal/policy/cache.go and tests/cache_test.go; F18 subject, action, context, and revision key binding and revocation verified."
     },
     {
       "id": "C25",

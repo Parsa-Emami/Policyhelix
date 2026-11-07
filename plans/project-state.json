@@ -1,7 +1,7 @@
 {
   "project": "PolicyHelix",
   "reviewed_commit": "0e40901",
-  "readiness": "SHADOW_ROLLOUT_AUDITABLE_DIVERGENCE_VERIFIED",
+  "readiness": "DECISION_CACHE_BOUND_KEYS_EXPIRY_VERIFIED",
   "core_ready": false,
   "implemented": [
     "responsive web shell",
@@ -27,10 +27,11 @@
     "decision metadata audit logging with pseudonymization and credential redaction",
     "policy simulator and decision diff UI with fixture explainability",
     "gateway health status, IdP outage fail-closed alert and bounded session revocation",
-    "shadow candidate policy evaluation and auditable divergence tracking without enforced outcome modification"
+    "shadow candidate policy evaluation and auditable divergence tracking without enforced outcome modification",
+    "bounded policy decision cache keys, expiry, LRU eviction, and revocation invalidation"
   ],
-  "engine": "shadow candidate policy evaluation and auditable divergence tracking, gateway health and session revocation dashboard, policy simulator and decision diff UI, decision audit logging without bearer tokens or cookies, per-resource outage behavior and intentional public bypass, supported policy obligations and fail-closed unknown mandatory obligations, allowlisted single upstream proxy & origin isolation, normalized gateway identity & header stripping, bounded 30-second revocation enforcer, revocable server-side sessions, OIDC callback validator, atomic bundle activation & rollback, bundle trust/freshness verifier, deterministic signed bundle builder, offline decision simulator, bounded local policy bundle evaluator, domain route & resource classes, recoverable storage, typed contracts v1 & runtime CI",
-  "next_task": "C24",
+  "engine": "bounded policy decision cache keys, expiry and revocation invalidation, shadow candidate policy evaluation and auditable divergence tracking, gateway health and session revocation dashboard, policy simulator and decision diff UI, decision audit logging without bearer tokens or cookies, per-resource outage behavior and intentional public bypass, supported policy obligations and fail-closed unknown mandatory obligations, allowlisted single upstream proxy & origin isolation, normalized gateway identity & header stripping, bounded 30-second revocation enforcer, revocable server-side sessions, OIDC callback validator, atomic bundle activation & rollback, bundle trust/freshness verifier, deterministic signed bundle builder, offline decision simulator, bounded local policy bundle evaluator, domain route & resource classes, recoverable storage, typed contracts v1 & runtime CI",
+  "next_task": "C25",
   "next_command": "npm run plan -- next",
   "full_product_endpoint": "C30 locally usable; C40 full published OSS v1"
 }
