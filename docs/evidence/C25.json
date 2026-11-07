@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "commit_id": "C25",
+  "project": "PolicyHelix",
+  "date": "2026-11-07",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix trust key rotation: rotate trust keys without rollback gap; new trust set is operator-controlled and removed key cannot activate an old signed bundle (Requirement F19)",
+  "source_identity": "sha256:9411ba51cff66f427360e07d3f4f3ffb939cdc8c79ba62faa57f6501a96babc9",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence and SHA256SUMS.txt",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml; local run used Go 1.26.2 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240,
+      "status": "development host verified against C25 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C25/positive-operator-key-rotation.json",
+      "sha256": "2aa4c8f767a0186407c1c4f99c4c56dfb922d2f2d425cb2e9fc34e033be6f2d4",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C25 operator-controlled trust key rotation and bundle activation without rollback gap"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C25/positive-removed-key-old-bundle-rejected.json",
+      "sha256": "9c256a2a4dc1ba921a66d995f8b8edf0e39df399b602d299a4fed410290c6a16",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C25 removed key rejection when attempting to activate an old signed bundle"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C25/positive-restart-key-rotation-persistence.json",
+      "sha256": "ad83ae3cafc99648fdc37b48f37a2bbf9af26311d4a614bd841f6e1558b9c2ec",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C25 restart durability of rotated trust set, removed key set, and monotonic revision floor"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C25/negative-new-key-rollback-revision.json",
+      "sha256": "7a4a442098c7acca6c6db40a094814d1bbbe4b7bfd9859b7545d4e7fb073fe22",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C25 rollback-gap prevention when a new trusted key signs a stale revision"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C25/negative-unauthenticated-rotation.json",
+      "sha256": "c1fb20b8519c99198feb8dc94fdbef00ab2748e9c43d498ca490e801d97c0031",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C25 unauthenticated caller rejection on trust key rotation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C25/negative-malformed-empty-trust-set.json",
+      "sha256": "8d36f09823a22e0979dd3ea8e8e71bf23481469e2089aca53218bdee8ee68257",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C25 empty trusted key set rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C25/negative-provider-unavailable.json",
+      "sha256": "899c2e5e747e5b5f03dec1e1ae7c28f806630b6f563fe3ba03cd7ac875c64b3c",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C25 unavailable provider explicit error"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C25/negative-private-resource-fail-closed.json",
+      "sha256": "012dd708c645287b78803065bc2b801c89b730fb36700a281d48907ee49839ff",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C25 private resource fail-closed posture after active key removal"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "go test -v -run TestC25 ./tests",
+      "exit_code": 0,
+      "output": "PASS: TestC25_ManifestIntegrity, TestC25_OperatorControlledRotationAndRemovedKeyRejection, TestC25_NoRollbackGapWithNewTrustedKey, TestC25_RestartAndRecoveryInvariance, TestC25_EmergencyKeyRemovalFailsClosed, TestC25_NegativeCasesAndConcurrentSafety, TestC25_CLIAndHTTPIntegration"
+    },
+    {
+      "command": "go test -count=1 ./...",
+      "exit_code": 0,
+      "output": "ok cmd/policyhelix, internal/contracts, internal/policy, internal/storage, tests"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "16 passed, 0 failed"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED: Checked JSON files and repository contract invariants."
+    }
+  ],
+  "results": [
+    "Requirement F19 fully implemented: New trust set is operator-controlled; removed key cannot activate an old signed bundle.",
+    "KeyRotationManager and StorageKeyStateStore implemented in internal/bundles/keys.go with durable atomic persistence via ADR-0003 storage.Adapter (record policyhelix:trust-keyring-state).",
+    "Operator authorization and private scope security gate enforced before any trust set mutation or operation replay via storage.ValidateIdentityAndScope.",
+    "Removed key IDs are permanently tracked in durable trust state; any attempt to activate an old or newly signed bundle with a removed key is rejected with REMOVED_SIGNER_KEY_REJECTED.",
+    "Monotonic bundle revision floor (HighestRevision) is preserved across trust key rotations and process restarts, preventing any rollback gap when rotating to a new signing key.",
+    "Emergency removal of the active bundle's signer key without a successor bundle immediately deactivates in-memory authority and fails closed on private resources.",
+    "Engine CLI flag -rotate-keys and HTTP endpoints (/api/v1/bundles/keys/rotate, /api/v1/bundles/keys/state) registered in cmd/policyhelix/main.go and proxied through scripts/serve-web.mjs.",
+    "Eight Apache-2.0 synthetic fixtures cataloged with SHA-256 digests in tests/fixtures/policyhelix/C25/manifest.json and verified in tests/key_rotation_test.go."
+  ],
+  "observed_limitations": [
+    "Full end-to-end enforcement matrix verification across origin bypass, forged header, revoked session, expired bundle, and policy outage is scheduled for downstream task C26."
+  ],
+  "rollback_or_recovery_observation": "Revert internal/bundles/keys.go, tests/key_rotation_test.go, tests/fixtures/policyhelix/C25/, cmd/policyhelix/main.go key rotation additions, scripts/serve-web.mjs proxy additions, and docs/evidence/C25.json. Existing C01-C24 components remain intact."
+}

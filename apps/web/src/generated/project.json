@@ -311,7 +311,7 @@
       "id": "C25",
       "title": "feat(rotation): rotate trust keys without rollback gap",
       "stage": "domain",
-      "status": "planned",
+      "status": "verified",
       "acceptance": [
         "New trust set is operator-controlled; removed key cannot activate an old signed bundle."
       ],

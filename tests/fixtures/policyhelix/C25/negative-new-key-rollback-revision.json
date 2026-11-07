@@ -1,0 +1,175 @@
+{
+  "fixture_id": "negative-new-key-rollback-revision",
+  "commit_id": "C25",
+  "description": "Rotating to a new trusted key preserves HighestRevision=5 and rejects a bundle signed by the new key with stale revision 4 (no rollback gap).",
+  "schema_version": "1",
+  "evaluation_time": "2026-11-03T12:00:00Z",
+  "initial_trusted_keys": [
+    {
+      "signer_key_id": "ed25519-primary-2026",
+      "issuer": "https://issuer.policyhelix.local",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    }
+  ],
+  "preload_activation": {
+    "schema_version": "1",
+    "operation_id": "op-preload-rev5",
+    "identity": {
+      "subject_id": "operator-1",
+      "issuer": "https://issuer.policyhelix.local",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 1720000000,
+      "min_required_epoch": 1710000000,
+      "untrusted_headers_stripped": true,
+      "provider_state": "available"
+    },
+    "bundle": {
+      "schema_version": "1",
+      "bundle_id": "bundle-v1-rev5",
+      "package": "policyhelix.authz",
+      "issuer": "https://issuer.policyhelix.local",
+      "signer_key_id": "ed25519-primary-2026",
+      "signature": "ed25519:86ed5223eb7e1424da40e9c10ea897320a5925d499e6db707210212d593af01789f64f5fd5227126c63a70759ddb91b4141def848739aea3520ba0e4407b7e0a",
+      "signature_verified": true,
+      "revision": 5,
+      "issued_at": "2026-11-03T10:00:00Z",
+      "expires_at": "2026-11-04T10:00:00Z",
+      "digest": "sha256:fc3e934a326990f2171e536b214d229f3e352f0fecc63f7c2b1c72fb041326f1",
+      "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+      "routes": [
+        {
+          "pattern": "/api/v1/analytics/reports",
+          "action": "read",
+          "classification": "private",
+          "allow_unauthenticated": false,
+          "required_roles": [
+            "operator",
+            "admin"
+          ],
+          "description": "Private analytics reports endpoint"
+        }
+      ],
+      "rules": [
+        {
+          "id": "rule-operator-analytics-read",
+          "effect": "allow",
+          "path_pattern": "/api/v1/analytics/reports",
+          "actions": [
+            "read"
+          ],
+          "roles": [
+            "operator",
+            "admin"
+          ],
+          "resource_class": "private",
+          "reason_code": "policy_allow_role_operator",
+          "reason_message": "Operator granted read access to analytics reports"
+        }
+      ]
+    }
+  },
+  "rotations": [
+    {
+      "schema_version": "1",
+      "operation_id": "op-rotate-with-stale-candidate",
+      "bundle_operation_id": "op-activate-stale-rev4",
+      "identity": {
+        "subject_id": "operator-1",
+        "issuer": "https://issuer.policyhelix.local",
+        "roles": [
+          "operator"
+        ],
+        "authenticated": true,
+        "session_epoch": 1720000000,
+        "min_required_epoch": 1710000000,
+        "untrusted_headers_stripped": true,
+        "provider_state": "available"
+      },
+      "evaluation_time": "2026-11-03T12:00:00Z",
+      "trusted_keys": [
+        {
+          "signer_key_id": "ed25519-rotated-2026",
+          "issuer": "https://issuer.policyhelix.local",
+          "public_key_hex": "e7f162a10bec559afea195e4dce84b69568d5d2cb0963eb446c0685e2b17f2f0"
+        }
+      ],
+      "remove_key_ids": [
+        "ed25519-primary-2026"
+      ],
+      "candidate_bundle": {
+        "schema_version": "1",
+        "bundle_id": "bundle-v2-rev4",
+        "package": "policyhelix.authz",
+        "issuer": "https://issuer.policyhelix.local",
+        "signer_key_id": "ed25519-rotated-2026",
+        "signature": "ed25519:53801f19cfc2776bf9cc1b9c9d3fa0c5f92f6ca95ed4ccbfbd2fbe431b73514cea3eaa70e97fb70a41678afeb118853b437b36404a899543ab90beda267b9e0f",
+        "signature_verified": true,
+        "revision": 4,
+        "issued_at": "2026-11-03T10:00:00Z",
+        "expires_at": "2026-11-04T10:00:00Z",
+        "digest": "sha256:f2308ced4a21fde34e77d21167b45b40eaf9667da1fca853798a2ecd2aa5f7ef",
+        "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+        "routes": [
+          {
+            "pattern": "/api/v1/analytics/reports",
+            "action": "read",
+            "classification": "private",
+            "allow_unauthenticated": false,
+            "required_roles": [
+              "operator",
+              "admin"
+            ],
+            "description": "Private analytics reports endpoint"
+          }
+        ],
+        "rules": [
+          {
+            "id": "rule-operator-analytics-read",
+            "effect": "allow",
+            "path_pattern": "/api/v1/analytics/reports",
+            "actions": [
+              "read"
+            ],
+            "roles": [
+              "operator",
+              "admin"
+            ],
+            "resource_class": "private",
+            "reason_code": "policy_allow_role_operator",
+            "reason_message": "Operator granted read access to analytics reports"
+          }
+        ]
+      }
+    }
+  ],
+  "evaluation": {
+    "request_id": "req-c25-operator-1",
+    "path": "/api/v1/analytics/reports",
+    "action": "read",
+    "subject": {
+      "id": "operator-1",
+      "issuer": "https://issuer.policyhelix.local",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 1720000000
+    },
+    "resource_id": "res-analytics-reports",
+    "deadline_ms": 50,
+    "eval_time": "2026-11-03T12:00:00Z"
+  },
+  "expected": {
+    "rotation_status": "rejected",
+    "rotation_valid": false,
+    "rotation_error_code": "STALE_OR_REPLAYED_REVISION",
+    "active": true,
+    "active_signer_key_id": "ed25519-primary-2026",
+    "active_revision": 5,
+    "highest_revision": 5,
+    "allow": true
+  }
+}

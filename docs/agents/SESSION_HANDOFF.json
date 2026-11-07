@@ -1,8 +1,8 @@
 {
   "project": "PolicyHelix",
-  "date": "2026-11-06",
-  "base_commit": "0e40901",
-  "scope": "Task C23: feat(rollout): test candidate policies in shadow mode; shadow decision never changes enforced result and divergence is auditable (Requirement F17)",
+  "date": "2026-11-07",
+  "base_commit": "7b57646",
+  "scope": "Task C25: feat(rotation): rotate trust keys without rollback gap; new trust set is operator-controlled and removed key cannot activate an old signed bundle (Requirement F19)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -26,11 +26,13 @@
     "C20",
     "C21",
     "C22",
-    "C23"
+    "C23",
+    "C24",
+    "C25"
   ],
   "commands": [
     "npm run validate:plan",
-    "go test -v -run TestC23 ./tests",
+    "go test -v -run TestC25 ./tests",
     "go test ./...",
     "npm test",
     "npm run build",
@@ -38,11 +40,11 @@
     "python3 scripts/validate_repo.py",
     "python3 scripts/source_identity.py"
   ],
-  "validation_results": "docs/evidence/C23.json",
-  "final_source_identity": "sha256:836f88b3295e75bb32f94edb0498bd423cac3173d49a73e2e5790d9f6d14f13e",
+  "validation_results": "docs/evidence/C25.json",
+  "final_source_identity": "sha256:9411ba51cff66f427360e07d3f4f3ffb939cdc8c79ba62faa57f6501a96babc9",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C24",
+  "next_task": "C26",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C23 verified. Candidate policy shadow execution and auditable divergence tracking implemented in internal/rollout/shadow.go and tests/shadow_test.go, CLI flag -evaluate-shadow and HTTP endpoints registered in cmd/policyhelix/main.go and proxied through scripts/serve-web.mjs. Requirement F17 verified. Ready for C24 (feat(gateway): bind cache on subject, action, context and revision)."
+  "continuation": "Task C25 verified. Operator-controlled trust key rotation without rollback gap and removed-key rejection implemented in internal/bundles/keys.go and tests/key_rotation_test.go, CLI flag -rotate-keys and HTTP endpoints registered in cmd/policyhelix/main.go and proxied through scripts/serve-web.mjs. Requirement F19 verified. Ready for C26 (test(enforcement): verify origin bypass outage and replay)."
 }

@@ -1,0 +1,64 @@
+{
+  "commit_id": "C25",
+  "description": "Synthetic licensed fixtures for PolicyHelix C25: rotate trust keys without rollback gap (Requirement F19).",
+  "fixtures": [
+    {
+      "fixture_id": "positive-operator-key-rotation",
+      "path": "tests/fixtures/policyhelix/C25/positive-operator-key-rotation.json",
+      "sha256": "2aa4c8f767a0186407c1c4f99c4c56dfb922d2f2d425cb2e9fc34e033be6f2d4",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-removed-key-old-bundle-rejected",
+      "path": "tests/fixtures/policyhelix/C25/positive-removed-key-old-bundle-rejected.json",
+      "sha256": "9c256a2a4dc1ba921a66d995f8b8edf0e39df399b602d299a4fed410290c6a16",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-restart-key-rotation-persistence",
+      "path": "tests/fixtures/policyhelix/C25/positive-restart-key-rotation-persistence.json",
+      "sha256": "ad83ae3cafc99648fdc37b48f37a2bbf9af26311d4a614bd841f6e1558b9c2ec",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-new-key-rollback-revision",
+      "path": "tests/fixtures/policyhelix/C25/negative-new-key-rollback-revision.json",
+      "sha256": "7a4a442098c7acca6c6db40a094814d1bbbe4b7bfd9859b7545d4e7fb073fe22",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-unauthenticated-rotation",
+      "path": "tests/fixtures/policyhelix/C25/negative-unauthenticated-rotation.json",
+      "sha256": "c1fb20b8519c99198feb8dc94fdbef00ab2748e9c43d498ca490e801d97c0031",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-malformed-empty-trust-set",
+      "path": "tests/fixtures/policyhelix/C25/negative-malformed-empty-trust-set.json",
+      "sha256": "8d36f09823a22e0979dd3ea8e8e71bf23481469e2089aca53218bdee8ee68257",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-provider-unavailable",
+      "path": "tests/fixtures/policyhelix/C25/negative-provider-unavailable.json",
+      "sha256": "899c2e5e747e5b5f03dec1e1ae7c28f806630b6f563fe3ba03cd7ac875c64b3c",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-private-resource-fail-closed",
+      "path": "tests/fixtures/policyhelix/C25/negative-private-resource-fail-closed.json",
+      "sha256": "012dd708c645287b78803065bc2b801c89b730fb36700a281d48907ee49839ff",
+      "type": "negative",
+      "license": "Apache-2.0"
+    }
+  ],
+  "license": "Apache-2.0",
+  "schema_version": "1"
+}

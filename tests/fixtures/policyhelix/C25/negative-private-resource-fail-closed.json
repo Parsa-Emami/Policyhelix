@@ -1,0 +1,133 @@
+{
+  "fixture_id": "negative-private-resource-fail-closed",
+  "commit_id": "C25",
+  "description": "Emergency removal of the active bundle's signer key without a replacement bundle deactivates authority and fails closed on private resources; unauthenticated access also fails closed.",
+  "schema_version": "1",
+  "evaluation_time": "2026-11-03T12:00:00Z",
+  "initial_trusted_keys": [
+    {
+      "signer_key_id": "ed25519-primary-2026",
+      "issuer": "https://issuer.policyhelix.local",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    }
+  ],
+  "preload_activation": {
+    "schema_version": "1",
+    "operation_id": "op-preload-rev1",
+    "identity": {
+      "subject_id": "operator-1",
+      "issuer": "https://issuer.policyhelix.local",
+      "roles": [
+        "operator"
+      ],
+      "authenticated": true,
+      "session_epoch": 1720000000,
+      "min_required_epoch": 1710000000,
+      "untrusted_headers_stripped": true,
+      "provider_state": "available"
+    },
+    "bundle": {
+      "schema_version": "1",
+      "bundle_id": "bundle-v1-rev1",
+      "package": "policyhelix.authz",
+      "issuer": "https://issuer.policyhelix.local",
+      "signer_key_id": "ed25519-primary-2026",
+      "signature": "ed25519:ac9e6dc2be0afb1ff6cb00d68fa63aee142b52516195ef06ff8d51247f05e4fdd2cf4dd326b384e34328b5cbcf2ce9d169544d297e0342154309565641af7a06",
+      "signature_verified": true,
+      "revision": 1,
+      "issued_at": "2026-11-03T10:00:00Z",
+      "expires_at": "2026-11-04T10:00:00Z",
+      "digest": "sha256:bf487b02722ae3bd57cc41fe7cec705266fd9d5b9d0e9e424f0f7650da70a535",
+      "rego_module": "package policyhelix.authz\ndefault allow = false\nallow { input.subject.authenticated == true }",
+      "routes": [
+        {
+          "pattern": "/api/v1/analytics/reports",
+          "action": "read",
+          "classification": "private",
+          "allow_unauthenticated": false,
+          "required_roles": [
+            "operator",
+            "admin"
+          ],
+          "description": "Private analytics reports endpoint"
+        }
+      ],
+      "rules": [
+        {
+          "id": "rule-operator-analytics-read",
+          "effect": "allow",
+          "path_pattern": "/api/v1/analytics/reports",
+          "actions": [
+            "read"
+          ],
+          "roles": [
+            "operator",
+            "admin"
+          ],
+          "resource_class": "private",
+          "reason_code": "policy_allow_role_operator",
+          "reason_message": "Operator granted read access to analytics reports"
+        }
+      ]
+    }
+  },
+  "rotations": [
+    {
+      "schema_version": "1",
+      "operation_id": "op-emergency-remove-active-key",
+      "identity": {
+        "subject_id": "operator-1",
+        "issuer": "https://issuer.policyhelix.local",
+        "roles": [
+          "operator"
+        ],
+        "authenticated": true,
+        "session_epoch": 1720000000,
+        "min_required_epoch": 1710000000,
+        "untrusted_headers_stripped": true,
+        "provider_state": "available"
+      },
+      "evaluation_time": "2026-11-03T12:00:00Z",
+      "trusted_keys": [
+        {
+          "signer_key_id": "ed25519-emergency-2026",
+          "issuer": "https://issuer.policyhelix.local",
+          "public_key_hex": "adc14011f82d1c56d956aa4f9d73d8858361a606048525e0d08c638dc75dd8c7"
+        }
+      ],
+      "remove_key_ids": [
+        "ed25519-primary-2026"
+      ]
+    }
+  ],
+  "evaluation": {
+    "request_id": "req-c25-unauth-1",
+    "path": "/api/v1/analytics/reports",
+    "action": "read",
+    "subject": {
+      "id": "anonymous",
+      "issuer": "https://issuer.policyhelix.local",
+      "roles": [],
+      "authenticated": false,
+      "session_epoch": 0
+    },
+    "resource_id": "res-analytics-reports",
+    "deadline_ms": 50,
+    "eval_time": "2026-11-03T12:00:00Z"
+  },
+  "expected": {
+    "rotation_status": "rotated",
+    "rotation_valid": true,
+    "key_set_epoch": 1,
+    "trusted_key_ids": [
+      "ed25519-emergency-2026"
+    ],
+    "removed_key_ids": [
+      "ed25519-primary-2026"
+    ],
+    "active": false,
+    "highest_revision": 1,
+    "allow": false,
+    "decision_reason_code": "NO_ACTIVE_POLICY_BUNDLE"
+  }
+}

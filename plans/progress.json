@@ -222,10 +222,12 @@
     },
     {
       "id": "C25",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C25.json"
+      ],
+      "source_identity": "sha256:9411ba51cff66f427360e07d3f4f3ffb939cdc8c79ba62faa57f6501a96babc9",
+      "notes": "Operator-controlled trust key rotation without rollback gap and removed-key rejection implemented in internal/bundles/keys.go and tests/key_rotation_test.go; F19 new trust set is operator-controlled and removed key cannot activate an old signed bundle verified."
     },
     {
       "id": "C26",

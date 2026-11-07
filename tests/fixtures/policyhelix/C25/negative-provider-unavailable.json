@@ -1,0 +1,46 @@
+{
+  "fixture_id": "negative-provider-unavailable",
+  "commit_id": "C25",
+  "description": "Unavailable required provider produces an explicit PROVIDER_UNAVAILABLE error rather than placeholder success.",
+  "schema_version": "1",
+  "evaluation_time": "2026-11-03T12:00:00Z",
+  "initial_trusted_keys": [
+    {
+      "signer_key_id": "ed25519-primary-2026",
+      "issuer": "https://issuer.policyhelix.local",
+      "public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+    }
+  ],
+  "rotations": [
+    {
+      "schema_version": "1",
+      "operation_id": "op-provider-unavailable",
+      "identity": {
+        "subject_id": "operator-1",
+        "issuer": "https://issuer.policyhelix.local",
+        "roles": [
+          "operator"
+        ],
+        "authenticated": true,
+        "session_epoch": 1720000000,
+        "min_required_epoch": 1710000000,
+        "untrusted_headers_stripped": true,
+        "provider_state": "available"
+      },
+      "evaluation_time": "2026-11-03T12:00:00Z",
+      "provider_unavailable": true,
+      "trusted_keys": [
+        {
+          "signer_key_id": "ed25519-rotated-2026",
+          "issuer": "https://issuer.policyhelix.local",
+          "public_key_hex": "e7f162a10bec559afea195e4dce84b69568d5d2cb0963eb446c0685e2b17f2f0"
+        }
+      ]
+    }
+  ],
+  "expected": {
+    "rotation_status": "rejected",
+    "rotation_valid": false,
+    "rotation_error_code": "PROVIDER_UNAVAILABLE"
+  }
+}
