@@ -75,6 +75,12 @@ export function createWebServer({ root, config, projectId, engineUrl }) {
     if (path === '/api/v1/security/verify' && engineUrl) {
       return await proxyToEngine(`${engineUrl}/api/v1/security/verify`);
     }
+    if (path === '/api/v1/benchmark/run' && engineUrl) {
+      return await proxyToEngine(`${engineUrl}/api/v1/benchmark/run`);
+    }
+    if (path === '/api/v1/benchmark/evaluate' && engineUrl) {
+      return await proxyToEngine(`${engineUrl}/api/v1/benchmark/evaluate`);
+    }
     if (path === '/api/v1/rollout/shadow/evaluate' && engineUrl) {
       return await proxyToEngine(`${engineUrl}/api/v1/rollout/shadow/evaluate`);
     }

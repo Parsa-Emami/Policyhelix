@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-07",
   "base_commit": "7b57646",
-  "scope": "Task C27: test(security): prove project abuse and authorization boundaries; execute negative UAT, XSS/import and object/provider authorization tests across every enabled surface (Requirement N27)",
+  "scope": "Task C28: perf(local): measure bounded target and overload workloads; record hardware, OS, source and fixture identities, latency/CPU/RSS/disk, cancellation and saturation for target and over-limit workloads (Requirement N28)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -30,12 +30,14 @@
     "C24",
     "C25",
     "C26",
-    "C27"
+    "C27",
+    "C28"
   ],
   "commands": [
     "npm run validate:plan",
-    "go test -v -run TestC27 ./tests",
-    "go test ./...",
+    "go test -v -run TestC28 ./tests",
+    "go test -count=1 ./...",
+    "node scripts/benchmark-local.mjs --verify",
     "npm test",
     "npm run test:browser",
     "npm run build",
@@ -43,11 +45,11 @@
     "python3 scripts/validate_repo.py",
     "python3 scripts/source_identity.py"
   ],
-  "validation_results": "docs/evidence/C27.json",
-  "final_source_identity": "sha256:de5970390c675cb4f3dae4228e4e9f847ac27a55885c63751e1f22c44deb22ea",
+  "validation_results": "docs/evidence/C28.json",
+  "final_source_identity": "sha256:e1e53292314cf0b7cf080f2f3b33f7c22cd01f2ca939a0191ea576bbecb2a899",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C28",
+  "next_task": "C29",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C27 verified. Negative UAT, XSS/import prototype-pollution guards, and object/provider authorization (IDOR) boundary suite implemented in internal/gateway/security.go, tests/security_suite_test.go, tests/browser/security.spec.ts, tests/release/security-matrix.md, docs/security/THREAT_MODEL.md, and tests/fixtures/policyhelix/C27/. CLI flag -verify-security and HTTP endpoint /api/v1/security/verify registered in cmd/policyhelix/main.go and proxied through scripts/serve-web.mjs. Requirement N27 verified. Ready for C28 (perf(engine): measure 200ms decision latency and resource bounds)."
+  "continuation": "Task C28 verified. Bounded target and overload workload evaluation engine implemented in internal/gateway/benchmark.go; scripts/benchmark-local.mjs, tests/scenarios/target-workload.json, tests/workload_test.go, tests/browser/benchmark.spec.ts, docs/evidence/performance.json, and tests/fixtures/policyhelix/C28/. Engine CLI flag -benchmark-workload and HTTP endpoints /api/v1/benchmark/run and /api/v1/benchmark/evaluate registered in cmd/policyhelix/main.go and proxied through scripts/serve-web.mjs. Decision deadline <= 200ms SLO met with zero errors, payload bounded at 64 KiB, worker saturation rejected HTTP 429, client cancellation handled HTTP 499, and restart recovery verified. Requirement N28 verified. Ready for C29 (observability: separate web health from engine, storage and provider readiness with secret-redacted logging)."
 }

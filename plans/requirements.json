@@ -251,7 +251,7 @@
       "mandatory": true,
       "planned_commit": "C28",
       "evidence_path": "docs/evidence/C28.json",
-      "status": "unimplemented"
+      "status": "verified"
     },
     {
       "id": "N29",

@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "project": "PolicyHelix",
+  "commit_id": "C28",
+  "requirement": "N28",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed scenario contract",
+  "description": "Formal scenario contract specifying target capacity, bounded performance SLOs, and overload saturation thresholds for PolicyHelix local open-source profile.",
+  "capacity_boundaries": {
+    "protected_apps": 1,
+    "concurrent_users": "5-10",
+    "max_payload_bytes": 65536,
+    "decision_deadline_ms": 200,
+    "hardware_target": {
+      "vcpu": 2,
+      "ram_mib": 4096,
+      "free_disk_mib": 10240
+    }
+  },
+  "invariants": [
+    "Private resources fail closed",
+    "Decision deadline <= 200ms enforced (fail-closed timeout 504 on breach)",
+    "Oversized payloads > 64 KiB rejected 413 without memory bloat",
+    "Client cancellations fail closed 499 without goroutine leakage",
+    "Saturation beyond worker capacity fails closed 429 without queue starvation",
+    "Durable state persists across engine restart under load without data loss"
+  ],
+  "workload_scenarios": [
+    {
+      "scenario_id": "SCENARIO-TARGET-BOUNDED",
+      "name": "Bounded Target Workload",
+      "description": "Evaluates 10 sequential and concurrent authorization requests within the 64 KiB payload limit and verifies latency p95 <= 200ms.",
+      "fixture_ref": "tests/fixtures/policyhelix/C28/positive-target-bounded-workload.json",
+      "target_users": 5,
+      "payload_bytes": 32768,
+      "expected_slo_p95_ms": 200.0,
+      "expected_allow": true
+    },
+    {
+      "scenario_id": "SCENARIO-CONCURRENCY-BURST",
+      "name": "Concurrent Burst Workload",
+      "description": "Evaluates 20 concurrent authorization requests across 10 workers verifying zero race conditions, low memory delta, and bounded latency.",
+      "fixture_ref": "tests/fixtures/policyhelix/C28/positive-concurrency-burst.json",
+      "target_users": 10,
+      "payload_bytes": 16384,
+      "expected_slo_p95_ms": 200.0,
+      "expected_allow": true
+    },
+    {
+      "scenario_id": "SCENARIO-OVERSIZED-PAYLOAD",
+      "name": "Oversized Payload Overload",
+      "description": "Sends payload exceeding 64 KiB bound (70,000 bytes) and verifies rejection with HTTP 413 PAYLOAD_TOO_LARGE.",
+      "fixture_ref": "tests/fixtures/policyhelix/C28/negative-oversized-payload-exceeds-64k.json",
+      "expected_status": 413,
+      "expected_allow": false,
+      "expected_error": "PAYLOAD_TOO_LARGE"
+    },
+    {
+      "scenario_id": "SCENARIO-DECISION-TIMEOUT",
+      "name": "Decision Deadline Timeout Overload",
+      "description": "Simulates evaluation delay exceeding the 200ms SLO and verifies fail-closed rejection with HTTP 504 DECISION_TIMEOUT.",
+      "fixture_ref": "tests/fixtures/policyhelix/C28/negative-deadline-exceeded-timeout.json",
+      "expected_status": 504,
+      "expected_allow": false,
+      "expected_error": "DECISION_TIMEOUT"
+    },
+    {
+      "scenario_id": "SCENARIO-CLIENT-CANCELLATION",
+      "name": "Client Request Cancellation",
+      "description": "Simulates client disconnecting or aborting request context and verifies clean HTTP 499 cancellation without goroutine leaks.",
+      "fixture_ref": "tests/fixtures/policyhelix/C28/negative-client-cancellation.json",
+      "expected_status": 499,
+      "expected_allow": false,
+      "expected_error": "REQUEST_CANCELLED"
+    },
+    {
+      "scenario_id": "SCENARIO-SATURATION-GUARD",
+      "name": "Worker Saturation Guard",
+      "description": "Sends requests exceeding worker pool capacity and verifies immediate fail-closed HTTP 429 rejection without thread exhaustion.",
+      "fixture_ref": "tests/fixtures/policyhelix/C28/negative-saturation-limit-fail-closed.json",
+      "expected_status": 429,
+      "expected_allow": false,
+      "expected_error": "SATURATION_LIMIT_EXCEEDED"
+    },
+    {
+      "scenario_id": "SCENARIO-RESTART-RECOVERY",
+      "name": "Durable Storage Restart Recovery",
+      "description": "Executes state mutations under load, simulates engine shutdown, and verifies intact recovery upon engine restart.",
+      "fixture_ref": "tests/fixtures/policyhelix/C28/negative-restart-recovery-workload.json",
+      "expected_status": 200,
+      "expected_allow": true
+    }
+  ]
+}

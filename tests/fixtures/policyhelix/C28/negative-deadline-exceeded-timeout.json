@@ -1,0 +1,33 @@
+{
+  "fixture_id": "negative-deadline-exceeded-timeout",
+  "commit_id": "C28",
+  "description": "Evaluation exceeding the 200ms decision deadline SLO triggers a fail-closed timeout with HTTP 504 DECISION_TIMEOUT.",
+  "schema_version": "1",
+  "workload_type": "timeout_overload",
+  "evaluation_time": "2026-11-07T12:00:00Z",
+  "concurrency": 1,
+  "max_workers": 10,
+  "decision_deadline_ms": 200,
+  "max_payload_bytes": 65536,
+  "steps": [
+    {
+      "step_id": "step-timeout-01",
+      "method": "POST",
+      "path": "/api/v1/analytics/reports",
+      "subject_id": "usr-c28-operator",
+      "role": "operator",
+      "owner_scope": "tenant:default",
+      "payload_size": 1024,
+      "simulate_delay_ms": 250,
+      "expected_status_code": 504,
+      "expected_allow": false,
+      "expected_error_code": "DECISION_TIMEOUT"
+    }
+  ],
+  "expected": {
+    "total_requests": 1,
+    "expected_allow_count": 0,
+    "expected_deny_count": 1,
+    "expected_timeout_count": 1
+  }
+}

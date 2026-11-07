@@ -1,0 +1,33 @@
+{
+  "fixture_id": "negative-oversized-payload-exceeds-64k",
+  "commit_id": "C28",
+  "description": "Workload payload exceeding strict 64 KiB bound (70,000 bytes) is rejected with HTTP 413 PAYLOAD_TOO_LARGE without memory bloat.",
+  "schema_version": "1",
+  "workload_type": "payload_overload",
+  "evaluation_time": "2026-11-07T12:00:00Z",
+  "concurrency": 1,
+  "max_workers": 10,
+  "decision_deadline_ms": 200,
+  "max_payload_bytes": 65536,
+  "steps": [
+    {
+      "step_id": "step-oversized-01",
+      "method": "POST",
+      "path": "/api/v1/analytics/exports",
+      "subject_id": "usr-c28-admin",
+      "role": "admin",
+      "owner_scope": "tenant:default",
+      "payload_size": 70000,
+      "simulate_delay_ms": 1,
+      "expected_status_code": 413,
+      "expected_allow": false,
+      "expected_error_code": "PAYLOAD_TOO_LARGE"
+    }
+  ],
+  "expected": {
+    "total_requests": 1,
+    "expected_allow_count": 0,
+    "expected_deny_count": 1,
+    "expected_payload_limit_count": 1
+  }
+}

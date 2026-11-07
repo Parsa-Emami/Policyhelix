@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "project": "PolicyHelix",
+  "commit_id": "C28",
+  "requirement": "N28",
+  "date": "2026-11-07",
+  "passed": true,
+  "environment": {
+    "os": "linux",
+    "type": "Linux",
+    "release": "7.0.0-43-generic",
+    "arch": "x64",
+    "hardware": {
+      "vcpu": 16,
+      "ram_mib": 30829,
+      "free_disk_mib": 92277,
+      "target_hardware_budget": "2 vCPU / 4096 MiB RAM / 10240 MiB free disk"
+    },
+    "toolchain": {
+      "node": "v24.19.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "source_identity": "sha256:e1e53292314cf0b7cf080f2f3b33f7c22cd01f2ca939a0191ea576bbecb2a899"
+  },
+  "capacity_targets": {
+    "protected_apps": 1,
+    "concurrent_users": "5-10",
+    "max_payload_bytes": 65536,
+    "decision_deadline_ms": 200,
+    "hardware_budget": "2 vCPU / 4096 MiB RAM / 10240 MiB free disk"
+  },
+  "workload_results": {
+    "target_bounded": {
+      "fixture_id": "positive-target-bounded-workload",
+      "total_requests": 10,
+      "allow_count": 10,
+      "deny_count": 0,
+      "latency": {
+        "min_ms": 2.100713,
+        "mean_ms": 3.29132,
+        "p50_ms": 3.162527,
+        "p90_ms": 5.266246,
+        "p95_ms": 5.298006,
+        "p99_ms": 5.298006,
+        "max_ms": 5.298006
+      },
+      "resource_usage": {
+        "start_alloc_bytes": 1296992,
+        "end_alloc_bytes": 1329424,
+        "start_sys_bytes": 12802312,
+        "end_sys_bytes": 13326600,
+        "start_num_goroutine": 6,
+        "end_num_goroutine": 6,
+        "delta_alloc_bytes": 32432,
+        "rss_peak_bytes": 13326600,
+        "disk_usage_bytes": 0
+      },
+      "slo_p95_ms": 200,
+      "slo_satisfied": true
+    },
+    "concurrency_burst": {
+      "fixture_id": "positive-concurrency-burst",
+      "total_requests": 20,
+      "allow_count": 20,
+      "deny_count": 0,
+      "latency": {
+        "min_ms": 2.124629,
+        "mean_ms": 2.9323588999999997,
+        "p50_ms": 2.206324,
+        "p90_ms": 4.32997,
+        "p95_ms": 4.348315,
+        "p99_ms": 4.36673,
+        "max_ms": 4.36673
+      },
+      "resource_usage": {
+        "start_alloc_bytes": 1421344,
+        "end_alloc_bytes": 1457824,
+        "start_sys_bytes": 13326600,
+        "end_sys_bytes": 13326600,
+        "start_num_goroutine": 6,
+        "end_num_goroutine": 6,
+        "delta_alloc_bytes": 36480,
+        "rss_peak_bytes": 13326600,
+        "disk_usage_bytes": 0
+      },
+      "slo_satisfied": true
+    },
+    "overload_scenarios": {
+      "oversized_payload": {
+        "fixture_id": "negative-oversized-payload-exceeds-64k",
+        "rejected_status": 413,
+        "error_code": "PAYLOAD_TOO_LARGE",
+        "passed": true
+      },
+      "decision_timeout": {
+        "fixture_id": "negative-deadline-exceeded-timeout",
+        "rejected_status": 504,
+        "error_code": "DECISION_TIMEOUT",
+        "passed": true
+      },
+      "client_cancellation": {
+        "fixture_id": "negative-client-cancellation",
+        "rejected_status": 499,
+        "error_code": "REQUEST_CANCELLED",
+        "passed": true
+      },
+      "concurrency_saturation": {
+        "fixture_id": "negative-saturation-limit-fail-closed",
+        "rejected_status": 429,
+        "error_code": "SATURATION_LIMIT_EXCEEDED",
+        "saturation_count": 3,
+        "passed": true
+      },
+      "restart_recovery": {
+        "fixture_id": "negative-restart-recovery-workload",
+        "recovered": true,
+        "passed": true
+      },
+      "malformed_fixture": {
+        "fixture_id": "negative-malformed-workload-fixture",
+        "rejected_status": 200,
+        "error_code": "MALFORMED_BENCHMARK_FIXTURE",
+        "passed": true
+      }
+    }
+  },
+  "observed_limits": [
+    "Observed sustained payload size: <= 64 KiB strictly enforced (larger rejected HTTP 413)",
+    "Observed decision latency p95: 5.30ms (well within <= 200ms SLO)",
+    "Observed concurrent capacity: 10 concurrent requests without queue starvation or goroutine leaks",
+    "Engine RSS memory: 12.71 MiB (well within 4096 MiB budget)",
+    "Saturation guard: Excess concurrent requests beyond worker capacity fail closed (HTTP 429)",
+    "Storage durability: Monotonic revisions and state persist intact across restart under load"
+  ],
+  "summary": "All bounded target and overload workloads measured and verified under local execution. Latency p95 <= 200ms SLO met with zero errors, payload bounded at 64 KiB, and overload conditions fail closed."
+}

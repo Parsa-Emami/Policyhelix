@@ -280,6 +280,7 @@ func main() {
 	rotateKeysFlag := flag.String("rotate-keys", "", "Path to C25 trust key rotation fixture JSON")
 	verifyEnforcementFlag := flag.String("verify-enforcement", "", "Path to C26 enforcement matrix fixture JSON")
 	verifySecurityFlag := flag.String("verify-security", "", "Path to C27 security boundary fixture JSON")
+	benchmarkWorkloadFlag := flag.String("benchmark-workload", "", "Path to C28 benchmark workload fixture JSON")
 	writeStorageFlag := flag.String("write-storage", "", "Path to C05 WriteRequest JSON fixture to commit to local storage")
 	storageDirFlag := flag.String("storage-dir", "", "Directory path for local authoritative storage port")
 	flag.Parse()
@@ -1082,6 +1083,37 @@ func main() {
 		rep, runErr := gateway.EvaluateSecurityBoundaryFixture(context.Background(), dir, fx)
 		_ = json.NewEncoder(os.Stdout).Encode(rep)
 		if runErr != nil || !rep.Passed {
+			os.Exit(1)
+		}
+		return
+	}
+
+	if *benchmarkWorkloadFlag != "" {
+		raw, err := os.ReadFile(*benchmarkWorkloadFlag)
+		if err != nil {
+			fmt.Fprintf(os.Stderr, "Benchmark fixture read error: %v\n", err)
+			os.Exit(1)
+		}
+		var fx gateway.BenchmarkWorkloadFixture
+		if err := json.Unmarshal(raw, &fx); err != nil {
+			fmt.Fprintf(os.Stderr, "Benchmark fixture JSON error: %v\n", err)
+			os.Exit(1)
+		}
+		dir := strings.TrimSpace(*storageDirFlag)
+		if dir == "" {
+			tmp, err := os.MkdirTemp("", "policyhelix-bench-*")
+			if err != nil {
+				fmt.Fprintf(os.Stderr, "Benchmark temp dir error: %v\n", err)
+				os.Exit(1)
+			}
+			defer os.RemoveAll(tmp)
+			dir = tmp
+		}
+		rep, runErr := gateway.EvaluateBenchmarkFixture(context.Background(), dir, fx)
+		if rep != nil {
+			_ = json.NewEncoder(os.Stdout).Encode(rep)
+		}
+		if runErr != nil || (rep != nil && !rep.Passed) {
 			os.Exit(1)
 		}
 		return

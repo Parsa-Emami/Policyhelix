@@ -1,7 +1,7 @@
 {
   "project": "PolicyHelix",
   "reviewed_commit": "7b57646",
-  "readiness": "SECURITY_BOUNDARIES_VERIFIED",
+  "readiness": "PERFORMANCE_AND_CAPACITY_BOUNDARIES_VERIFIED",
   "core_ready": false,
   "implemented": [
     "responsive web shell",
@@ -31,10 +31,11 @@
     "bounded policy decision cache keys, expiry, LRU eviction, and revocation invalidation",
     "operator-controlled trust key rotation without rollback gap and removed-key rejection",
     "end-to-end enforcement matrix verification across origin bypass, forged headers, revoked sessions, expired/stale/tampered bundles, and policy outages",
-    "negative UAT, XSS/import prototype-pollution guards, and object/provider authorization (IDOR) boundary verification across all enabled surfaces"
+    "negative UAT, XSS/import prototype-pollution guards, and object/provider authorization (IDOR) boundary verification across all enabled surfaces",
+    "bounded target and overload workload evaluation with latency/CPU/RSS/disk tracking, 200ms decision deadline, 64 KiB payload limit, cancellation, and saturation fail-closed controls"
   ],
-  "engine": "negative UAT, XSS/import and object/provider authorization (IDOR) boundary suite, end-to-end enforcement matrix verification (origin bypass, forged headers, revoked sessions, expired/tampered/replayed bundles, and policy outages), operator-controlled trust key rotation without rollback gap, bounded policy decision cache keys, expiry and revocation invalidation, shadow candidate policy evaluation and auditable divergence tracking, gateway health and session revocation dashboard, policy simulator and decision diff UI, decision audit logging without bearer tokens or cookies, per-resource outage behavior and intentional public bypass, supported policy obligations and fail-closed unknown mandatory obligations, allowlisted single upstream proxy & origin isolation, normalized gateway identity & header stripping, bounded 30-second revocation enforcer, revocable server-side sessions, OIDC callback validator, atomic bundle activation & rollback, bundle trust/freshness verifier, deterministic signed bundle builder, offline decision simulator, bounded local policy bundle evaluator, domain route & resource classes, recoverable storage, typed contracts v1 & runtime CI",
-  "next_task": "C28",
+  "engine": "bounded target and overload workload benchmark engine (p95 <= 200ms deadline, 64 KiB payload limit, saturation/cancellation fail-closed guards, memory/disk tracking), negative UAT, XSS/import and object/provider authorization (IDOR) boundary suite, end-to-end enforcement matrix verification (origin bypass, forged headers, revoked sessions, expired/tampered/replayed bundles, and policy outages), operator-controlled trust key rotation without rollback gap, bounded policy decision cache keys, expiry and revocation invalidation, shadow candidate policy evaluation and auditable divergence tracking, gateway health and session revocation dashboard, policy simulator and decision diff UI, decision audit logging without bearer tokens or cookies, per-resource outage behavior and intentional public bypass, supported policy obligations and fail-closed unknown mandatory obligations, allowlisted single upstream proxy & origin isolation, normalized gateway identity & header stripping, bounded 30-second revocation enforcer, revocable server-side sessions, OIDC callback validator, atomic bundle activation & rollback, bundle trust/freshness verifier, deterministic signed bundle builder, offline decision simulator, bounded local policy bundle evaluator, domain route & resource classes, recoverable storage, typed contracts v1 & runtime CI",
+  "next_task": "C29",
   "next_command": "npm run plan -- next",
   "full_product_endpoint": "C30 locally usable; C40 full published OSS v1"
 }

@@ -249,10 +249,12 @@
     },
     {
       "id": "C28",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C28.json"
+      ],
+      "source_identity": "sha256:e1e53292314cf0b7cf080f2f3b33f7c22cd01f2ca939a0191ea576bbecb2a899",
+      "notes": "Bounded target and overload workload evaluation engine implemented in internal/gateway/benchmark.go; scripts/benchmark-local.mjs, tests/scenarios/target-workload.json, tests/workload_test.go, tests/browser/benchmark.spec.ts, and docs/evidence/performance.json; latency SLO p95 <= 200ms, payload limit 64 KiB, saturation, cancellation, and restart recovery verified; Requirement N28 verified."
     },
     {
       "id": "C29",

@@ -1,0 +1,70 @@
+{
+  "fixture_id": "negative-saturation-limit-fail-closed",
+  "commit_id": "C28",
+  "description": "Concurrency burst exceeding bounded worker capacity triggers immediate fail-closed rejection with HTTP 429 SATURATION_LIMIT_EXCEEDED without queuing starvation.",
+  "schema_version": "1",
+  "workload_type": "saturation_overload",
+  "evaluation_time": "2026-11-07T12:00:00Z",
+  "concurrency": 5,
+  "max_workers": 2,
+  "decision_deadline_ms": 200,
+  "max_payload_bytes": 65536,
+  "steps": [
+    {
+      "step_id": "sat-step-01",
+      "method": "POST",
+      "path": "/api/v1/analytics/reports",
+      "subject_id": "usr-c28-operator",
+      "role": "operator",
+      "owner_scope": "tenant:default",
+      "payload_size": 1024,
+      "simulate_delay_ms": 50
+    },
+    {
+      "step_id": "sat-step-02",
+      "method": "POST",
+      "path": "/api/v1/analytics/reports",
+      "subject_id": "usr-c28-operator",
+      "role": "operator",
+      "owner_scope": "tenant:default",
+      "payload_size": 1024,
+      "simulate_delay_ms": 50
+    },
+    {
+      "step_id": "sat-step-03",
+      "method": "POST",
+      "path": "/api/v1/analytics/reports",
+      "subject_id": "usr-c28-operator",
+      "role": "operator",
+      "owner_scope": "tenant:default",
+      "payload_size": 1024,
+      "simulate_delay_ms": 50
+    },
+    {
+      "step_id": "sat-step-04",
+      "method": "POST",
+      "path": "/api/v1/analytics/reports",
+      "subject_id": "usr-c28-operator",
+      "role": "operator",
+      "owner_scope": "tenant:default",
+      "payload_size": 1024,
+      "simulate_delay_ms": 50
+    },
+    {
+      "step_id": "sat-step-05",
+      "method": "POST",
+      "path": "/api/v1/analytics/reports",
+      "subject_id": "usr-c28-operator",
+      "role": "operator",
+      "owner_scope": "tenant:default",
+      "payload_size": 1024,
+      "simulate_delay_ms": 50
+    }
+  ],
+  "expected": {
+    "total_requests": 5,
+    "expected_allow_count": 2,
+    "expected_deny_count": 3,
+    "expected_saturation_count": 3
+  }
+}

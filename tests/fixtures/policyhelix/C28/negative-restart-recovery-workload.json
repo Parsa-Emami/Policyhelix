@@ -1,0 +1,18 @@
+{
+  "fixture_id": "negative-restart-recovery-workload",
+  "commit_id": "C28",
+  "description": "Storage write under load followed by simulated engine shutdown and restart verifies durable record persistence without state corruption or rollback.",
+  "schema_version": "1",
+  "workload_type": "restart_recovery",
+  "evaluation_time": "2026-11-07T12:00:00Z",
+  "concurrency": 1,
+  "max_workers": 10,
+  "decision_deadline_ms": 200,
+  "max_payload_bytes": 65536,
+  "steps": [],
+  "expected": {
+    "total_requests": 1,
+    "expected_allow_count": 1,
+    "expected_deny_count": 0
+  }
+}

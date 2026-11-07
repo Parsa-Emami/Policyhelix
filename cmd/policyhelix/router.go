@@ -1327,5 +1327,63 @@ func setupRouter(ad *storage.Adapter) *http.ServeMux {
 		_ = json.NewEncoder(w).Encode(rep)
 	})
 
+	handleBenchmarkRun := func(w http.ResponseWriter, r *http.Request) {
+		if r.Method != http.MethodPost {
+			w.Header().Set("Allow", "POST")
+			w.WriteHeader(http.StatusMethodNotAllowed)
+			return
+		}
+		body, err := io.ReadAll(http.MaxBytesReader(w, r.Body, 1048576))
+		if err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusRequestEntityTooLarge)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"passed":     false,
+				"error_code": gateway.ErrCodePayloadTooLarge,
+				"message":    "Failed to read request body or exceeded 1MB",
+			})
+			return
+		}
+		var fx gateway.BenchmarkWorkloadFixture
+		if err := json.Unmarshal(body, &fx); err != nil {
+			w.Header().Set("Content-Type", "application/json; charset=utf-8")
+			w.WriteHeader(http.StatusBadRequest)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"passed":     false,
+				"error_code": gateway.ErrCodeMalformedBenchmark,
+				"message":    fmt.Sprintf("Malformed benchmark fixture JSON: %v", err),
+			})
+			return
+		}
+		tmpDir, err := os.MkdirTemp("", "policyhelix-bench-http-*")
+		w.Header().Set("Content-Type", "application/json; charset=utf-8")
+		if err != nil {
+			w.WriteHeader(http.StatusServiceUnavailable)
+			_ = json.NewEncoder(w).Encode(map[string]interface{}{
+				"passed":     false,
+				"error_code": bundles.ErrCodeActivationStoreUnavail,
+				"message":    err.Error(),
+			})
+			return
+		}
+		defer os.RemoveAll(tmpDir)
+		rep, runErr := gateway.EvaluateBenchmarkFixture(r.Context(), tmpDir, fx)
+		status := http.StatusOK
+		if runErr != nil {
+			status = http.StatusInternalServerError
+		} else if rep != nil && !rep.Passed {
+			if rep.ErrorCode == gateway.ErrCodeMalformedBenchmark {
+				status = http.StatusBadRequest
+			} else {
+				status = http.StatusForbidden
+			}
+		}
+		w.WriteHeader(status)
+		_ = json.NewEncoder(w).Encode(rep)
+	}
+
+	mux.HandleFunc("/api/v1/benchmark/run", handleBenchmarkRun)
+	mux.HandleFunc("/api/v1/benchmark/evaluate", handleBenchmarkRun)
+
 	return mux
 }

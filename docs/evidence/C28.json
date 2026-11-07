@@ -1,0 +1,167 @@
+{
+  "schema_version": 1,
+  "commit_id": "C28",
+  "project": "PolicyHelix",
+  "date": "2026-11-07",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix capacity and performance: record hardware, OS, source and fixture identities, latency/CPU/RSS/disk, cancellation and saturation for target and over-limit workloads (Requirement N28)",
+  "source_identity": "sha256:e1e53292314cf0b7cf080f2f3b33f7c22cd01f2ca939a0191ea576bbecb2a899",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence, SHA256SUMS.txt, plans/progress.json and docs/agents/SESSION_HANDOFF.json",
+  "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml; local run used Go 1.26.2 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 16,
+      "ram_mib": 30829,
+      "free_disk_mib": 92216,
+      "target_hardware_budget": "2 vCPU / 4096 MiB RAM / 10240 MiB free disk",
+      "status": "development host measured against C28 2 vCPU / 4096 MiB / 10240 MiB planning target"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    },
+    {
+      "tool": "Playwright",
+      "version": "1.64.1",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C28/positive-target-bounded-workload.json",
+      "sha256": "8e3653ca1f345f3149debbf90853bd44bb9d2343a008293126c30f28f2b405dc",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C28 bounded target workload evaluation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C28/positive-concurrency-burst.json",
+      "sha256": "7feeb84d9d08f484520bfd5f6f967e33fb8642ce6cd9bc43d5db89a7c5d47af3",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C28 concurrent multi-session burst evaluation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C28/negative-oversized-payload-exceeds-64k.json",
+      "sha256": "e799511b76eebd4a02ac09af9cb7afc91dcfe7acd7e71d9988c94796be19f7c3",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C28 payload exceeding 64 KiB rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C28/negative-deadline-exceeded-timeout.json",
+      "sha256": "9d11b5b3ffc7b8344c53242f3b4a28ee9ae835033835294648e12547483c6bac",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C28 decision deadline timeout rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C28/negative-client-cancellation.json",
+      "sha256": "af0a115c0d0c4ab2e25c01a62bebc61baaf326c62d0eafb774e98e929745e2ab",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C28 client cancellation handling"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C28/negative-saturation-limit-fail-closed.json",
+      "sha256": "9ff874fb3067d6e82d6cdfc1591b17c9cb687b8d8527e68278d389d87f522787",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C28 worker capacity saturation fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C28/negative-malformed-workload-fixture.json",
+      "sha256": "92b8d4bcb3147da5ca122537f209e15321584c7ffa58e3767f99a041c517b86d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C28 malformed workload schema rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C28/negative-private-resource-fail-closed.json",
+      "sha256": "8e672b2458d2fb0a1528cdecd1674a65e6fd52fe26aefbcfd9ad1786a4f3fce2",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C28 private resource fail-closed under load"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C28/negative-restart-recovery-workload.json",
+      "sha256": "1136114fbd68981e476bda3fbd38bb5f92019cf82ea01162d3d0d387f5eb1743",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C28 storage durability and restart recovery under load"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C28/negative-provider-unavailable-workload.json",
+      "sha256": "84cd4d2a683eacb4a3cc2d65f9313e123d37e720cf2e261a698825efe7a3467f",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for C28 provider outage fail-closed rejection"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "go test -v -run TestC28 ./tests",
+      "exit_code": 0,
+      "output": "PASS: TestC28_ManifestIntegrityAndFixtureEvaluation, TestC28_BoundedTargetWorkloadAndLatencySLO, TestC28_OverloadCancellationSaturationAndFailClosed, TestC28_RestartInvariantAndResourceTracking, TestC28_CLIAndHTTPBenchmarkVerify, TestC28_ExtremeWorkerSaturationBurst, TestC28_MalformedFixtureAndEdgeCases"
+    },
+    {
+      "command": "go test -count=1 ./...",
+      "exit_code": 0,
+      "output": "ok cmd/policyhelix, internal/contracts, internal/gateway, internal/policy, internal/storage, tests"
+    },
+    {
+      "command": "node scripts/benchmark-local.mjs --verify",
+      "exit_code": 0,
+      "output": "PolicyHelix C28 Local Benchmark Driver: target bounded p95 latency ~5.38ms (SLO <= 200ms satisfied), concurrency burst p95 ~4.33ms, payload overload rejected 413, decision timeout rejected 504, client cancellation handled 499, worker saturation rejected 429, storage restart recovery verified, and CLI flag verified."
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "16 passed, 0 failed"
+    },
+    {
+      "command": "npm run test:browser",
+      "exit_code": 0,
+      "output": "31 passed (3.0s): verifies target bounded workload latency SLO (p95 <= 200ms) over supervisor proxy; verifies concurrent burst workload execution without race conditions; verifies overload scenarios (payload limits 413, timeouts 504, cancellation 499, and saturation 429 fail closed); verifies restart recovery durability; rejects disallowed HTTP methods and malformed benchmark fixtures; plus all C21, C22, and C27 workspace regressions"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED: Checked 375 JSON files and repository contract invariants."
+    }
+  ],
+  "results": [
+    "Requirement N28 fully implemented and verified: hardware, OS, source, and fixture identities recorded alongside nanosecond-precision latency, CPU, RSS memory, disk footprint, cancellation, and saturation metrics.",
+    "Benchmark workload evaluation engine implemented in internal/gateway/benchmark.go supporting bounded concurrency worker pool, nanosecond-precision sampling, percentile calculation (p50, p90, p95, p99, max), and fail-closed saturation controls.",
+    "Formal scenario contract tests/scenarios/target-workload.json created with schema version 1, defining capacity boundaries (1 protected app, 5-10 users, <= 64 KiB payload limit, <= 200ms decision deadline) and overload thresholds.",
+    "Standalone and supervisor-integrated benchmark driver scripts/benchmark-local.mjs created with automated --verify assertions, gathering host metrics and publishing docs/evidence/performance.json.",
+    "Engine CLI flag -benchmark-workload and HTTP endpoints POST /api/v1/benchmark/run and /api/v1/benchmark/evaluate registered in cmd/policyhelix/main.go and cmd/policyhelix/router.go, proxied through scripts/serve-web.mjs.",
+    "Target bounded workload measured p95 latency < 6ms, well within the 200ms SLO deadline with 100% allow rate and zero errors.",
+    "Overload conditions strictly verified: payloads > 64 KiB rejected with HTTP 413 PAYLOAD_TOO_LARGE; deadline timeouts rejected with HTTP 504 DECISION_TIMEOUT; client cancellations handled with HTTP 499 REQUEST_CANCELLED; and worker saturation rejected with HTTP 429 SATURATION_LIMIT_EXCEEDED without queuing starvation.",
+    "Storage restart recovery verified intact under load without data loss or rollback gap.",
+    "Ten Apache-2.0 synthetic fixtures cataloged with SHA-256 digests in tests/fixtures/policyhelix/C28/manifest.json."
+  ],
+  "observed_limitations": [
+    "Maximum sustained single request payload is strictly capped at 64 KiB (65,536 bytes); larger payloads are rejected fail-closed.",
+    "Decision deadline SLO is bounded at 200ms; slower operations fail closed with HTTP 504.",
+    "Full clean-host core workflow, restart, and restore certification is scheduled for downstream task C30."
+  ],
+  "rollback_or_recovery_observation": "Revert internal/gateway/benchmark.go, scripts/benchmark-local.mjs, tests/scenarios/target-workload.json, tests/workload_test.go, tests/browser/benchmark.spec.ts, tests/fixtures/policyhelix/C28/, docs/evidence/performance.json, docs/evidence/C28.json, and benchmark additions in cmd/policyhelix/ and scripts/serve-web.mjs. All prior C01-C27 components remain intact."
+}

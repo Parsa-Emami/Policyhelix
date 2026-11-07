@@ -1,0 +1,33 @@
+{
+  "fixture_id": "negative-client-cancellation",
+  "commit_id": "C28",
+  "description": "Client cancellation during evaluation aborts execution immediately returning HTTP 499 REQUEST_CANCELLED without goroutine leakage.",
+  "schema_version": "1",
+  "workload_type": "cancellation_overload",
+  "evaluation_time": "2026-11-07T12:00:00Z",
+  "concurrency": 1,
+  "max_workers": 10,
+  "decision_deadline_ms": 200,
+  "max_payload_bytes": 65536,
+  "steps": [
+    {
+      "step_id": "step-cancel-01",
+      "method": "POST",
+      "path": "/api/v1/analytics/reports",
+      "subject_id": "usr-c28-operator",
+      "role": "operator",
+      "owner_scope": "tenant:default",
+      "payload_size": 1024,
+      "simulate_cancel": true,
+      "expected_status_code": 499,
+      "expected_allow": false,
+      "expected_error_code": "REQUEST_CANCELLED"
+    }
+  ],
+  "expected": {
+    "total_requests": 1,
+    "expected_allow_count": 0,
+    "expected_deny_count": 1,
+    "expected_cancelled_count": 1
+  }
+}

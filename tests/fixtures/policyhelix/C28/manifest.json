@@ -1,0 +1,78 @@
+{
+  "commit_id": "C28",
+  "description": "Synthetic licensed fixtures for PolicyHelix C28: measure bounded target and overload workloads, decision deadline <= 200ms, payload <= 64 KiB, saturation, cancellation, and restart recovery (Requirement N28).",
+  "fixtures": [
+    {
+      "fixture_id": "positive-target-bounded-workload",
+      "path": "tests/fixtures/policyhelix/C28/positive-target-bounded-workload.json",
+      "sha256": "8e3653ca1f345f3149debbf90853bd44bb9d2343a008293126c30f28f2b405dc",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "positive-concurrency-burst",
+      "path": "tests/fixtures/policyhelix/C28/positive-concurrency-burst.json",
+      "sha256": "7feeb84d9d08f484520bfd5f6f967e33fb8642ce6cd9bc43d5db89a7c5d47af3",
+      "type": "positive",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-oversized-payload-exceeds-64k",
+      "path": "tests/fixtures/policyhelix/C28/negative-oversized-payload-exceeds-64k.json",
+      "sha256": "e799511b76eebd4a02ac09af9cb7afc91dcfe7acd7e71d9988c94796be19f7c3",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-deadline-exceeded-timeout",
+      "path": "tests/fixtures/policyhelix/C28/negative-deadline-exceeded-timeout.json",
+      "sha256": "9d11b5b3ffc7b8344c53242f3b4a28ee9ae835033835294648e12547483c6bac",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-client-cancellation",
+      "path": "tests/fixtures/policyhelix/C28/negative-client-cancellation.json",
+      "sha256": "af0a115c0d0c4ab2e25c01a62bebc61baaf326c62d0eafb774e98e929745e2ab",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-saturation-limit-fail-closed",
+      "path": "tests/fixtures/policyhelix/C28/negative-saturation-limit-fail-closed.json",
+      "sha256": "9ff874fb3067d6e82d6cdfc1591b17c9cb687b8d8527e68278d389d87f522787",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-malformed-workload-fixture",
+      "path": "tests/fixtures/policyhelix/C28/negative-malformed-workload-fixture.json",
+      "sha256": "92b8d4bcb3147da5ca122537f209e15321584c7ffa58e3767f99a041c517b86d",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-private-resource-fail-closed",
+      "path": "tests/fixtures/policyhelix/C28/negative-private-resource-fail-closed.json",
+      "sha256": "8e672b2458d2fb0a1528cdecd1674a65e6fd52fe26aefbcfd9ad1786a4f3fce2",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-restart-recovery-workload",
+      "path": "tests/fixtures/policyhelix/C28/negative-restart-recovery-workload.json",
+      "sha256": "1136114fbd68981e476bda3fbd38bb5f92019cf82ea01162d3d0d387f5eb1743",
+      "type": "negative",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "negative-provider-unavailable-workload",
+      "path": "tests/fixtures/policyhelix/C28/negative-provider-unavailable-workload.json",
+      "sha256": "84cd4d2a683eacb4a3cc2d65f9313e123d37e720cf2e261a698825efe7a3467f",
+      "type": "negative",
+      "license": "Apache-2.0"
+    }
+  ],
+  "license": "Apache-2.0",
+  "schema_version": "1"
+}

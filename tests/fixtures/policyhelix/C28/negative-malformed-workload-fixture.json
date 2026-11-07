@@ -1,0 +1,17 @@
+{
+  "fixture_id": "negative-malformed-workload-fixture",
+  "commit_id": "C28",
+  "description": "Malformed benchmark workload fixture with invalid schema version is rejected with typed error MALFORMED_BENCHMARK_FIXTURE.",
+  "schema_version": "invalid-schema-99",
+  "workload_type": "malformed_fixture",
+  "evaluation_time": "2026-11-07T12:00:00Z",
+  "concurrency": 1,
+  "max_workers": 10,
+  "decision_deadline_ms": 200,
+  "max_payload_bytes": 65536,
+  "steps": [],
+  "expected": {
+    "total_requests": 0,
+    "expected_error_code": "MALFORMED_BENCHMARK_FIXTURE"
+  }
+}
