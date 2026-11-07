@@ -244,7 +244,7 @@
       "evidence": [
         "docs/evidence/C27.json"
       ],
-      "source_identity": "sha256:129ce2cdcaa25ae845435a2ed8afbf644c50a319619a46a9badd58c40217cc46",
+      "source_identity": "sha256:de5970390c675cb4f3dae4228e4e9f847ac27a55885c63751e1f22c44deb22ea",
       "notes": "Negative UAT, XSS/import prototype-pollution guards, and object/provider authorization (IDOR) boundary suite implemented in internal/gateway/security.go, tests/security_suite_test.go, tests/browser/security.spec.ts, tests/release/security-matrix.md and docs/security/THREAT_MODEL.md; Requirement N27 verified."
     },
     {

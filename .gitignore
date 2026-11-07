@@ -49,3 +49,4 @@ apps/control-plane/build/
 .cache/
 .aistudio/
 .aisudio/
+.pytest_cache/

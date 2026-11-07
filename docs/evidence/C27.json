@@ -6,7 +6,7 @@
   "passed": true,
   "planning_template": false,
   "scope": "PolicyHelix security and abuse boundaries: execute negative UAT, XSS/import and object/provider authorization tests for every enabled surface (Requirement N27)",
-  "source_identity": "sha256:129ce2cdcaa25ae845435a2ed8afbf644c50a319619a46a9badd58c40217cc46",
+  "source_identity": "sha256:de5970390c675cb4f3dae4228e4e9f847ac27a55885c63751e1f22c44deb22ea",
   "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence, SHA256SUMS.txt, plans/progress.json and docs/agents/SESSION_HANDOFF.json",
   "source_identity_note": "Computed after implementation, fixture and metadata edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
   "environment": {
