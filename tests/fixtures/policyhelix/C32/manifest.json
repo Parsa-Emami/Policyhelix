@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "commit_id": "C32",
+  "project": "PolicyHelix",
+  "provenance": "repository-authored synthetic licensed fixtures; no third-party data or real traffic",
+  "license": "Apache-2.0",
+  "requirements": [
+    "N32"
+  ],
+  "fixtures": [
+    {
+      "fixture_id": "C32-POS-01",
+      "path": "tests/fixtures/policyhelix/C32/positive-loopback-launch.json",
+      "sha256": "548b2cd76e0041e9d3f18d136febe6eee8ed68b4e64f4305ea6aee4783d94446",
+      "type": "positive",
+      "stage": "loopback-launch",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C32-POS-02",
+      "path": "tests/fixtures/policyhelix/C32/positive-optional-ingress.json",
+      "sha256": "3876aedd12cfb03471e2bfafb707c1b85598eb864c992b5ddcf374ab9f3847ff",
+      "type": "positive",
+      "stage": "optional-ingress",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C32-NEG-01",
+      "path": "tests/fixtures/policyhelix/C32/negative-untrusted-host.json",
+      "sha256": "9301117d22828f612c807d780ae4a0ba3cd8e6b3bccb7439c6801ce23f71a175",
+      "type": "negative",
+      "stage": "untrusted-host",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C32-NEG-02",
+      "path": "tests/fixtures/policyhelix/C32/negative-cross-origin-bypass.json",
+      "sha256": "08e42ff50017fb3165b34cf8b3564876a93d626a5c0d75e3aad9c6a5ea5a3a0d",
+      "type": "negative",
+      "stage": "cross-origin-bypass",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C32-NEG-03",
+      "path": "tests/fixtures/policyhelix/C32/negative-cache-leakage.json",
+      "sha256": "7a486ebb8e6d4bee1ef13bd6100819e22378f4dbd58f88e0c4da90fa2489e855",
+      "type": "negative",
+      "stage": "cache-leakage",
+      "license": "Apache-2.0"
+    }
+  ]
+}

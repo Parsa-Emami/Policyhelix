@@ -1,0 +1,24 @@
+{
+  "fixture_id": "C32-NEG-01",
+  "commit_id": "C32",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Negative case: requests supplying an external or untrusted Host header are rejected with HTTP 403 to prevent DNS-rebinding attacks.",
+  "invariants": [
+    "Prove loopback/origin/cache boundaries",
+    "Private resources fail closed"
+  ],
+  "untrusted_hosts": [
+    "attacker.example.com",
+    "evil.invalid",
+    "192.168.1.100",
+    "10.0.0.1",
+    "localhost.evil.com",
+    "127.0.0.1.attacker.org"
+  ],
+  "expected_outcome": {
+    "http_status": 403,
+    "error_code": "invalid_host"
+  }
+}

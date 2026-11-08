@@ -285,10 +285,12 @@
     },
     {
       "id": "C32",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C32.json"
+      ],
+      "source_identity": "sha256:c92b3c452c642fd48618ad72615b2343e4afdbb600b678f32550e3c93d125206",
+      "notes": "Network boundaries, local launch hardening and optional private hosting implemented and verified; zero public domain dependency proven; loopback authorities (localhost, 127.0.0.1, [::1]) enforced with external Host header rejection (DNS-rebinding defense); cross-origin requests rejected with invalid_origin; Cache-Control: no-store strictly enforced on all dynamic routes while assets remain immutable; optional private ingress documented in infra/deployment.md and docs/evidence/domain.json; verified via tests/web/network-boundaries.test.mjs; Requirement N32 verified."
     },
     {
       "id": "C33",

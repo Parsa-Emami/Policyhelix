@@ -1,0 +1,29 @@
+{
+  "fixture_id": "C32-POS-02",
+  "commit_id": "C32",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Positive case: optional private network hosting behind an Nginx TLS ingress or intranet boundary with configured allowed hosts and stripped untrusted identity headers.",
+  "invariants": [
+    "Optional TLS/private ingress without exposing engine work by default",
+    "Private resources fail closed",
+    "Only authenticated normalized identity enters policy"
+  ],
+  "ingress_profile": {
+    "tls_enabled": true,
+    "proxy_type": "nginx-reverse-proxy",
+    "internal_upstream": "http://127.0.0.1:4309",
+    "configured_allowed_hosts": [
+      "policyhelix.internal"
+    ],
+    "stripped_client_headers": [
+      "X-Remote-User",
+      "X-Forwarded-User",
+      "X-Forwarded-Email",
+      "X-Authenticated-Subject"
+    ],
+    "client_max_body_size": "1m",
+    "proxy_read_timeout_seconds": 20
+  }
+}

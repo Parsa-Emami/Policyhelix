@@ -1,0 +1,27 @@
+{
+  "fixture_id": "C32-NEG-03",
+  "commit_id": "C32",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Negative case: sensitive, dynamic and API routes must never return cacheable headers; any response lacking Cache-Control: no-store fails validation.",
+  "invariants": [
+    "Prove loopback/origin/cache boundaries",
+    "Private resources fail closed"
+  ],
+  "dynamic_endpoints": [
+    "/",
+    "/healthz",
+    "/readyz",
+    "/runtime-config.json",
+    "/api/v1/runtime/status",
+    "/api/v1/reference/state"
+  ],
+  "forbidden_cache_directives": [
+    "public",
+    "max-age=[1-9]",
+    "immutable",
+    "s-maxage"
+  ],
+  "required_cache_directive": "no-store"
+}

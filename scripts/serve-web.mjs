@@ -6,7 +6,7 @@ import { validateRuntimeConfig } from '../apps/web/src/lib/runtime-config.mjs';
 
 const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript; charset=utf-8', '.css': 'text/css; charset=utf-8', '.svg': 'image/svg+xml', '.png': 'image/png', '.webmanifest': 'application/manifest+json' };
 const csp = "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'";
-export function createWebServer({ root, config, projectId, engineUrl }) {
+export function createWebServer({ root, config, projectId, engineUrl, allowedHosts = [] }) {
   const valid = validateRuntimeConfig(config, projectId);
   const publicRoot = resolve(root);
   const within = path => { const diff = relative(publicRoot, path); return diff !== '..' && !diff.startsWith('../') && !isAbsolute(diff); };
@@ -21,8 +21,36 @@ export function createWebServer({ root, config, projectId, engineUrl }) {
       res.writeHead(status, { 'Content-Type': type, 'Content-Length': Buffer.byteLength(body) });
       res.end(req.method === 'HEAD' ? undefined : body);
     };
-    const localAuthority = /^(?:localhost|127\.0\.0\.1|\[::1\])(?::([0-9]{1,5}))?$/i.exec(req.headers.host ?? '');
-    if (!localAuthority || (localAuthority[1] && (Number(localAuthority[1]) < 1 || Number(localAuthority[1]) > 65535))) { send(403, '{"error":"invalid_host"}'); return; }
+
+    const hostHeader = req.headers.host ?? '';
+    const configuredHosts = Array.isArray(allowedHosts) && allowedHosts.length > 0 ? allowedHosts : (config?.allowedHosts ?? []);
+    const isLoopback = /^(?:localhost|127\.0\.0\.1|\[::1\])(?::([0-9]{1,5}))?$/i.exec(hostHeader);
+    const isAllowedHost = configuredHosts.some(h => {
+      const escaped = h.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      return new RegExp(`^${escaped}(?::([0-9]{1,5}))?$`, 'i').test(hostHeader);
+    });
+    if (!isLoopback && !isAllowedHost) { send(403, '{"error":"invalid_host"}'); return; }
+    if (isLoopback && isLoopback[1] && (Number(isLoopback[1]) < 1 || Number(isLoopback[1]) > 65535)) { send(403, '{"error":"invalid_host"}'); return; }
+
+    // Origin header verification (C32 origin boundary): reject untrusted cross-origin requests
+    if (req.headers.origin) {
+      try {
+        const originUrl = new URL(req.headers.origin);
+        const originHost = originUrl.host;
+        const originLoopback = /^(?:localhost|127\.0\.0\.1|\[::1\])(?::([0-9]{1,5}))?$/i.test(originHost);
+        const originAllowed = configuredHosts.some(h => {
+          const escaped = h.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+          return new RegExp(`^${escaped}(?::([0-9]{1,5}))?$`, 'i').test(originHost);
+        });
+        if (!originLoopback && !originAllowed) {
+          send(403, '{"error":"invalid_origin"}');
+          return;
+        }
+      } catch {
+        send(403, '{"error":"invalid_origin"}');
+        return;
+      }
+    }
     let path;
     try {
       path = decodeURIComponent((req.url ?? '/').split('?')[0]);
@@ -168,10 +196,10 @@ export function createWebServer({ root, config, projectId, engineUrl }) {
 
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   const args = process.argv.slice(2);
-  const options = { host: '127.0.0.1', port: '4173', root: 'dist/web', config: 'ops/web/runtime-config.json' };
+  const options = { host: '127.0.0.1', port: '4173', root: 'dist/web', config: 'ops/web/runtime-config.json', allowedHosts: '' };
   for (let i = 0; i < args.length; i += 2) {
-    const key = args[i].slice(2);
-    if (!args[i].startsWith('--') || !Object.hasOwn(options, key) || !args[i + 1]) throw new Error('Usage: node scripts/serve-web.mjs [--host 127.0.0.1] [--port 4173] [--root dist/web] [--config path]');
+    const key = args[i].slice(2).replace(/-([a-z])/g, (_, letter) => letter.toUpperCase());
+    if (!args[i].startsWith('--') || !Object.hasOwn(options, key) || !args[i + 1]) throw new Error('Usage: node scripts/serve-web.mjs [--host 127.0.0.1] [--port 4173] [--root dist/web] [--config path] [--allowed-hosts host1,host2]');
     options[key] = args[i + 1];
   }
   if (!['127.0.0.1', '::1'].includes(options.host)) throw new Error('Bind to loopback and use the documented TLS proxy.');
@@ -179,7 +207,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
   const product = JSON.parse(await readFile(new URL('../ops/web/brand.json', import.meta.url), 'utf8'));
   const config = JSON.parse(await readFile(resolve(options.config), 'utf8'));
   await stat(resolve(options.root, 'index.html'));
-  const server = createWebServer({ root: options.root, config, projectId: product.slug });
+  const allowedHostsList = options.allowedHosts ? options.allowedHosts.split(',').map(s => s.trim()).filter(Boolean) : [];
+  const server = createWebServer({ root: options.root, config, projectId: product.slug, allowedHosts: allowedHostsList });
   server.maxRequestsPerSocket = 1000;
   server.on('error', error => { console.error(error.message); process.exitCode = 1; });
   server.listen(+options.port, options.host, () => console.log(JSON.stringify({ service: product.slug + '-web', host: options.host, port: +options.port, engineReady: false })));

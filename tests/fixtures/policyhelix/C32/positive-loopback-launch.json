@@ -1,0 +1,25 @@
+{
+  "fixture_id": "C32-POS-01",
+  "commit_id": "C32",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Positive case: PolicyHelix operates 100% locally on loopback interfaces (127.0.0.1, ::1, localhost) with zero public domain, external DNS, or cloud dependency.",
+  "invariants": [
+    "Local operation needs no owned public domain",
+    "Loopback/origin/cache boundaries enforced",
+    "Private resources fail closed"
+  ],
+  "network_profile": {
+    "public_domain_required": false,
+    "allowed_local_authorities": [
+      "localhost",
+      "127.0.0.1",
+      "[::1]"
+    ],
+    "default_web_port": 4173,
+    "default_engine_port": 4174,
+    "cache_control_dynamic": "no-store",
+    "cache_control_static": "public, max-age=31536000, immutable"
+  }
+}

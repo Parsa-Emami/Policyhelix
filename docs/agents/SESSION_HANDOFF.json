@@ -1,8 +1,8 @@
 {
   "project": "PolicyHelix",
   "date": "2026-11-08",
-  "base_commit": "6804611",
-  "scope": "Task C31: build(release): package complete reproducible open-source artifacts (Requirement N31)",
+  "base_commit": "78a555c",
+  "scope": "Task C32: feat(network): harden local launch and optional private hosting (Requirement N32)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -34,21 +34,22 @@
     "C28",
     "C29",
     "C30",
-    "C31"
+    "C31",
+    "C32"
   ],
   "commands": [
     "npm run validate:plan",
-    "bash scripts/package.sh",
+    "node --test tests/web/network-boundaries.test.mjs",
     "npm test",
     "go test -count=1 ./...",
     "python3 scripts/validate_repo.py",
-    "python3 scripts/source_identity.py --check docs/evidence/C31.json"
+    "python3 scripts/source_identity.py --check docs/evidence/C32.json"
   ],
-  "validation_results": "docs/evidence/C31.json",
-  "final_source_identity": "sha256:cff3717f1dd21e358b528fe0510f6b8befe075157a2a81283a661f0ca451f3e4",
+  "validation_results": "docs/evidence/C32.json",
+  "final_source_identity": "sha256:c92b3c452c642fd48618ad72615b2343e4afdbb600b678f32550e3c93d125206",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C32",
+  "next_task": "C33",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C31 verified. Complete reproducible open-source release packaging is implemented in scripts/package.sh and scripts/package-source.mjs. The standalone dist/release artifact contains the compiled Go engine binary, web UI assets, offline Rego rules, reproducible source archive with zero-network build recipes, CycloneDX 1.5 SBOM, third-party notices, cryptographic checksums (SHA256SUMS.txt), provenance metadata (release.json), and sandboxed systemd/nginx ops templates. Staged-byte atomic crash recovery, quota exhaustion, and fail-closed security are verified by tests/package_release_test.go and tests/web/packaging.test.mjs. Evidence recorded in docs/evidence/C31.json. Ready for C32 (feat(network): harden local launch and optional private hosting)."
+  "continuation": "Task C32 verified. Hardened local launch with zero public domain requirement is implemented and verified. scripts/serve-web.mjs enforces loopback authority (localhost, 127.0.0.1, [::1]) and rejects external Host headers (DNS-rebinding defense); rejects untrusted cross-origin requests (invalid_origin); strictly enforces Cache-Control: no-store on all dynamic and API routes while serving immutable static assets. Optional private hosting ingress is documented in infra/deployment.md, with machine contract in docs/evidence/domain.json and runbook updates in docs/engineering/CLONE_TO_RUN.md. Verified via tests/fixtures/policyhelix/C32/, tests/web/network-boundaries.test.mjs, and full check suites. Evidence recorded in docs/evidence/C32.json. Ready for C33 (build(container): rootless single-host container recipe and compose file)."
 }

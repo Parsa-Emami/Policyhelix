@@ -1,0 +1,137 @@
+{
+  "schema_version": 1,
+  "commit_id": "C32",
+  "project": "PolicyHelix",
+  "date": "2026-11-08",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix network boundary and private hosting hardening: zero public domain requirement, loopback authority enforcement, untrusted Host and Origin rejection, strict cache-control boundaries, optional TLS private ingress documentation and fail-closed engine protection (Requirement N32)",
+  "source_identity": "sha256:c92b3c452c642fd48618ad72615b2343e4afdbb600b678f32550e3c93d125206",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence, SHA256SUMS.txt, plans/progress.json and docs/agents/SESSION_HANDOFF.json",
+  "source_identity_note": "Computed after implementation, fixture, documentation and plan-state edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux 7.0.0-43-generic x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml and .github/workflows/web.yml; local run used Go 1.26.2 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 16,
+      "ram_mib": 30828,
+      "free_disk_mib": 92388,
+      "target_hardware_budget": "2 vCPU / 4096 MiB RAM / 10240 MiB free disk",
+      "status": "development host exceeds the C32 planning target; this evidence does not measure the minimum supported host"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C32/positive-loopback-launch.json",
+      "sha256": "548b2cd76e0041e9d3f18d136febe6eee8ed68b4e64f4305ea6aee4783d94446",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for local loopback launch without public domain"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C32/positive-optional-ingress.json",
+      "sha256": "3876aedd12cfb03471e2bfafb707c1b85598eb864c992b5ddcf374ab9f3847ff",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for optional private network hosting behind TLS ingress"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C32/negative-untrusted-host.json",
+      "sha256": "9301117d22828f612c807d780ae4a0ba3cd8e6b3bccb7439c6801ce23f71a175",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for untrusted Host header rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C32/negative-cross-origin-bypass.json",
+      "sha256": "08e42ff50017fb3165b34cf8b3564876a93d626a5c0d75e3aad9c6a5ea5a3a0d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for untrusted cross-origin request rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C32/negative-cache-leakage.json",
+      "sha256": "7a486ebb8e6d4bee1ef13bd6100819e22378f4dbd58f88e0c4da90fa2489e855",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for dynamic route cache leakage prevention"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "node --test tests/web/network-boundaries.test.mjs",
+      "exit_code": 0,
+      "output": "1 test passed"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "20 tests passed"
+    },
+    {
+      "command": "go test ./...",
+      "exit_code": 0,
+      "output": "ok github.com/parsa-emami/policyhelix/tests"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED"
+    },
+    {
+      "command": "python3 scripts/source_identity.py --check docs/evidence/C32.json",
+      "exit_code": 0,
+      "output": "Source identity verified"
+    }
+  ],
+  "results": [
+    "Requirement N32 verified: PolicyHelix operates locally without requiring an owned public domain, public DNS or external network connectivity.",
+    "Loopback authority boundaries proven: requests to localhost, 127.0.0.1 and [::1] succeed; external and untrusted Host headers (attacker.example.com, evil.invalid, 192.168.1.100) are rejected with HTTP 403 invalid_host, defending against DNS-rebinding attacks.",
+    "Cross-origin boundaries proven: requests carrying an external Origin header (attacker.com, malicious.org) targeting API routes are rejected with HTTP 403 invalid_origin.",
+    "Cache boundaries proven: dynamic routes (/, /healthz, /readyz, /runtime-config.json, /api/*) strictly emit Cache-Control: no-store; only fingerprinted static assets in /assets/ receive immutable caching.",
+    "Optional TLS/private ingress documented in infra/deployment.md and docs/evidence/domain.json, showing Nginx TLS reverse proxying, header stripping (X-Remote-User, X-Forwarded-User) and CIDR whitelisting without exposing engine work by default.",
+    "No database schema, migration, .env or Dockerfile was modified; all core features remain open-source Apache-2.0."
+  ],
+  "observed_behavior": {
+    "public_domain_required": false,
+    "loopback_hosts_supported": [
+      "localhost",
+      "127.0.0.1",
+      "[::1]"
+    ],
+    "untrusted_hosts_rejected": 7,
+    "cross_origin_requests_rejected": 4,
+    "dynamic_cache_control": "no-store",
+    "static_cache_control": "public, max-age=31536000, immutable",
+    "core_ready": false,
+    "business_features_completed": false
+  },
+  "observed_limitations": [
+    "Private hosting behind custom domain names requires explicit operator configuration via allowedHosts or Nginx reverse proxying to maintain DNS-rebinding protection.",
+    "coreReady remains false until release gate C30-C40 full sequence is complete; C40 requires maintainer-authorized actual release."
+  ],
+  "rollback_or_recovery_observation": "Revert scripts/serve-web.mjs, infra/deployment.md, docs/evidence/domain.json, docs/engineering/CLONE_TO_RUN.md, tests/fixtures/policyhelix/C32/, tests/web/network-boundaries.test.mjs, and docs/evidence/C32.json. Prior accepted state and C31 packaging artifacts are retained without side effects."
+}

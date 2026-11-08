@@ -1,0 +1,26 @@
+{
+  "fixture_id": "C32-NEG-02",
+  "commit_id": "C32",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Negative case: untrusted cross-origin requests carrying an external Origin header targeting API routes are rejected with HTTP 403.",
+  "invariants": [
+    "Prove loopback/origin/cache boundaries",
+    "Private resources fail closed"
+  ],
+  "untrusted_origins": [
+    "http://attacker.com",
+    "https://malicious.org",
+    "http://192.168.1.50:8080"
+  ],
+  "target_endpoints": [
+    "/api/v1/runtime/status",
+    "/api/v1/reference/state",
+    "/api/v1/reference/simulate"
+  ],
+  "expected_outcome": {
+    "http_status": 403,
+    "error_code": "invalid_origin"
+  }
+}

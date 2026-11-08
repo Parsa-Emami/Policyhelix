@@ -1,0 +1,61 @@
+{
+  "schema_version": 1,
+  "commit_id": "C32",
+  "project": "PolicyHelix",
+  "scope": "PolicyHelix network boundary and domain posture verification (Requirement N32)",
+  "date": "2026-11-08",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic verification evidence; no third-party data or real traffic",
+  "public_domain_policy": {
+    "public_domain_required": false,
+    "public_dns_required": false,
+    "public_cloud_required": false,
+    "local_first_guarantee": true
+  },
+  "verified_authorities": {
+    "default_loopback_hosts": [
+      "localhost",
+      "127.0.0.1",
+      "[::1]"
+    ],
+    "untrusted_hosts_rejected": [
+      "attacker.example.com",
+      "evil.invalid",
+      "192.168.1.100",
+      "127.0.0.1.attacker.org"
+    ],
+    "rejection_status": 403,
+    "rejection_error": "invalid_host"
+  },
+  "origin_and_cors_policy": {
+    "cross_origin_api_allowed": false,
+    "untrusted_origin_rejection_status": 403,
+    "untrusted_origin_rejection_error": "invalid_origin",
+    "csp_header": "default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; base-uri 'none'; form-action 'none'; frame-ancestors 'none'; object-src 'none'"
+  },
+  "cache_boundaries": {
+    "dynamic_routes_directive": "no-store",
+    "static_assets_directive": "public, max-age=31536000, immutable",
+    "tested_dynamic_endpoints": [
+      "/",
+      "/healthz",
+      "/readyz",
+      "/runtime-config.json",
+      "/api/v1/runtime/status",
+      "/api/v1/reference/state"
+    ]
+  },
+  "optional_ingress_profile": {
+    "supported_proxy": "nginx",
+    "template_path": "ops/web/nginx.conf.template",
+    "systemd_service_path": "ops/web/service.systemd",
+    "header_stripping_enforced": [
+      "X-Remote-User",
+      "X-Forwarded-User",
+      "X-Forwarded-Email",
+      "X-Authenticated-Subject"
+    ],
+    "default_access_policy": "deny all except trusted operator CIDRs"
+  },
+  "test_suite": "tests/web/network-boundaries.test.mjs"
+}

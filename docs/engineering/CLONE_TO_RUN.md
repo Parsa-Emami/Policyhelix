@@ -33,4 +33,13 @@ npm run test:clone
 npm run doctor
 ```
 
-`npm run test:clone` performs a real local Git transport clone of the staged/committed source, runs `npm run setup`, starts the supervised engine, verifies real storage/provider readiness, executes every step of `tests/scenarios/clone-to-value.json` (six workflow stages plus seven negative fixtures), restarts the supervisor against the same durable storage and proves the revoked session stays denied while a valid session still reaches the upstream. `tests/browser/clone-to-value.spec.ts` runs the same six stages through the browser workspace. C30 evidence is recorded in `docs/evidence/C30.json`; C40 still requires authorized published-source and installed full-workflow proof. Optional hosting/package operations remain in WEB_RUNBOOK.md.
+`npm run test:clone` performs a real local Git transport clone of the staged/committed source, runs `npm run setup`, starts the supervised engine, verifies real storage/provider readiness, executes every step of `tests/scenarios/clone-to-value.json` (six workflow stages plus seven negative fixtures), restarts the supervisor against the same durable storage and proves the revoked session stays denied while a valid session still reaches the upstream. `tests/browser/clone-to-value.spec.ts` runs the same six stages through the browser workspace. C30 evidence is recorded in `docs/evidence/C30.json`; C40 still requires authorized published-source and installed full-workflow proof.
+
+## Network boundaries & private hosting
+
+Per Task C32 (Requirement N32), local operation has **zero public domain or public DNS requirements**. The web workspace and loopback Go engine bind strictly to `127.0.0.1` and `::1`.
+
+- **Host validation:** Rejects external or untrusted `Host` headers (`403 {"error":"invalid_host"}`) to defend against DNS-rebinding.
+- **Cross-origin defense:** Cross-origin API requests from untrusted origins are rejected with `403 {"error":"invalid_origin"}`.
+- **Cache boundaries:** All dynamic and API responses strictly return `Cache-Control: no-store`; only fingerprinted static assets in `/assets/` are cached immutably.
+- **Optional private hosting:** For intranet, VPN, or private subnet deployments behind an Nginx TLS reverse proxy, consult [infra/deployment.md](../../infra/deployment.md) and [WEB_RUNBOOK.md](WEB_RUNBOOK.md). Stripped ingress headers (`X-Remote-User`, `X-Forwarded-User`) ensure untrusted identities cannot be injected.
