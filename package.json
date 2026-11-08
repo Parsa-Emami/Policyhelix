@@ -21,6 +21,8 @@
     "test:browser": "playwright test",
     "benchmark": "node scripts/benchmark-local.mjs",
     "benchmark:verify": "node scripts/benchmark-local.mjs --verify",
+    "package": "bash scripts/package.sh",
+    "package:source": "node scripts/package-source.mjs",
     "package:web": "node scripts/package-web.mjs",
     "validate:plan": "node scripts/roadmap.mjs validate",
     "check": "npm run validate:plan && npm run build && npm run build:engine && npm test && npm run test:engine",

@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-08",
   "base_commit": "6804611",
-  "scope": "Task C30: test(acceptance): prove full local usability from git clone; real supervised engine workflow, negative cases, restart and restore with browser acceptance (Requirement N30)",
+  "scope": "Task C31: build(release): package complete reproducible open-source artifacts (Requirement N31)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -33,23 +33,22 @@
     "C27",
     "C28",
     "C29",
-    "C30"
+    "C30",
+    "C31"
   ],
   "commands": [
     "npm run validate:plan",
-    "node scripts/verify-reference.mjs",
-    "go test -count=1 ./...",
+    "bash scripts/package.sh",
     "npm test",
-    "npm run test:browser",
-    "npm run test:clone",
+    "go test -count=1 ./...",
     "python3 scripts/validate_repo.py",
-    "python3 scripts/source_identity.py --check docs/evidence/C30.json"
+    "python3 scripts/source_identity.py --check docs/evidence/C31.json"
   ],
-  "validation_results": "docs/evidence/C30.json",
-  "final_source_identity": "sha256:3b765c14d085e49c63b88cf3a9573235a5d7cd4303c0b989f1c9f677e1936dde",
+  "validation_results": "docs/evidence/C31.json",
+  "final_source_identity": "sha256:10ed7a0654a78b78914856189e284f2701df5767fd9a8b594136b4349ff40e5a",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C31",
+  "next_task": "C32",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C30 verified. The complete local-demo reference workflow is implemented in internal/reference/reference.go with shared policy authority in internal/gateway/live.go; the supervised engine proves six executed stages, seven required negative fixtures, durable restart/restore, real storage/provider readiness and browser acceptance. scripts/clone-smoke.mjs now performs a real git transport clone, setup, full scenario execution and restart, while tests/browser/clone-to-value.spec.ts runs the same six stages through the workspace. Evidence is recorded in docs/evidence/C30.json and docs/evidence/private-install.json. Known scope limits: the identity provider is the synthetic engine-local demo profile, the clean-host run used the supported development host rather than a separate OS image, and coreReady remains false until C40. Ready for C31 (verified convenience artifacts plus documented source-build alternative)."
+  "continuation": "Task C31 verified. Complete reproducible open-source release packaging is implemented in scripts/package.sh and scripts/package-source.mjs. The standalone dist/release artifact contains the compiled Go engine binary, web UI assets, offline Rego rules, reproducible source archive with zero-network build recipes, CycloneDX 1.5 SBOM, third-party notices, cryptographic checksums (SHA256SUMS.txt), provenance metadata (release.json), and sandboxed systemd/nginx ops templates. Staged-byte atomic crash recovery, quota exhaustion, and fail-closed security are verified by tests/package_release_test.go and tests/web/packaging.test.mjs. Evidence recorded in docs/evidence/C31.json. Ready for C32 (feat(network): harden local launch and optional private hosting)."
 }

@@ -1,0 +1,31 @@
+{
+  "fixture_id": "C31-NEG-03",
+  "commit_id": "C31",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Negative case: private resources fail closed if package checksum fails, binary is tampered, or SBOM is missing/invalid.",
+  "invariants": [
+    "Private resources fail closed"
+  ],
+  "fail_closed_checks": [
+    {
+      "condition": "CHECKSUM_MISMATCH",
+      "action": "sha256sum -c SHA256SUMS.txt",
+      "expected_outcome": "REJECT_AND_ABORT",
+      "allow": false
+    },
+    {
+      "condition": "TAMPERED_ENGINE_BINARY",
+      "action": "execute supervisor with modified binary digest",
+      "expected_outcome": "FAIL_CLOSED_NO_ADMISSION",
+      "allow": false
+    },
+    {
+      "condition": "CORRUPTED_SBOM",
+      "action": "validate package sbom.json",
+      "expected_outcome": "VALIDATION_ERROR",
+      "allow": false
+    }
+  ]
+}

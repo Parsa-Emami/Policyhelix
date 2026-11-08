@@ -276,10 +276,12 @@
     },
     {
       "id": "C31",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C31.json"
+      ],
+      "source_identity": "sha256:10ed7a0654a78b78914856189e284f2701df5767fd9a8b594136b4349ff40e5a",
+      "notes": "Complete reproducible open-source release packaging implemented in scripts/package.sh and scripts/package-source.mjs; Go engine binary, web UI assets, offline Rego rules, reproducible source archive with build recipes, CycloneDX 1.5 SBOM, third-party notices, cryptographic checksums (SHA256SUMS.txt), provenance metadata (release.json), staged-byte atomic crash recovery and fail-closed security verified through tests/package_release_test.go and tests/web/packaging.test.mjs; Requirement N31 verified."
     },
     {
       "id": "C32",

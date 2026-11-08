@@ -1,0 +1,40 @@
+{
+  "fixture_id": "C31-POS-01",
+  "commit_id": "C31",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Complete product packaging specification: verifies standalone release layout, compiled Go engine, web assets, offline rules, SBOM, checksums and provenance.",
+  "invariants": [
+    "Private resources fail closed",
+    "Complete product release includes engine, web UI and offline rules",
+    "Staged-byte atomic publication with cryptographic checksums"
+  ],
+  "expected_package": {
+    "scope": "policyhelix-complete",
+    "engine_ready": true,
+    "required_files": [
+      "engine/policyhelix",
+      "web/index.html",
+      "web/assets",
+      "rules/policy.rego",
+      "scripts/serve-web.mjs",
+      "scripts/start-local.mjs",
+      "apps/web/src/lib/runtime-config.mjs",
+      "ops/web/nginx.conf.template",
+      "ops/web/service.systemd",
+      "ops/web/runtime-config.json",
+      "ops/web/brand.json",
+      "docs/ARTIFACTS.md",
+      "docs/WEB_RUNBOOK.md",
+      "LICENSE",
+      "NOTICE",
+      "THIRD_PARTY_NOTICES.md",
+      "policyhelix-source.tar.gz",
+      "sbom.json",
+      "release.json",
+      "SHA256SUMS.txt"
+    ],
+    "verification_command": "sha256sum -c SHA256SUMS.txt"
+  }
+}

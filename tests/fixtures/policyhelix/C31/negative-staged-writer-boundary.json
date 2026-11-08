@@ -1,0 +1,22 @@
+{
+  "fixture_id": "C31-NEG-01",
+  "commit_id": "C31",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Negative case: kill the writer at the staged-byte/manifest boundary; restart exposes only a complete prior or new authoritative state without orphan corrupt files.",
+  "invariants": [
+    "Kill the writer at the staged-byte/manifest boundary; restart exposes only a complete prior or new authoritative state",
+    "Private resources fail closed"
+  ],
+  "boundary_conditions": {
+    "staging_directory": "dist/.staging-release-*",
+    "target_directory": "dist/release",
+    "fault_point": "INTERRUPT_DURING_STAGING",
+    "expected_behavior": {
+      "partial_release_visible": false,
+      "prior_release_retained": true,
+      "restart_recovery": "CLEAN_PRIOR_OR_NEW_ONLY"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "fixture_id": "C31-POS-02",
+  "commit_id": "C31",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Reproducible source archive and offline build recipe specification: verifies source tarball generation, zero network build recipes, and deterministic archive metadata.",
+  "invariants": [
+    "Complete product release includes source archive/build recipes",
+    "Clean-host core workflow and zero-network offline build capability"
+  ],
+  "source_recipe": {
+    "archive_name": "policyhelix-source.tar.gz",
+    "format": "tar.gz",
+    "required_build_recipes": [
+      "scripts/package.sh",
+      "scripts/package-source.mjs",
+      "scripts/oss-bootstrap.mjs",
+      "package.json",
+      "go.mod"
+    ],
+    "offline_build_command": "bash scripts/package.sh",
+    "excluded_patterns": [
+      ".git",
+      "node_modules",
+      "dist",
+      ".staging-release-*"
+    ]
+  }
+}

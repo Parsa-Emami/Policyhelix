@@ -1,0 +1,28 @@
+{
+  "fixture_id": "C31-NEG-02",
+  "commit_id": "C31",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Negative case: replay the operation, lose an ACK or exhaust disk/quota; no duplicate side effect, partial success or unlimited retry.",
+  "invariants": [
+    "Replay the operation, lose an ACK or exhaust disk/quota; no duplicate side effect, partial success or unlimited retry",
+    "Private resources fail closed"
+  ],
+  "replay_and_exhaustion": {
+    "scenarios": [
+      {
+        "fault": "OPERATION_REPLAY",
+        "expected": "IDEMPOTENT_SUCCESS_NO_DUPLICATE_FILES"
+      },
+      {
+        "fault": "LOST_ACKNOWLEDGEMENT",
+        "expected": "IDEMPOTENT_RESUMPTION_SAFE"
+      },
+      {
+        "fault": "DISK_QUOTA_EXHAUSTED",
+        "expected": "ATOMIC_ABORT_RETRYABLE_ERROR_NO_CORRUPTION"
+      }
+    ]
+  }
+}

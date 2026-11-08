@@ -1,0 +1,52 @@
+{
+  "schema_version": 1,
+  "commit_id": "C31",
+  "project": "PolicyHelix",
+  "provenance": "repository-authored synthetic licensed fixtures; no third-party data or real traffic",
+  "license": "Apache-2.0",
+  "requirements": [
+    "N31"
+  ],
+  "fixtures": [
+    {
+      "fixture_id": "C31-POS-01",
+      "path": "tests/fixtures/policyhelix/C31/positive-complete-package.json",
+      "sha256": "75bc81cc95a87af2f02731077f19ae616bf871115285fff8c0588e87b39055ee",
+      "type": "positive",
+      "stage": "complete-package",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C31-POS-02",
+      "path": "tests/fixtures/policyhelix/C31/positive-source-recipe.json",
+      "sha256": "d830597fa28bf7b28f6466f867c0dc7c292180c49dc1882cd389ecdcc34115b5",
+      "type": "positive",
+      "stage": "source-recipe",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C31-NEG-01",
+      "path": "tests/fixtures/policyhelix/C31/negative-staged-writer-boundary.json",
+      "sha256": "4a2ad5747f9ecc812bb9d26df638e427e901d986774b81d3f6cef47af68d680f",
+      "type": "negative",
+      "stage": "staged-writer-boundary",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C31-NEG-02",
+      "path": "tests/fixtures/policyhelix/C31/negative-replay-exhaust-quota.json",
+      "sha256": "4d8c8f9e9e69e62f4ecfa1b13c9bbc1016aeecfce2b90e092581bd4f859f867d",
+      "type": "negative",
+      "stage": "replay-exhaust-quota",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C31-NEG-03",
+      "path": "tests/fixtures/policyhelix/C31/negative-private-fail-closed.json",
+      "sha256": "b3fbd4473af98d458a2b0cdc4a8229ff979004e0fb97e019b16b2ab8a3bfd57d",
+      "type": "negative",
+      "stage": "private-fail-closed",
+      "license": "Apache-2.0"
+    }
+  ]
+}

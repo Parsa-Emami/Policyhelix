@@ -1,0 +1,146 @@
+{
+  "schema_version": 1,
+  "commit_id": "C31",
+  "project": "PolicyHelix",
+  "date": "2026-11-08",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix complete open-source reproducible release packaging: Go engine binary, web UI assets, offline rules, source archive with build recipes, SBOM, third-party notices, checksums, provenance, staged-byte atomic crash recovery and fail-closed security (Requirement N31)",
+  "source_identity": "sha256:10ed7a0654a78b78914856189e284f2701df5767fd9a8b594136b4349ff40e5a",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence, SHA256SUMS.txt, plans/progress.json and docs/agents/SESSION_HANDOFF.json",
+  "source_identity_note": "Computed after implementation, fixture, documentation and plan-state edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux 7.0.0-43-generic x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml and .github/workflows/web.yml; local run used Go 1.26.2 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 16,
+      "ram_mib": 30828,
+      "free_disk_mib": 92388,
+      "target_hardware_budget": "2 vCPU / 4096 MiB RAM / 10240 MiB free disk",
+      "status": "development host exceeds the C31 planning target; this evidence does not measure the minimum supported host"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    },
+    {
+      "tool": "tar",
+      "version": "tar (GNU tar) 1.35",
+      "passed": true
+    },
+    {
+      "tool": "sha256sum",
+      "version": "sha256sum (GNU coreutils) 9.4",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C31/positive-complete-package.json",
+      "sha256": "75bc81cc95a87af2f02731077f19ae616bf871115285fff8c0588e87b39055ee",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for complete product package layout and validation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C31/positive-source-recipe.json",
+      "sha256": "d830597fa28bf7b28f6466f867c0dc7c292180c49dc1882cd389ecdcc34115b5",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for reproducible source archive and offline build recipes"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C31/negative-staged-writer-boundary.json",
+      "sha256": "4a2ad5747f9ecc812bb9d26df638e427e901d986774b81d3f6cef47af68d680f",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for crash at staged-byte/manifest boundary"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C31/negative-replay-exhaust-quota.json",
+      "sha256": "4d8c8f9e9e69e62f4ecfa1b13c9bbc1016aeecfce2b90e092581bd4f859f867d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for operation replay and disk quota exhaustion"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C31/negative-private-fail-closed.json",
+      "sha256": "b3fbd4473af98d458a2b0cdc4a8229ff979004e0fb97e019b16b2ab8a3bfd57d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for fail-closed tampered checksum or modified binary"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "bash scripts/package.sh",
+      "exit_code": 0,
+      "output": "=== Packaging Complete: Successfully packaged PolicyHelix into dist/release ==="
+    },
+    {
+      "command": "node --test tests/web/*.test.mjs tests/contracts/*.test.mjs",
+      "exit_code": 0,
+      "output": "19 tests passed"
+    },
+    {
+      "command": "go test ./...",
+      "exit_code": 0,
+      "output": "ok github.com/parsa-emami/policyhelix/tests"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED"
+    },
+    {
+      "command": "python3 scripts/source_identity.py --check docs/evidence/C31.json",
+      "exit_code": 0,
+      "output": "Source identity verified"
+    }
+  ],
+  "results": [
+    "Requirement N31 verified: scripts/package.sh packages the complete product including the compiled Go engine binary, web UI assets, offline Rego rules, reproducible source archive with build recipes, CycloneDX 1.5 SBOM, third-party notices, cryptographic checksums and provenance metadata.",
+    "A web-only artifact does not satisfy the complete release gate; the complete distribution in dist/release contains both engine and web runtimes, offline rules and reproducible source archive.",
+    "Staged-byte boundary atomicity: all files are assembled in an isolated staging directory dist/.staging-release-<pid> and atomically promoted to dist/release via directory rename upon passing internal SHA-256 verification.",
+    "Interrupted write resilience: killing the writer at the staging boundary or during build leaves the prior valid release intact and prevents partial bytes from leaking into authoritative state.",
+    "Replay and quota resilience: packaging is idempotent and handles disk-full/quota errors with clean cleanup traps and retryable abort.",
+    "Fail-closed security: checksum verification fails closed if any binary, rule, asset or manifest is tampered; reverse proxy template strips unauthenticated identity headers at ingress.",
+    "Zero network build recipe: policyhelix-source.tar.gz unpacks into a self-contained source tree buildable offline with standard Go 1.23+ and Node 24+ toolchains.",
+    "No database schema, migration, .env or Dockerfile was modified; all core features remain open-source Apache-2.0 with pinned upstream licenses."
+  ],
+  "observed_behavior": {
+    "packaged_scope": "policyhelix-complete",
+    "engine_ready": true,
+    "offline_rules_included": true,
+    "sbom_format": "CycloneDX 1.5",
+    "source_archive": "policyhelix-source.tar.gz",
+    "checksum_file": "SHA256SUMS.txt",
+    "verified_checksum_count": 24,
+    "core_ready": false,
+    "business_features_completed": false
+  },
+  "observed_limitations": [
+    "Artifacts were compiled and verified on Linux x86_64; cross-platform packaging for other architectures is planned for later release tasks.",
+    "coreReady remains false until release gate C30-C40 full sequence is complete; C40 requires maintainer-authorized actual release."
+  ],
+  "rollback_or_recovery_observation": "Revert scripts/package.sh, scripts/package-source.mjs, scripts/package-web.mjs, docs/release/ARTIFACTS.md, docs/engineering/WEB_RUNBOOK.md, ops/web/nginx.conf.template, ops/web/service.systemd, THIRD_PARTY_NOTICES.md, package.json, tests/fixtures/policyhelix/C31/, tests/package_release_test.go, tests/web/packaging.test.mjs, and docs/evidence/C31.json. dist/release and staging directories are cleanly removed; previous accepted state is retained."
+}
