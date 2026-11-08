@@ -52,7 +52,7 @@
     "python3 scripts/source_identity.py --check docs/evidence/C35.json"
   ],
   "validation_results": "docs/evidence/C35.json",
-  "final_source_identity": "sha256:1fa1b89fa4c4968fc1a71f7cc4b889052a944af323524a6f3f9c57c9b929981c",
+  "final_source_identity": "sha256:12a265b3b47c412ddb865695da03392bf5754ac5dc1f71a2d318aeaa83430a79",
   "protected_paths_changed": [],
   "current_core_ready": false,
   "next_task": "C36",

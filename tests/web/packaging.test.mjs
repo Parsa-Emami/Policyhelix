@@ -15,7 +15,8 @@ function ensurePackage() {
   const releaseDir = resolve(root, 'dist/release');
   const checksumFile = join(releaseDir, 'SHA256SUMS.txt');
   const engineBin = join(releaseDir, 'engine/policyhelix');
-  if (existsSync(checksumFile) && existsSync(engineBin)) {
+  const webIndex = join(releaseDir, 'web/index.html');
+  if (existsSync(checksumFile) && existsSync(engineBin) && existsSync(webIndex)) {
     return;
   }
   try {
@@ -25,8 +26,10 @@ function ensurePackage() {
   }
 }
 
+// Ensure package once before test suite executes
+ensurePackage();
+
 test('C31 packaging: dist/release contains all complete product artifacts and valid checksums', async () => {
-  ensurePackage();
   const releaseDir = resolve(root, 'dist/release');
 
   // Verify release directory exists
@@ -97,7 +100,6 @@ test('C31 packaging: dist/release contains all complete product artifacts and va
 });
 
 test('C31 negative invariant: tampered release fails closed', async () => {
-  ensurePackage();
   const releaseDir = resolve(root, 'dist/release');
   const checksumContent = await readFile(join(releaseDir, 'SHA256SUMS.txt'), 'utf8');
   assert.ok(checksumContent.includes('engine/policyhelix'));

@@ -6,7 +6,7 @@
   "passed": true,
   "planning_template": false,
   "scope": "Verify integrity and authenticity against independently trusted release identity/key, install, upgrade and roll back on supported hosts without discarding newer accepted data, and maintain documented source-build alternative (Requirement N35)",
-  "source_identity": "sha256:1fa1b89fa4c4968fc1a71f7cc4b889052a944af323524a6f3f9c57c9b929981c",
+  "source_identity": "sha256:12a265b3b47c412ddb865695da03392bf5754ac5dc1f71a2d318aeaa83430a79",
   "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence, SHA256SUMS.txt, plans/progress.json and docs/agents/SESSION_HANDOFF.json",
   "source_identity_note": "Computed after implementation, fixture, documentation and plan-state edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
   "environment": {

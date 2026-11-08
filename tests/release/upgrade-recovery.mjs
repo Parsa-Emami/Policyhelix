@@ -14,18 +14,24 @@ import { existsSync } from 'node:fs';
 // Helper: Ensure dist/release exists and is packaged
 function ensureReleasePackage() {
   const releaseDir = resolve(root, 'dist/release');
+  const checksumFile = join(releaseDir, 'SHA256SUMS.txt');
   const sigFile = join(releaseDir, 'SHA256SUMS.txt.sig');
-  if (!existsSync(sigFile)) {
-    try {
-      execFileSync('bash', ['scripts/package.sh'], { cwd: root, stdio: 'pipe' });
-    } catch (err) {
-      throw new Error('Packaging failed: ' + err.message);
-    }
+  const webIndex = join(releaseDir, 'web/index.html');
+  const engineBin = join(releaseDir, 'engine/policyhelix');
+  if (existsSync(checksumFile) && existsSync(sigFile) && existsSync(webIndex) && existsSync(engineBin)) {
+    return;
+  }
+  try {
+    execFileSync('bash', ['scripts/package.sh'], { cwd: root, stdio: 'pipe' });
+  } catch (err) {
+    throw new Error('Packaging failed: ' + err.message);
   }
 }
 
+// Ensure release package once before test suite executes
+ensureReleasePackage();
+
 test('C35: verify authenticity and integrity of packaged release artifacts', async () => {
-  ensureReleasePackage();
   const releaseDir = resolve(root, 'dist/release');
 
   const result = await verifyRelease(releaseDir);
@@ -35,7 +41,6 @@ test('C35: verify authenticity and integrity of packaged release artifacts', asy
 });
 
 test('C35: data-safe clean install, state acceptance, and forward upgrade', async () => {
-  ensureReleasePackage();
   const releaseDir = resolve(root, 'dist/release');
   const tempHostDir = resolve(root, 'dist/.test-upgrade-host-' + process.pid);
 
@@ -198,7 +203,6 @@ test('C35: rollback gap prevention rejects stale backup restore over newer accep
 });
 
 test('C35: negative cases fail closed on tampered bytes or untrusted signers', async () => {
-  ensureReleasePackage();
   const releaseDir = resolve(root, 'dist/release');
   const tempDir = resolve(root, 'dist/.test-tamper-failclosed-' + process.pid);
 
@@ -281,7 +285,6 @@ test('C35: negative cases fail closed on tampered bytes or untrusted signers', a
 });
 
 test('C35: documented source-build alternative compiles and verifies cleanly', async () => {
-  ensureReleasePackage();
   const releaseDir = resolve(root, 'dist/release');
 
   // Verify source archive exists and has non-zero size
