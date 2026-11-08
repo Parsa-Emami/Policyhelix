@@ -6,7 +6,7 @@
   "passed": true,
   "planning_template": false,
   "scope": "PolicyHelix complete open-source reproducible release packaging: Go engine binary, web UI assets, offline rules, source archive with build recipes, SBOM, third-party notices, checksums, provenance, staged-byte atomic crash recovery and fail-closed security (Requirement N31)",
-  "source_identity": "sha256:10ed7a0654a78b78914856189e284f2701df5767fd9a8b594136b4349ff40e5a",
+  "source_identity": "sha256:cff3717f1dd21e358b528fe0510f6b8befe075157a2a81283a661f0ca451f3e4",
   "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence, SHA256SUMS.txt, plans/progress.json and docs/agents/SESSION_HANDOFF.json",
   "source_identity_note": "Computed after implementation, fixture, documentation and plan-state edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
   "environment": {

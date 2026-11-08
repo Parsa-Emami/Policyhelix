@@ -6,6 +6,7 @@ import (
 	"encoding/json"
 	"io"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 	"testing"
@@ -17,7 +18,11 @@ import (
 func TestC31PackageArtifactsAndInvariants(t *testing.T) {
 	releaseDir := filepath.Join("..", "dist", "release")
 	if _, err := os.Stat(releaseDir); os.IsNotExist(err) {
-		t.Skip("dist/release does not exist yet; run scripts/package.sh before this test")
+		cmd := exec.Command("bash", "scripts/package.sh")
+		cmd.Dir = ".."
+		if out, err := cmd.CombinedOutput(); err != nil {
+			t.Fatalf("failed to package release: %v\noutput: %s", err, string(out))
+		}
 	}
 
 	// 1. Verify required files exist

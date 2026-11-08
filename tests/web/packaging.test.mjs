@@ -1,13 +1,27 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile, stat, readdir } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 
 const root = resolve(fileURLToPath(new URL('../../', import.meta.url)));
 
+// Ensure the release package is built so tests can verify the complete product artifact
+function ensurePackage() {
+  const releaseDir = resolve(root, 'dist/release');
+  const checksumFile = join(releaseDir, 'SHA256SUMS.txt');
+  const engineBin = join(releaseDir, 'engine/policyhelix');
+  try {
+    execFileSync('bash', ['scripts/package.sh'], { cwd: root, stdio: 'pipe' });
+  } catch (err) {
+    throw new Error('Packaging failed during test initialization: ' + err.message);
+  }
+}
+
 test('C31 packaging: dist/release contains all complete product artifacts and valid checksums', async () => {
+  ensurePackage();
   const releaseDir = resolve(root, 'dist/release');
 
   // Verify release directory exists
@@ -78,6 +92,7 @@ test('C31 packaging: dist/release contains all complete product artifacts and va
 });
 
 test('C31 negative invariant: tampered release fails closed', async () => {
+  ensurePackage();
   const releaseDir = resolve(root, 'dist/release');
   const checksumContent = await readFile(join(releaseDir, 'SHA256SUMS.txt'), 'utf8');
   assert.ok(checksumContent.includes('engine/policyhelix'));
