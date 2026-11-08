@@ -132,7 +132,22 @@
       "command": "python3 scripts/source_identity.py --check docs/evidence/C33.json",
       "exit_code": 0,
       "output": "Source identity matches"
+    },
+    {
+      "command": "python3 scripts/plan.py validate",
+      "exit_code": 0,
+      "output": "PLAN VALIDATION PASSED"
     }
+  ],
+  "results": [
+    "Requirement N33 verified: Complete reference workflow executed with keyboard navigation and accessible table equivalents at 360px and 1440px viewports.",
+    "Responsive mobile viewports proven: zero horizontal page overflow (scrollWidth <= innerWidth) at 360px mobile width across both Card and Table views with touch-target sizes >= 36px.",
+    "Desktop viewports proven: full 6-stage reference workflow executed and verified against live engine at 1440px width.",
+    "Accessible table equivalent proven: semantic table (role=table, th[scope=col], th[scope=row], caption) renders all six workflow stages, expected invariants, real engine execution statuses and action triggers.",
+    "Keyboard navigation proven: sequential tab navigation across all workflow controls, view mode toggles, and individual stage execution buttons using Tab, Enter and Space keys.",
+    "Failure resilience proven: clean empty state presentation (0 of 6 passed), explicit alert banners (role=alert) for simulated 422 errors, fail-safe recovery for network aborts/interruptions, and fail-closed denial with active authority retention during simulated provider outages.",
+    "Backward compatibility proven: structured JSON export (schema_version 2) generated; N-1 schema (schema_version 1) import parsed without errors; tampered export payloads rejected fail-closed.",
+    "Observed platform advertising proven: Linux x86_64 explicitly advertised as tested platform; unverified platforms (Windows/macOS native installers, mobile app stores, cloud SaaS) explicitly disclaimed."
   ],
   "stop_conditions_checked": [
     "No database schemas, migrations, .env files, or Dockerfiles were modified.",
