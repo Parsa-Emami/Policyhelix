@@ -1,0 +1,31 @@
+{
+  "fixture_id": "C35-POS-02",
+  "commit_id": "C35",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Data-safe install and upgrade specification: verifies clean installation, acceptance of initial data R1, in-place forward upgrade preserving all accepted state in .local-data/ without loss, and subsequent acceptance of newer data R2.",
+  "invariants": [
+    "Install, upgrade and roll back on supported hosts without discarding newer accepted data",
+    "Forward repair retains the latest valid bytes and compatible reader",
+    "Never overwrite newer accepted state with an old backup"
+  ],
+  "upgrade_lifecycle": {
+    "clean_install_step": {
+      "release_version": "0.0.1",
+      "storage_mount": ".local-data/storage",
+      "initial_state": {
+        "active_bundle_revision": 1,
+        "session_epoch": 1,
+        "records_retained": true
+      }
+    },
+    "forward_upgrade_step": {
+      "target_release_version": "0.0.2",
+      "pre_upgrade_verification": "node scripts/verify-release.mjs",
+      "preserves_prior_records": true,
+      "data_loss_bytes": 0,
+      "accepted_newer_revision": 2
+    }
+  }
+}

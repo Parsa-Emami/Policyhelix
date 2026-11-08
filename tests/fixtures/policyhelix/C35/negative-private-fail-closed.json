@@ -1,0 +1,27 @@
+{
+  "fixture_id": "C35-NEG-04",
+  "commit_id": "C35",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Negative case: private resources fail closed if package verification fails, authority is invalid, or unauthenticated requests are received.",
+  "invariants": [
+    "Private resources fail closed"
+  ],
+  "fail_closed_checks": [
+    {
+      "condition": "FAILED_RELEASE_VERIFICATION",
+      "action": "attempt to launch unverified release",
+      "expected_outcome": "FAIL_CLOSED_NO_ADMISSION",
+      "error_code": "VERIFICATION_FAILED",
+      "allow": false
+    },
+    {
+      "condition": "UNAUTHENTICATED_ACCESS_ATTEMPT",
+      "action": "request private resource without valid session",
+      "expected_outcome": "ACCESS_DENIED_FAIL_CLOSED",
+      "error_code": "PRIVATE_RESOURCE_FAIL_CLOSED",
+      "allow": false
+    }
+  ]
+}

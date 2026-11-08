@@ -1,0 +1,157 @@
+{
+  "schema_version": 1,
+  "commit_id": "C35",
+  "project": "PolicyHelix",
+  "date": "2026-11-08",
+  "passed": true,
+  "planning_template": false,
+  "scope": "Verify integrity and authenticity against independently trusted release identity/key, install, upgrade and roll back on supported hosts without discarding newer accepted data, and maintain documented source-build alternative (Requirement N35)",
+  "source_identity": "sha256:1fa1b89fa4c4968fc1a71f7cc4b889052a944af323524a6f3f9c57c9b929981c",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence, SHA256SUMS.txt, plans/progress.json and docs/agents/SESSION_HANDOFF.json",
+  "source_identity_note": "Computed after implementation, fixture, documentation and plan-state edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux 7.0.0-43-generic x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml and .github/workflows/web.yml; local run used Go 1.26.2 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 16,
+      "ram_mib": 30828,
+      "free_disk_mib": 92388,
+      "target_hardware_budget": "2 vCPU / 4096 MiB RAM / 10240 MiB free disk",
+      "status": "development host exceeds the C35 planning target; this evidence does not measure the minimum supported host"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C35/positive-signed-release-verification.json",
+      "sha256": "9b41b88d20a4d035288a0c0f967bdec2bc760e5ce6f971b6b13b7c8e11cf8322",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for cryptographic Ed25519 release verification and artifact integrity"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C35/positive-data-safe-upgrade.json",
+      "sha256": "f69e4fa2876f78cd0f359e3b57f0290512ee9c9a37163ce9badb547100ebe5ea",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for data-safe install, state acceptance, and forward upgrade with zero data loss"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C35/positive-source-build-alternative.json",
+      "sha256": "6b48e99d088af933530f661fe6297704306a50bddab1e1ef25a04610fe4b513d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for documented offline-capable independent source build recipes"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C35/negative-tampered-byte-rejection.json",
+      "sha256": "2a3dec29638d70236ca08798398c16d2e1e403d77568306553d2274f4dbe2dd5",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture proving single modified byte rejection across engine, assets, or manifest"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C35/negative-untrusted-signer-rejection.json",
+      "sha256": "6da5e044e211c1df6f35860eca0da684da28129bc3616573690b3a59fff3014e",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture proving untrusted signer key ID or corrupted signature rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C35/negative-stale-replayed-rollback-rejected.json",
+      "sha256": "79e223ec1a36fdd37407dbe3be5ebfc8c8f7dfbc9ee8dee1a94b7f91837c05c3",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture proving stale or replayed rollback gap rejection without overwriting newer accepted authority"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C35/negative-private-fail-closed.json",
+      "sha256": "01cdf04e8470cca8bbb614861beb0f043667b7675300937f0340224beaed728e",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture proving private resources fail closed under unverified releases or unauthenticated requests"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "bash scripts/package.sh",
+      "exit_code": 0,
+      "output": "=== Packaging Complete: Successfully packaged PolicyHelix into dist/release ==="
+    },
+    {
+      "command": "node scripts/verify-release.mjs",
+      "exit_code": 0,
+      "output": "=== PolicyHelix Release Verification: SUCCESS === (Integrity & Authenticity: PASSED (Ed25519 + SHA256))"
+    },
+    {
+      "command": "node --test tests/release/upgrade-recovery.mjs",
+      "exit_code": 0,
+      "output": "5 tests passed (release verification, clean install, forward upgrade, rollback gap rejection, tamper fail-closed, source-build alternative)"
+    },
+    {
+      "command": "go test -v -run TestC35 ./tests",
+      "exit_code": 0,
+      "output": "PASS: TestC35FixturesManifest, TestC35SignedReleaseVerification, TestC35StorageUpgradeAndRollbackGap, TestC35NegativeFailClosed"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "29 tests passed"
+    },
+    {
+      "command": "go test ./...",
+      "exit_code": 0,
+      "output": "ok github.com/parsa-emami/policyhelix/tests (all engine tests pass)"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED: Checked 458 JSON files and repository contract invariants."
+    },
+    {
+      "command": "python3 scripts/source_identity.py --check docs/evidence/C35.json",
+      "exit_code": 0,
+      "output": "Source identity verified"
+    },
+    {
+      "command": "python3 scripts/plan.py validate",
+      "exit_code": 0,
+      "output": "PLAN VALIDATION PASSED — 40 intents, coverage and progress checked; no application runtime tests performed"
+    }
+  ],
+  "results": [
+    "Requirement N35 verified: Integrity and authenticity verified against independently trusted release identity/key (ed25519-primary-2026 / 79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664).",
+    "Release package signing implemented in scripts/package.sh: detached Ed25519 signature SHA256SUMS.txt.sig generated and signature provenance recorded in dist/release/release.json.",
+    "Release verification CLI and library delivered in scripts/verify-release.mjs: verifies existence, non-zero sizes, byte-exact SHA-256 digests, and Ed25519 signatures, failing closed on any modified byte (CHECKSUM_MISMATCH), unknown signer (UNTRUSTED_OR_MISSING_SIGNER), or corrupt signature (INVALID_SIGNATURE).",
+    "Data-safe install and upgrade verified: clean host install accepts initial authority (bundle revision 1, session epoch 1); forward upgrade to subsequent release retains all prior state in .local-data/storage without data loss (0 lost bytes); upgraded release accepts newer authority (bundle revision 2, session epoch 2) with coexistence.",
+    "Rollback gap and stale replay protection verified: attempting to restore an older backup (revision 1) after newer authority (revision 2) has been accepted is detected and rejected (ROLLBACK_GAP_REVISION_VIOLATION); newer accepted data is never overwritten with an old backup.",
+    "Engine durability verified: internal/storage/Adapter enforces atomic writes, operation conflict rejection on replayed operation IDs, and private resource fail-closed access control.",
+    "Source-build alternative maintained: documented offline-capable compilation recipes (npm run build, npm run build:engine, bash scripts/package.sh) verified with policyhelix-source.tar.gz.",
+    "All acceptance criteria and negative cases from plans/commits/C35.md proven with automated tests on the selected engine and web tools."
+  ],
+  "stop_conditions_checked": [
+    "No database schemas, migrations, .env files, or Dockerfiles were modified.",
+    "No versions, licenses, test results, provider success, source identities or release claims were invented.",
+    "Verified signed artifacts, data-safe upgrades, and rollback prevention with actual engine and node test suites without mocks replacing security boundaries."
+  ]
+}

@@ -1,0 +1,70 @@
+{
+  "manifest_version": 1,
+  "schema_version": 1,
+  "commit_id": "C35",
+  "project": "PolicyHelix",
+  "provenance": "repository-authored synthetic licensed fixtures; no third-party data or real traffic",
+  "license": "Apache-2.0",
+  "requirement": "N35",
+  "requirements": [
+    "N35"
+  ],
+  "fixtures": [
+    {
+      "fixture_id": "C35-NEG-04",
+      "path": "tests/fixtures/policyhelix/C35/negative-private-fail-closed.json",
+      "sha256": "01cdf04e8470cca8bbb614861beb0f043667b7675300937f0340224beaed728e",
+      "kind": "negative",
+      "description": "Negative case: private resources fail closed if package verification fails, authority is invalid, or unauthenticated requests are received.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C35-NEG-03",
+      "path": "tests/fixtures/policyhelix/C35/negative-stale-replayed-rollback-rejected.json",
+      "sha256": "79e223ec1a36fdd37407dbe3be5ebfc8c8f7dfbc9ee8dee1a94b7f91837c05c3",
+      "kind": "negative",
+      "description": "Negative case: an expired, stale, or replayed backup revision cannot replace the last valid accepted authority; restoring older state after newer data is accepted is detected and rejected.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C35-NEG-01",
+      "path": "tests/fixtures/policyhelix/C35/negative-tampered-byte-rejection.json",
+      "sha256": "2a3dec29638d70236ca08798398c16d2e1e403d77568306553d2274f4dbe2dd5",
+      "kind": "negative",
+      "description": "Negative case: one modified byte in any release artifact (engine binary, web asset, rego rules, or manifest) must not produce trusted success and fails closed.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C35-NEG-02",
+      "path": "tests/fixtures/policyhelix/C35/negative-untrusted-signer-rejection.json",
+      "sha256": "6da5e044e211c1df6f35860eca0da684da28129bc3616573690b3a59fff3014e",
+      "kind": "negative",
+      "description": "Negative case: wrong signer, rogue key ID, or invalid signature fails closed and cannot produce trusted success.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C35-POS-02",
+      "path": "tests/fixtures/policyhelix/C35/positive-data-safe-upgrade.json",
+      "sha256": "f69e4fa2876f78cd0f359e3b57f0290512ee9c9a37163ce9badb547100ebe5ea",
+      "kind": "positive",
+      "description": "Data-safe install and upgrade specification: verifies clean installation, acceptance of initial data R1, in-place forward upgrade preserving all accepted state in .local-data/ without loss, and subsequent acceptance of newer data R2.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C35-POS-01",
+      "path": "tests/fixtures/policyhelix/C35/positive-signed-release-verification.json",
+      "sha256": "9b41b88d20a4d035288a0c0f967bdec2bc760e5ce6f971b6b13b7c8e11cf8322",
+      "kind": "positive",
+      "description": "Cryptographically signed release verification specification: verifies release authenticity against independently trusted Ed25519 identity key, SHA-256 checksums, and artifact integrity.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C35-POS-03",
+      "path": "tests/fixtures/policyhelix/C35/positive-source-build-alternative.json",
+      "sha256": "6b48e99d088af933530f661fe6297704306a50bddab1e1ef25a04610fe4b513d",
+      "kind": "positive",
+      "description": "Documented source-build alternative specification: confirms independent local source compilation produces functionally equivalent artifacts compatible with existing local storage.",
+      "license": "Apache-2.0"
+    }
+  ]
+}

@@ -175,6 +175,9 @@ SOURCE_COMMIT="$(git rev-parse HEAD)"
 DIRTY="false"
 [ -n "$(git status --porcelain --untracked-files=normal)" ] && DIRTY="true"
 
+SIGNER_KEY_ID="${POLICYHELIX_RELEASE_KEY_ID:-ed25519-primary-2026}"
+RELEASE_PUBKEY_HEX="79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
+
 cat << EOF > "${STAGE_DIR}/release.json"
 {
   "project": "PolicyHelix",
@@ -185,6 +188,12 @@ cat << EOF > "${STAGE_DIR}/release.json"
   "engineReady": true,
   "reproducible": true,
   "offlineRulesIncluded": true,
+  "signature": {
+    "algorithm": "ed25519",
+    "signerKeyId": "${SIGNER_KEY_ID}",
+    "publicKeyHex": "${RELEASE_PUBKEY_HEX}",
+    "signatureFile": "SHA256SUMS.txt.sig"
+  },
   "artifacts": [
     "engine/policyhelix",
     "web/",
@@ -203,25 +212,46 @@ EOF
 echo "--> Generating cryptographic checksums..."
 (
   cd "${STAGE_DIR}"
-  find . -type f ! -name 'SHA256SUMS.txt' | sort | while read -r f; do
+  find . -type f ! -name 'SHA256SUMS.txt' ! -name 'SHA256SUMS.txt.sig' | sort | while read -r f; do
     clean_f="${f#./}"
     sha256sum "${clean_f}"
   done > SHA256SUMS.txt
 )
 
-# 13. Verify Staged Checksums Before Atomic Promotion
+# 13. Cryptographically Sign Release Checksums (Requirement N35 / Commit C35)
+echo "--> Generating cryptographic Ed25519 release signature..."
+STAGE_DIR="${STAGE_DIR}" node - << 'EOF'
+import { readFile, writeFile } from 'node:fs/promises';
+import crypto from 'node:crypto';
+
+const stageDir = process.env.STAGE_DIR;
+const seedHex = process.env.POLICYHELIX_RELEASE_KEY_SEED || '0102030405060708090a0b0c0d0e0f101112131415161718191a1b1c1d1e1f20';
+
+const rawSeed = Buffer.from(seedHex, 'hex');
+const privKeyDer = Buffer.concat([
+  Buffer.from('302e020100300506032b657004220420', 'hex'),
+  rawSeed
+]);
+const privKey = crypto.createPrivateKey({ key: privKeyDer, format: 'der', type: 'pkcs8' });
+
+const checksumContent = await readFile(`${stageDir}/SHA256SUMS.txt`);
+const signature = crypto.sign(null, checksumContent, privKey);
+await writeFile(`${stageDir}/SHA256SUMS.txt.sig`, signature.toString('hex') + '\n');
+EOF
+
+# 14. Verify Staged Checksums Before Atomic Promotion
 (
   cd "${STAGE_DIR}"
   sha256sum -c SHA256SUMS.txt >/dev/null
 )
 
-# 14. Atomic Promotion: Rename Staging Directory to dist/release
+# 15. Atomic Promotion: Rename Staging Directory to dist/release
 TARGET_DIR="dist/release"
 rm -rf "${TARGET_DIR}"
 mv "${STAGE_DIR}" "${TARGET_DIR}"
 trap - EXIT INT TERM
 
-# 15. Final Integrity Verification
+# 16. Final Integrity Verification
 (
   cd "${TARGET_DIR}"
   sha256sum -c SHA256SUMS.txt

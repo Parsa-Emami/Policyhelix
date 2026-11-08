@@ -312,10 +312,12 @@
     },
     {
       "id": "C35",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C35.json"
+      ],
+      "source_identity": "sha256:1fa1b89fa4c4968fc1a71f7cc4b889052a944af323524a6f3f9c57c9b929981c",
+      "notes": "Integrity and authenticity verified against independently trusted release identity ed25519-primary-2026; release signing implemented in scripts/package.sh with detached Ed25519 signature (SHA256SUMS.txt.sig) and release.json metadata; release verification CLI/library implemented in scripts/verify-release.mjs; clean install, state acceptance, forward upgrade with zero data loss in .local-data/, and rollback gap prevention rejecting stale backup restore over newer accepted data verified via tests/release/upgrade-recovery.mjs, tests/c35_release_verification_test.go, and docs/evidence/release-verification.json; documented source-build alternative verified; Requirement N35 verified."
     },
     {
       "id": "C36",

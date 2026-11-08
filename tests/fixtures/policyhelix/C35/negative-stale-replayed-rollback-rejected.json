@@ -1,0 +1,31 @@
+{
+  "fixture_id": "C35-NEG-03",
+  "commit_id": "C35",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Negative case: an expired, stale, or replayed backup revision cannot replace the last valid accepted authority; restoring older state after newer data is accepted is detected and rejected.",
+  "invariants": [
+    "An expired/stale/replayed revision cannot replace the last valid accepted authority",
+    "Never overwrite newer accepted state with an old backup",
+    "Private resources fail closed"
+  ],
+  "rollback_gap_scenarios": [
+    {
+      "condition": "STALE_BACKUP_RESTORE_ATTEMPT",
+      "accepted_authority_revision": 2,
+      "stale_backup_revision": 1,
+      "expected_outcome": "REJECT_ROLLBACK_GAP",
+      "error_code": "ROLLBACK_GAP_REVISION_VIOLATION",
+      "allow": false
+    },
+    {
+      "condition": "EXPIRED_RELEASE_REVISION_ROLLBACK",
+      "accepted_authority_epoch": 2,
+      "replayed_authority_epoch": 1,
+      "expected_outcome": "REJECT_REPLAYED_EPOCH",
+      "error_code": "EXPIRED_OR_REVOKED_IDENTITY",
+      "allow": false
+    }
+  ]
+}

@@ -1,0 +1,35 @@
+{
+  "fixture_id": "C35-NEG-01",
+  "commit_id": "C35",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Negative case: one modified byte in any release artifact (engine binary, web asset, rego rules, or manifest) must not produce trusted success and fails closed.",
+  "invariants": [
+    "One modified byte, missing evidence or a wrong/untrusted signer must not produce trusted success",
+    "Private resources fail closed"
+  ],
+  "tamper_scenarios": [
+    {
+      "target": "engine/policyhelix",
+      "action": "single byte modification",
+      "expected_outcome": "REJECT_AND_FAIL_CLOSED",
+      "error_code": "CHECKSUM_MISMATCH",
+      "allow": false
+    },
+    {
+      "target": "web/index.html",
+      "action": "single byte modification",
+      "expected_outcome": "REJECT_AND_FAIL_CLOSED",
+      "error_code": "CHECKSUM_MISMATCH",
+      "allow": false
+    },
+    {
+      "target": "rules/policy.rego",
+      "action": "rule payload alteration",
+      "expected_outcome": "REJECT_AND_FAIL_CLOSED",
+      "error_code": "CHECKSUM_MISMATCH",
+      "allow": false
+    }
+  ]
+}

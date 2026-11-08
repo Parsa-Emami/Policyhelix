@@ -1,0 +1,35 @@
+{
+  "fixture_id": "C35-NEG-02",
+  "commit_id": "C35",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Negative case: wrong signer, rogue key ID, or invalid signature fails closed and cannot produce trusted success.",
+  "invariants": [
+    "One modified byte, missing evidence or a wrong/untrusted signer must not produce trusted success",
+    "Private resources fail closed"
+  ],
+  "signer_rejection_scenarios": [
+    {
+      "condition": "ROGUE_SIGNER_KEY_ID",
+      "signer_key_id": "ed25519-rogue-attacker-2026",
+      "expected_outcome": "REJECT_UNTRUSTED_SIGNER",
+      "error_code": "UNTRUSTED_OR_MISSING_SIGNER",
+      "allow": false
+    },
+    {
+      "condition": "CORRUPTED_ED25519_SIGNATURE",
+      "action": "bit flip in detached signature bytes",
+      "expected_outcome": "REJECT_INVALID_SIGNATURE",
+      "error_code": "INVALID_SIGNATURE",
+      "allow": false
+    },
+    {
+      "condition": "MISSING_SIGNATURE_FILE",
+      "action": "missing SHA256SUMS.txt.sig",
+      "expected_outcome": "REJECT_MISSING_ARTIFACT",
+      "error_code": "MISSING_ARTIFACT",
+      "allow": false
+    }
+  ]
+}

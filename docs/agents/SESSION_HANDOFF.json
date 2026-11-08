@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-08",
   "base_commit": "78a555c",
-  "scope": "Task C34: docs(oss): complete installation usage contribution and support guides (Requirement N34)",
+  "scope": "Task C35: test(distribution): verify signed artifacts and data-safe upgrades (Requirement N35)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -37,24 +37,25 @@
     "C31",
     "C32",
     "C33",
-    "C34"
+    "C34",
+    "C35"
   ],
   "commands": [
     "npm run validate:plan",
-    "npm run build && npm run build:engine",
-    "go test -v -run TestC34OSSGuidesAndInvariants ./tests",
-    "node --test tests/web/oss-guides.test.mjs",
+    "bash scripts/package.sh",
+    "node scripts/verify-release.mjs",
+    "node --test tests/release/upgrade-recovery.mjs",
+    "go test -v -run TestC35 ./tests",
     "npm test",
-    "npm run test:engine",
-    "npm run test:browser",
+    "go test ./...",
     "python3 scripts/validate_repo.py",
-    "python3 scripts/source_identity.py --check docs/evidence/C34.json"
+    "python3 scripts/source_identity.py --check docs/evidence/C35.json"
   ],
-  "validation_results": "docs/evidence/C34.json",
-  "final_source_identity": "sha256:f5dc882323ae17eca85007c42453fa23fb887b4a3aa5f0137666f99196badd85",
+  "validation_results": "docs/evidence/C35.json",
+  "final_source_identity": "sha256:1fa1b89fa4c4968fc1a71f7cc4b889052a944af323524a6f3f9c57c9b929981c",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C35",
+  "next_task": "C36",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C34 verified. Comprehensive OSS installation, usage, contribution, and support guides, user guide (docs/release/USER_GUIDE.md), confirmed private vulnerability reporting route in SECURITY.md (GitHub Private Vulnerability Reporting and security@policyhelix.org with 48h SLA), independent offline source build recipes, upstream license inventory, local data layout (.local-data/), operational limits (<=200ms decision deadline, 2 vCPU/4GB RAM/10GB disk), loopback-only privacy, crash recovery and forward repair, and community support channels are documented and verified. Validated via tests/fixtures/policyhelix/C34/, tests/c34_oss_guides_test.go, tests/web/oss-guides.test.mjs, and machine evidence docs/evidence/C34.json. Ready for C35."
+  "continuation": "Task C35 verified. Cryptographically signed release artifact verification against trusted Ed25519 key (ed25519-primary-2026 / 79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664), detached Ed25519 signature generation in scripts/package.sh (SHA256SUMS.txt.sig), release verification tool in scripts/verify-release.mjs, data-safe clean install, state acceptance, forward upgrade with zero data loss in .local-data/, and rollback gap prevention rejecting stale backup restore over newer accepted data verified via tests/release/upgrade-recovery.mjs, tests/c35_release_verification_test.go, and docs/evidence/release-verification.json. Documented source-build alternative verified. Ready for C36."
 }

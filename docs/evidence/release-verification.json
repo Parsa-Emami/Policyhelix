@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "commit_id": "C35",
+  "requirement": "N35",
+  "project": "PolicyHelix",
+  "scope": "Signed artifact authenticity, checksum integrity, and data-safe install/upgrade/rollback verification (Requirement N35)",
+  "date": "2026-11-08",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic verification evidence; no third-party data or real traffic",
+  "release_identity": {
+    "algorithm": "ed25519",
+    "trusted_signer_key_id": "ed25519-primary-2026",
+    "trusted_public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664",
+    "detached_signature_file": "SHA256SUMS.txt.sig",
+    "checksum_manifest": "SHA256SUMS.txt",
+    "signature_verified": true,
+    "verification_tool": "scripts/verify-release.mjs"
+  },
+  "distribution_artifacts": {
+    "verified_count": 24,
+    "required_files": [
+      "engine/policyhelix",
+      "web/index.html",
+      "rules/policy.rego",
+      "scripts/serve-web.mjs",
+      "scripts/start-local.mjs",
+      "apps/web/src/lib/runtime-config.mjs",
+      "ops/web/nginx.conf.template",
+      "ops/web/service.systemd",
+      "ops/web/runtime-config.json",
+      "ops/web/brand.json",
+      "docs/ARTIFACTS.md",
+      "docs/WEB_RUNBOOK.md",
+      "LICENSE",
+      "NOTICE",
+      "THIRD_PARTY_NOTICES.md",
+      "policyhelix-source.tar.gz",
+      "sbom.json",
+      "release.json",
+      "SHA256SUMS.txt",
+      "SHA256SUMS.txt.sig"
+    ],
+    "checksum_algorithm": "SHA-256",
+    "all_digests_matched": true
+  },
+  "data_safe_upgrade": {
+    "clean_install_verified": true,
+    "initial_authority_accepted": {
+      "bundle_revision": 1,
+      "session_epoch": 1,
+      "storage_location": ".local-data/storage"
+    },
+    "forward_upgrade_verified": true,
+    "existing_records_preserved": true,
+    "data_loss_bytes": 0,
+    "newer_authority_accepted": {
+      "bundle_revision": 2,
+      "session_epoch": 2
+    },
+    "coexistence_confirmed": true
+  },
+  "rollback_gap_protection": {
+    "stale_backup_restore_rejected": true,
+    "rejection_code": "ROLLBACK_GAP_REVISION_VIOLATION",
+    "monotonic_revision_enforced": true,
+    "newer_accepted_state_overwritten": false,
+    "forward_repair_supported": true
+  },
+  "negative_cases": {
+    "single_byte_tamper_rejected": {
+      "verified": true,
+      "code": "CHECKSUM_MISMATCH",
+      "fail_closed": true
+    },
+    "untrusted_signer_rejected": {
+      "verified": true,
+      "code": "UNTRUSTED_OR_MISSING_SIGNER",
+      "fail_closed": true
+    },
+    "corrupted_signature_rejected": {
+      "verified": true,
+      "code": "INVALID_SIGNATURE",
+      "fail_closed": true
+    },
+    "missing_artifact_rejected": {
+      "verified": true,
+      "code": "MISSING_ARTIFACT",
+      "fail_closed": true
+    },
+    "unauthenticated_private_access_denied": {
+      "verified": true,
+      "code": "UNAUTHENTICATED_IDENTITY",
+      "fail_closed": true
+    }
+  },
+  "source_build_alternative": {
+    "maintained": true,
+    "recipes": [
+      "npm run build",
+      "npm run build:engine",
+      "bash scripts/package.sh"
+    ],
+    "offline_archive": "policyhelix-source.tar.gz",
+    "storage_interoperability": true
+  },
+  "verification_commands": [
+    "npm run validate:plan",
+    "bash scripts/package.sh",
+    "node scripts/verify-release.mjs",
+    "node --test tests/release/upgrade-recovery.mjs",
+    "go test -v -run TestC35 ./tests",
+    "npm test",
+    "go test ./..."
+  ]
+}

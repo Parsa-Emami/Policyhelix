@@ -40,8 +40,9 @@ dist/release/
 ├── THIRD_PARTY_NOTICES.md              # Complete third-party dependency licenses and SBOM inventory
 ├── policyhelix-source.tar.gz           # Reproducible source archive with build recipes
 ├── sbom.json                           # Machine-readable Software Bill of Materials (CycloneDX 1.5)
-├── release.json                        # Provenance metadata, Git commit and scope
-└── SHA256SUMS.txt                      # Cryptographic checksums of all package files
+├── release.json                        # Provenance metadata, Git commit, scope, and signature metadata
+├── SHA256SUMS.txt                      # Cryptographic checksums of all package files
+└── SHA256SUMS.txt.sig                  # Detached Ed25519 signature of checksum manifest
 ```
 
 ## Atomic staging & crash resilience
@@ -49,22 +50,26 @@ dist/release/
 1. **Staged-byte boundary**:
    All artifacts are assembled into an isolated staging directory `dist/.staging-release-<pid>`. Files are written, synced, and verified against SHA-256 digests prior to promotion.
 2. **Atomic promotion**:
-   Once all files and checksums pass verification, the staging directory is promoted to `dist/release` using an atomic directory move (`rename`).
+   Once all files, checksums, and Ed25519 detached signatures pass verification, the staging directory is promoted to `dist/release` using an atomic directory move (`rename`).
 3. **Crash recovery**:
    If a writer process is killed at the staging boundary or during assembly, the destination `dist/release` is unaffected. A restart or subsequent packaging run cleans any stale staging directory and either retains the prior valid release or produces a complete new release.
 4. **Quota exhaustion and replay resilience**:
    Packaging is idempotent. If disk quota is exhausted or write fails, the staging directory is cleaned up via traps, leaving no orphan corrupt files in `dist/release`.
 
-## Integrity verification
+## Integrity & cryptographic authenticity verification
 
-To verify a downloaded or packaged release on any Linux host:
+To verify both cryptographic authenticity and file checksums of a downloaded or packaged release:
 
 ```bash
+# Automated cryptographic verification against trusted release key
+node scripts/verify-release.mjs
+
+# Or verify raw checksums on any Linux host
 cd dist/release
 sha256sum -c SHA256SUMS.txt
 ```
 
-Every file must report `OK`. Any modified byte, tampered binary, or altered rule triggers an immediate checksum mismatch and causes deployment to fail closed.
+Every file must report `OK`, and the Ed25519 signature over `SHA256SUMS.txt` must verify against the trusted signer identity (`ed25519-primary-2026`). Any modified byte, tampered binary, altered rule, untrusted signer, or missing signature triggers an immediate verification failure and causes deployment to fail closed.
 
 ## Software Bill of Materials (SBOM)
 

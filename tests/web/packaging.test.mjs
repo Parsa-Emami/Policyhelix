@@ -8,11 +8,16 @@ import { execFileSync } from 'node:child_process';
 
 const root = resolve(fileURLToPath(new URL('../../', import.meta.url)));
 
+import { existsSync } from 'node:fs';
+
 // Ensure the release package is built so tests can verify the complete product artifact
 function ensurePackage() {
   const releaseDir = resolve(root, 'dist/release');
   const checksumFile = join(releaseDir, 'SHA256SUMS.txt');
   const engineBin = join(releaseDir, 'engine/policyhelix');
+  if (existsSync(checksumFile) && existsSync(engineBin)) {
+    return;
+  }
   try {
     execFileSync('bash', ['scripts/package.sh'], { cwd: root, stdio: 'pipe' });
   } catch (err) {

@@ -1,0 +1,25 @@
+{
+  "fixture_id": "C35-POS-03",
+  "commit_id": "C35",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Documented source-build alternative specification: confirms independent local source compilation produces functionally equivalent artifacts compatible with existing local storage.",
+  "invariants": [
+    "Maintain the documented source-build alternative",
+    "Independent source build without proprietary toolchains or mandatory cloud services"
+  ],
+  "source_build": {
+    "recipe_steps": [
+      "npm run build",
+      "npm run build:engine",
+      "bash scripts/package.sh"
+    ],
+    "produced_artifacts": [
+      "dist/engine/policyhelix",
+      "dist/web/index.html",
+      "dist/release/SHA256SUMS.txt.sig"
+    ],
+    "storage_interoperability": true
+  }
+}

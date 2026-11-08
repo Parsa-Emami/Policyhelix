@@ -1,0 +1,22 @@
+{
+  "fixture_id": "C35-POS-01",
+  "commit_id": "C35",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic licensed fixture; no third-party data or real traffic",
+  "description": "Cryptographically signed release verification specification: verifies release authenticity against independently trusted Ed25519 identity key, SHA-256 checksums, and artifact integrity.",
+  "invariants": [
+    "Verify integrity and authenticity against independently trusted release identity/key",
+    "Private resources fail closed",
+    "Complete product release includes engine, web UI and offline rules"
+  ],
+  "expected_verification": {
+    "trusted_signer_key_id": "ed25519-primary-2026",
+    "trusted_public_key_hex": "79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664",
+    "signature_algorithm": "ed25519",
+    "detached_signature_file": "SHA256SUMS.txt.sig",
+    "checksum_manifest": "SHA256SUMS.txt",
+    "verification_command": "node scripts/verify-release.mjs",
+    "expected_outcome": "TRUSTED_SUCCESS"
+  }
+}
