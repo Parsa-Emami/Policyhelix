@@ -1,0 +1,25 @@
+{
+  "fixture_id": "C30-NEG-06",
+  "commit_id": "C30",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "A fixture reference outside the licensed synthetic fixture directory is rejected explicitly instead of silently succeeding.",
+  "invariant": "Private resources fail closed",
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "stage": "Private resources fail closed",
+      "action": "A fixture reference outside the licensed synthetic fixture directory is rejected explicitly instead of silently succeeding.",
+      "endpoint": "/api/v1/reference/simulate",
+      "method": "POST",
+      "body": {
+        "fixture_ref": "../../README.md"
+      },
+      "expected": {
+        "http_status": 422,
+        "error_code": "MALFORMED_FIXTURE"
+      }
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "fixture_id": "C30-NEG-07",
+  "commit_id": "C30",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Starting the engine without the durable local storage prerequisite must produce an explicit unavailable error for the reference workflow instead of placeholder success.",
+  "invariant": "Private resources fail closed",
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "stage": "Private resources fail closed",
+      "action": "Starting the engine without the durable local storage prerequisite must produce an explicit unavailable error for the reference workflow instead of placeholder success.",
+      "endpoint": "/api/v1/reference/state",
+      "method": "GET",
+      "body": {},
+      "expected": {
+        "http_status": 503,
+        "status": "unavailable",
+        "error": "REFERENCE_RUNTIME_UNAVAILABLE"
+      }
+    }
+  ]
+}

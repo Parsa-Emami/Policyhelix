@@ -1,6 +1,6 @@
 # PolicyHelix: reference workflow
 
-Status: planned domain acceptance; the current JSON structure preview does not implement this workflow.
+Status: implemented and verified at C30 in the local-demo profile (synthetic licensed fixtures, durable local storage, owned loopback upstream and engine-issued revocable sessions). This is not a production security certification.
 
 Simulator fixture -> sign/verify bundle -> protect owned upstream -> test spoofed header/direct origin -> revoke -> simulate decision/IdP outage and expired policy.
 
@@ -52,10 +52,12 @@ Simulator fixture -> sign/verify bundle -> protect owned upstream -> test spoofe
 
 C01 and C04 freeze the synthetic positive and negative fixture formats. No real secrets, user source/traffic data, or unlicensed third-party corpuses are permitted.
 
-A clean source clone must reproduce the entire workflow with restart and restore at C30:
+A clean source clone reproduces the entire workflow with restart and restore; `npm run test:clone` proves it from a real Git transport clone. Verified command sequence:
 ```bash
 git clone https://github.com/Parsa-Emami/Policyhelix.git
 cd Policyhelix
 npm run setup
 npm start
 ```
+
+Live integration tests: `cmd/policyhelix/reference_test.go` exercises the engine directly, `scripts/clone-smoke.mjs` drives all C30 fixtures over the supervised HTTP surface, and `tests/browser/clone-to-value.spec.ts` runs the six stages through the browser workspace. Evidence is recorded in `docs/evidence/C30.json`.

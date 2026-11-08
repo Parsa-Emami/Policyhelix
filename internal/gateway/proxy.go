@@ -19,6 +19,7 @@ import (
 
 	"github.com/parsa-emami/policyhelix/internal/auth"
 	"github.com/parsa-emami/policyhelix/internal/contracts"
+	"github.com/parsa-emami/policyhelix/internal/policy"
 )
 
 // Specific error codes for C17 allowlisted upstream and origin isolation.
@@ -118,6 +119,7 @@ type ProxyResult struct {
 	OutageMetadata            map[string]interface{}    `json:"outage_metadata,omitempty"`
 	UpstreamResponseBody      string                    `json:"upstream_response_body,omitempty"`
 	UpstreamStatusCode        int                       `json:"upstream_status_code,omitempty"`
+	BundleDecision            *policy.BundleDecision    `json:"bundle_decision,omitempty"`
 }
 
 // GenerateGatewayProof produces a verifiable HMAC-SHA256 origin proof token.
@@ -535,6 +537,10 @@ func (p *AllowlistedGatewayProxy) EvaluateProxyRequest(ctx context.Context, req 
 		injected[k] = v
 	}
 	injected[HeaderGatewayProof] = proof
+	// The origin proof is bound to the request id, so the trusted request id must reach the origin.
+	if req.RequestID != "" {
+		injected["X-Request-Id"] = req.RequestID
+	}
 
 	// Gate 9: Policy Obligation Enforcement (C18 / Requirement F12)
 	var executedObligations []ExecutedObligation

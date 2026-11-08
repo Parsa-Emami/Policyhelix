@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "commit_id": "C30",
+  "project": "PolicyHelix",
+  "date": "2026-11-08",
+  "passed": true,
+  "planning_template": false,
+  "scope": "PolicyHelix local-demo profile: real clean-clone install, full six-stage reference workflow, seven required negative fixtures, durable restart and restore, browser acceptance and real engine/provider readiness (Requirement N30)",
+  "source_identity": "sha256:3b765c14d085e49c63b88cf3a9573235a5d7cd4303c0b989f1c9f677e1936dde",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence, SHA256SUMS.txt, plans/progress.json and docs/agents/SESSION_HANDOFF.json",
+  "source_identity_note": "Computed after implementation, fixture, documentation and plan-state edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux 7.0.0-43-generic x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml and .github/workflows/web.yml; local run used Go 1.26.2 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 16,
+      "ram_mib": 30828,
+      "free_disk_mib": 92388,
+      "target_hardware_budget": "2 vCPU / 4096 MiB RAM / 10240 MiB free disk",
+      "status": "development host exceeds the C30 planning target; this evidence does not measure the minimum supported host"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    },
+    {
+      "tool": "Playwright",
+      "version": "1.64.1",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C30/positive-reference-workflow.json",
+      "sha256": "88ff5b7cb33678666b4504b7ae340ebad1eb6da793567686b4bc0c02084d7d33",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for the six-stage reference workflow and its two issued sessions"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C30/positive-restart-restore.json",
+      "sha256": "c0ad6d3225f80e58134ca1b794480f1dd5377fe7b8c4e4286b1066c020eacae5",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for restart and durable restore of the active bundle, revocation epoch and valid session"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C30/negative-spoofed-header.json",
+      "sha256": "a6f3af7c54dbd711731e24cc946d224704a7be6744f704e4a3240cf911a180c7",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for forged identity header rejection before upstream side effects"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C30/negative-direct-origin.json",
+      "sha256": "89b01239ca9c63b9dd0f97123fbf41fecfb6ab452779bcb47f2dccb404614173",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for direct origin access rejection by the real loopback upstream"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C30/negative-revoked-session.json",
+      "sha256": "a68d2f65a9f5b21113f318dbc876bdbc86f0188fb1673d757ff2aa1d234814c1",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for bounded revocation denial without forwarded request or side effect"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C30/negative-expired-bundle.json",
+      "sha256": "85cd9ae78285ee9c0fe98b162595c8f9c95610341b807e26c5982e643b8c6bb1",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for expired signed bundle rejection with retained active authority"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C30/negative-provider-unavailable.json",
+      "sha256": "95655ef3e6131a578e90a35becef1a1b09312f48cf53a762d8a15a9d312fa0a2",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for unavailable provider fail-closed behavior"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C30/negative-malformed-fixture.json",
+      "sha256": "1e81de1ba7270892033841a262c6ab8bd64413325d55ef612f9596bb7f9e8259",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for explicit malformed fixture reference rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C30/negative-unavailable-runtime.json",
+      "sha256": "57c932b4d8b53be0c87119c93284aaf1cd021e1add9b2eb45b031853f3e8c962",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for explicit reference runtime unavailability without durable storage"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "node scripts/verify-reference.mjs",
+      "exit_code": 0,
+      "output": "Executed scenario contract, C30 fixtures and preserved C01 fixtures validated; 12 negative validator cases rejected as expected."
+    },
+    {
+      "command": "go test -count=1 ./...",
+      "exit_code": 0,
+      "output": "ok cmd/policyhelix (all package tests); ok internal/contracts 0.035s; ok internal/gateway 0.004s; ok internal/policy 0.004s; ok internal/reference 0.006s; ok internal/storage 0.003s; ok tests 4.020s; no failures"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "tests 17, suites 0, pass 17, fail 0 (includes supervisor reference runtime readiness)"
+    },
+    {
+      "command": "npm run test:browser",
+      "exit_code": 0,
+      "output": "36 passed (7.9s), including tests/browser/clone-to-value.spec.ts six-stage workflow, mobile 360px viewport, keyboard navigation, and error/unready states against the live engine"
+    },
+    {
+      "command": "npm run test:clone",
+      "exit_code": 0,
+      "output": "{\"passed\":true,\"stagedTree\":\"d4f13284eac69dc9648a2c10fc0c7ef0432b1547\",\"commands\":[\"git clone\",\"npm run setup\",\"npm start (loopback supervisor)\"],\"proof\":\"real git clone -> npm run setup -> supervised engine -> six-stage reference workflow -> required negative cases -> restart and restore\",\"webOnlyProof\":\"git clone -> npm run setup -> web workspace / and /healthz (web-shell) served\",\"engineReady\":true,\"providers\":{\"local_opa\":\"connected\",\"owned_synthetic_upstream\":\"connected\",\"self_hosted_keycloak\":\"connected\"},\"workflowStages\":6,\"negativeFixtures\":7,\"fixturesExecuted\":[\"C30-POS-01\",\"C30-NEG-01\",\"C30-NEG-02\",\"C30-NEG-03\",\"C30-NEG-04\",\"C30-NEG-05\",\"C30-NEG-06\",\"C30-NEG-07\",\"C30-POS-02\"],\"scenarioChecks\":13,\"activeBundleRevision\":1,\"highestRevision\":1,\"revokedSessions\":1,\"browserSpec\":\"tests/browser/clone-to-value.spec.ts\",\"coreReady\":false}"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED"
+    },
+    {
+      "command": "python3 scripts/source_identity.py --check docs/evidence/C30.json",
+      "exit_code": 0,
+      "output": "Source identity verified"
+    }
+  ],
+  "results": [
+    "Requirement N30 verified: a real git transport clone of the staged source, npm run setup and the supervised loopback runtime complete the project's full reference workflow, negative cases, restart and restore.",
+    "Clean-clone install proof: the clone tree equals the exact staged tree, npm ci installs the locked dependencies with lifecycle scripts disabled, the web workspace builds, and dist/engine/policyhelix compiles inside the clone; no prebuilt artifacts are reused.",
+    "Real readiness proof: the supervised engine reports storage durable and all three required providers connected (local_opa embedded self-test, self_hosted_keycloak synthetic local demo store round-trip, owned_synthetic_upstream HTTP probe) before the workflow is allowed to run.",
+    "Six-stage workflow executed over the supervised HTTP surface: simulator fixture C01-POS-01 expected allow matched; Ed25519 signed bundle accepted with signature verified, durable activation and monotonic revision; authenticated request forwarded through the allowlisted gateway to the owned upstream with HTTP 200; forged headers stripped and direct origin rejected with HTTP 403; revocation stopped the next request with REVOKED_SESSION and zero side effects; decision-engine and IdP outages denied while an expired bundle was rejected and the active authority retained.",
+    "All seven required negative fixtures executed: spoofed header, direct origin, revoked session, expired bundle, unavailable provider, malformed fixture and unavailable runtime each produced the declared typed error or fail-closed outcome instead of placeholder success.",
+    "Restart and restore: the supervisor stopped and restarted against the same durable storage directory; state restored with active bundle revision 1, highest revision 1 and one revoked session; the revoked session remained denied and the still-valid session still reached the owned upstream with HTTP 200.",
+    "Browser acceptance: the Reference Workflow page runs all six stages against the live engine, shows real stage results, and a fresh page load reads the durable bundle back from local storage; the full Playwright suite passes 36 tests with no page errors.",
+    "C01 fixtures remain frozen and intact; the scenario contract declares observed_from for every stage and the validator has 12 negative regression cases, including missing execution observations.",
+    "No database schema, migration, .env or Dockerfile was modified; no paid/cloud account, public domain, sibling clone or telemetry is required."
+  ],
+  "observed_behavior": {
+    "staged_tree": "d4f13284eac69dc9648a2c10fc0c7ef0432b1547",
+    "workflow_stages": 6,
+    "fixtures_executed": [
+      "C30-POS-01",
+      "C30-NEG-01",
+      "C30-NEG-02",
+      "C30-NEG-03",
+      "C30-NEG-04",
+      "C30-NEG-05",
+      "C30-NEG-06",
+      "C30-NEG-07",
+      "C30-POS-02"
+    ],
+    "scenario_checks": 13,
+    "providers_connected": [
+      "local_opa",
+      "self_hosted_keycloak",
+      "owned_synthetic_upstream"
+    ],
+    "active_bundle_revision_after_restart": 1,
+    "highest_revision_after_restart": 1,
+    "revoked_sessions_after_restart": 1,
+    "browser_tests_passed": 36,
+    "core_ready": false,
+    "business_features_completed": false
+  },
+  "observed_limitations": [
+    "The clean-host proof is a real git transport clone executed on the supported Linux development host with the documented Go 1.26.2 and Node 24.19.0 toolchains installed; it did not provision a separate pristine OS image and does not measure the 2 vCPU / 4096 MiB minimum target.",
+    "The local-demo identity provider issues engine-local fingerprint-bound revocable sessions through durable storage instead of running Keycloak; readiness labels this verification synthetic_local_demo. The local-private profile still requires real identity/provider durability evidence before sensitive use.",
+    "coreReady and businessFeaturesCompleted remain false; C40 still requires authorized published source/artifacts and an installed full-workflow proof.",
+    "This development host exports a local HTTP proxy, so verification commands ran with NODE_USE_ENV_PROXY unset to keep loopback probes direct. No source or CI configuration depends on that local setting."
+  ],
+  "rollback_or_recovery_observation": "Revert internal/reference/reference.go, internal/reference/reference_test.go, cmd/policyhelix/reference_test.go, cmd/policyhelix/main.go and router.go reference wiring, internal/gateway/live.go and enforcement.go refactor, internal/gateway/diagnostics.go and proxy.go additions, internal/bundles/keys.go ActiveBundle accessor, apps/web ReferenceWorkflow page and runtime configuration, scripts/clone-smoke.mjs, scripts/start-local.mjs, scripts/serve-web.mjs, scripts/verify-reference.mjs, tests/scenarios/clone-to-value.json, tests/browser/clone-to-value.spec.ts, tests/fixtures/policyhelix/C30/, and docs/evidence/C30.json. C01-C29 components and the local storage bytes remain intact; forward repair reuses the compatible reader and never overwrites newer accepted state with an old backup."
+}

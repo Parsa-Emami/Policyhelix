@@ -68,13 +68,21 @@ test('supervisor starts loopback web and engine, exposes runtime status, and shu
   assert.equal(status.loopback, true);
   assert.equal(status.coreReady, false);
   assert.equal(status.businessFeaturesCompleted, false);
+  assert.deepEqual(Object.keys(status.providers).sort(), ['local_opa', 'owned_synthetic_upstream', 'self_hosted_keycloak']);
+  for (const provider of Object.values(status.providers)) assert.equal(provider, 'connected');
   assert.deepEqual(status.invariants, [
     'Private resources fail closed',
     'Only authenticated normalized identity enters policy',
     'Bundle signature plus freshness and monotonic revision',
   ]);
 
-  // 5. Unimplemented API endpoints still fail closed with 503
+  // 5. The live reference workflow runtime is reachable through the supervisor
+  const referenceState = await (await fetch(`${base}/api/v1/reference/state`)).json();
+  assert.equal(referenceState.ready, true);
+  assert.equal(referenceState.storage_durable, true);
+  assert.equal(referenceState.providers.length, 3);
+
+  // 6. Unimplemented API endpoints still fail closed with 503
   assert.equal((await fetch(`${base}/api/v1/unimplemented`)).status, 503);
   assert.equal((await fetch(`${base}/api`)).status, 503);
 });

@@ -1,0 +1,31 @@
+{
+  "fixture_id": "C30-NEG-01",
+  "commit_id": "C30",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "A forged X-Remote-User identity header must be stripped and rejected before policy evaluation and before any upstream side effect.",
+  "invariant": "Only authenticated normalized identity enters policy",
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "stage": "Only authenticated normalized identity enters policy",
+      "action": "A forged X-Remote-User identity header must be stripped and rejected before policy evaluation and before any upstream side effect.",
+      "endpoint": "/api/v1/reference/spoof",
+      "method": "POST",
+      "body": {
+        "session_id": "$SESSION_ACTIVE",
+        "forged_headers": {
+          "X-Remote-User": "admin",
+          "X-Forwarded-User": "admin"
+        }
+      },
+      "expected": {
+        "http_status": 200,
+        "spoofed_allow": false,
+        "spoofed_forwarded_to_upstream": false,
+        "spoofed_error_code": "FORGED_HEADER_REJECTED"
+      }
+    }
+  ]
+}

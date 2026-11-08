@@ -169,65 +169,17 @@ func EvaluateEnforcementFixture(ctx context.Context, storageDir string, fx Enfor
 	rep.PublicBypassUsed = pRes.PublicBypassUsed
 
 	// Stage 3: Policy Bundle Enforcement Check
-	// If the gateway proxy allowed the request and it is not an intentional public outage bypass,
-	// enforce the active policy bundle authority on private/internal/restricted routes.
-	isPublicHealth := pRes.PublicBypassUsed || pReq.ExplicitPublicRoute || strings.EqualFold(pReq.ResourceClassification, "public") || pReq.Path == "/health"
-	if rep.Allow && !isPublicHealth {
-		if !kState.Active {
-			// If candidate bundle was rejected (e.g., expired bundle with no prior active bundle), surface the candidate error code
-			errCode := policy.ErrCodeNoActiveBundle
-			if rep.CandidateErrorCode != "" {
-				errCode = rep.CandidateErrorCode
-			}
-			rep.Allow = false
-			rep.ForwardedToUpstream = false
-			rep.StatusCode = http.StatusForbidden
-			rep.ErrorCode = errCode
-			rep.ErrorMessage = "Fail closed: no valid active policy bundle in force"
-		} else {
-			sub := policy.SubjectIdentity{
-				Authenticated: false,
-			}
-			if pRes.Subject != nil {
-				sub = policy.SubjectIdentity{
-					ID:            pRes.Subject.ID,
-					Issuer:        pRes.Subject.Issuer,
-					Roles:         pRes.Subject.Roles,
-					Authenticated: pRes.Subject.Authenticated,
-					SessionEpoch:  pRes.Subject.SessionEpoch,
-				}
-			}
-			action := "read"
-			if strings.EqualFold(pReq.Method, "POST") || strings.EqualFold(pReq.Method, "PUT") || strings.EqualFold(pReq.Method, "DELETE") {
-				action = "write"
-			}
-			bDec := mgr.Evaluate(ctx, policy.BundleEvalInput{
-				RequestID:  pReq.RequestID,
-				Path:       pReq.Path,
-				Action:     action,
-				Subject:    sub,
-				ResourceID: pReq.Path,
-				DeadlineMS: 50,
-				EvalTime:   evalTime.Format(time.RFC3339),
-			})
-			rep.BundleDecision = &bDec
-			if !bDec.Allow {
-				rep.Allow = false
-				rep.ForwardedToUpstream = false
-				rep.StatusCode = http.StatusForbidden
-				if bDec.Error != nil && bDec.Error.Code != "" {
-					rep.ErrorCode = bDec.Error.Code
-					rep.ErrorMessage = bDec.Error.Message
-				} else if len(bDec.Reasons) > 0 {
-					rep.ErrorCode = bDec.Reasons[0]
-					rep.ErrorMessage = "Policy bundle denied request"
-				} else {
-					rep.ErrorCode = ErrCodePrivateResource
-					rep.ErrorMessage = "Private resource denied by policy bundle"
-				}
-			}
-		}
+	// Shared with the live local runtime so fixture proof and product behavior cannot diverge.
+	if dec := EnforcePolicyAuthority(ctx, mgr, pReq, pRes, evalTime, rep.CandidateErrorCode); dec != nil {
+		rep.BundleDecision = dec
 	}
+	rep.Allow = pRes.Allow
+	rep.ForwardedToUpstream = pRes.ForwardedToUpstream
+	rep.StatusCode = pRes.StatusCode
+	rep.ErrorCode = pRes.ErrorCode
+	rep.ErrorMessage = pRes.ErrorMessage
+	rep.OutageDisposition = pRes.OutageDisposition
+	rep.PublicBypassUsed = pRes.PublicBypassUsed
 
 	if err := verifyEnforcementExpectations(fx.Expected, &rep); err != nil {
 		rep.Passed = false

@@ -2,7 +2,7 @@
 
 ## Runnable today
 
-Install Git and Node 24.19+ within Node 24 (npm bundled), then:
+Install Git, Node 24.19+ within Node 24 (npm bundled) and Go 1.26+, then:
 
 ```sh
 git clone https://github.com/Parsa-Emami/Policyhelix.git
@@ -11,17 +11,17 @@ npm run setup
 npm start
 ```
 
-Open http://127.0.0.1:4173. Setup installs the committed web lockfile with lifecycle scripts disabled, stops on errors and builds the workspace. No Python, Go, Rust, PHP, database, cloud account or domain is needed for the current web shell. It previews JSON structure locally and browses the roadmap; it does not implement the full domain product.
+Open http://127.0.0.1:4173 and select **Reference Workflow**. Setup installs the committed web lockfile with lifecycle scripts disabled, stops on errors, builds the web workspace and compiles `dist/engine/policyhelix`. `npm start` supervises the loopback Go engine, durable local storage under `.local-data` and an owned synthetic upstream; no second terminal, database server, cloud account or public domain is needed. The browser runs the six-stage reference workflow: simulator fixture, signed bundle activation, protected upstream, spoofed-header/direct-origin rejection, revocation, and outage/expired-policy fail-closed behavior.
 
 `npm run setup -- --check` shows preparation without changes. `--skip-install` builds using already installed dependencies. `npm run doctor` reports actual web/core state. `npm run release:check` deliberately exits 2 until full evidence is ready. Ctrl+C stops the current web process. Ports can be selected with `npm start -- --port 4301` when running multiple projects.
 
-## Full-product contract to implement
+## Verified local-demo scope
 
-The same clone/setup/start sequence must prepare and supervise the actual Go engine and required self-hosted open-source resources by C30. No second undocumented terminal, paid account, sibling clone or owned public domain. C03 implements local lifecycle/health and C31 supplies verified convenience artifacts plus a documented source-build alternative. Downloads may be needed to prepare resources; user payloads are not sent to a compulsory proprietary service. No global runtime install, system trust change or user data deletion occurs implicitly.
+The same clone/setup/start sequence prepares and supervises the Go engine and its local resources, as verified by `npm run test:clone` and `docs/evidence/C30.json`. No second undocumented terminal, paid account, sibling clone or owned public domain is used. C31 supplies convenience artifacts plus a documented source-build alternative; downloads may be needed to prepare resources, and user payloads are not sent to a compulsory proprietary service. No global runtime install, system trust change or user data deletion occurs implicitly.
 
-Local resources: local OPA, self-hosted Keycloak/OIDC, owned synthetic demo upstream. Hardware target: 2 vCPU / 4096 MiB RAM / 10240 MiB free disk plus real dataset/provider/backup space. These are unmeasured targets until C28. Full engine support initially targets Linux x86_64; other hosts require their own actual C30/C33 evidence. Rootless workloads need Linux or a tested Linux/WSL2 host.
+Local resources: embedded signed-bundle policy evaluator, a store-round-trip identity/session provider and the owned synthetic demo upstream. Hardware target: 2 vCPU / 4096 MiB RAM / 10240 MiB free disk plus real dataset/provider/backup space. The C30 verification host exceeded that target; C28 measured the bounded workload separately. Full engine support initially targets Linux x86_64; other hosts require their own actual C30/C33 evidence. Rootless workloads need Linux or a tested Linux/WSL2 host.
 
-`local-demo` uses synthetic fixtures and isolated development providers; `local-private` requires real identity/permission, provider durability, revocation and restore evidence before sensitive use. A development provider mode never becomes a production vault/gateway by relabeling it.
+`local-demo` uses synthetic fixtures and isolated development providers; the identity provider issues engine-local, fingerprint-bound, revocable sessions instead of running Keycloak. `local-private` requires real identity/permission, provider durability, revocation and restore evidence before sensitive use. A development provider mode never becomes a production vault/gateway by relabeling it.
 
 ## Checks
 
@@ -33,4 +33,4 @@ npm run test:clone
 npm run doctor
 ```
 
-The current test:clone performs a real local Git clone of the staged/committed source, runs setup and verifies web readiness and disabled engine admission. C30 must extend it to the full tests/scenarios/clone-to-value.json workflow and real engine readiness. Current shell checks cannot certify domain functionality. See each C task for future engine commands and prerequisites. Optional hosting/package operations remain in WEB_RUNBOOK.md.
+`npm run test:clone` performs a real local Git transport clone of the staged/committed source, runs `npm run setup`, starts the supervised engine, verifies real storage/provider readiness, executes every step of `tests/scenarios/clone-to-value.json` (six workflow stages plus seven negative fixtures), restarts the supervisor against the same durable storage and proves the revoked session stays denied while a valid session still reaches the upstream. `tests/browser/clone-to-value.spec.ts` runs the same six stages through the browser workspace. C30 evidence is recorded in `docs/evidence/C30.json`; C40 still requires authorized published-source and installed full-workflow proof. Optional hosting/package operations remain in WEB_RUNBOOK.md.

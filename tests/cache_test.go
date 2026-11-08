@@ -95,6 +95,11 @@ func makeC24SignedBundle(bundleID string, rev int64, issuedAt, expiresAt string,
 	return b
 }
 
+// c24IssuedAt and c24ExpiresAt return a rolling validity window so the fixture suite does not
+// become a time bomb once a hard-coded calendar date passes.
+func c24IssuedAt() string { return time.Now().UTC().Add(-48 * time.Hour).Format(time.RFC3339) }
+func c24ExpiresAt() string { return time.Now().UTC().Add(30 * 24 * time.Hour).Format(time.RFC3339) }
+
 func generateC24FixturesIfMissing(t *testing.T) string {
 	t.Helper()
 	dir := getC24FixtureDir()
@@ -107,8 +112,8 @@ func generateC24FixturesIfMissing(t *testing.T) string {
 		return dir // Already generated
 	}
 
-	issued := "2026-11-06T00:00:00Z"
-	expires := "2026-11-08T00:00:00Z"
+	issued := c24IssuedAt()
+	expires := c24ExpiresAt()
 
 	bundleRev20 := makeC24SignedBundle(
 		"bundle-workloads-v20", 20, issued, expires,
@@ -1130,7 +1135,7 @@ func TestC24_FailClosedPrivateResources(t *testing.T) {
 	}
 
 	bundle := makeC24SignedBundle(
-		"bundle-vault-v1", 1, "2026-11-06T00:00:00Z", "2026-11-08T00:00:00Z",
+		"bundle-vault-v1", 1, c24IssuedAt(), c24ExpiresAt(),
 		"/vault/secret", []string{"admin"}, policy.ResourceClassPrivate,
 		"allow_vault", "admin only",
 	)
@@ -1211,7 +1216,7 @@ func TestC24_HTTPEndpoints(t *testing.T) {
 	}
 
 	bundle := makeC24SignedBundle(
-		"bundle-http-v1", 1, "2026-11-06T00:00:00Z", "2026-11-08T00:00:00Z",
+		"bundle-http-v1", 1, c24IssuedAt(), c24ExpiresAt(),
 		"/api/v1/jobs", []string{"operator"}, policy.ResourceClassPrivate,
 		"allow_op", "operator allowed",
 	)
@@ -1322,7 +1327,7 @@ func TestC24_EvaluateWithCache_BundleEvalInput(t *testing.T) {
 	}
 
 	bundle := makeC24SignedBundle(
-		"bundle-core-v1", 1, "2026-11-06T00:00:00Z", "2026-11-08T00:00:00Z",
+		"bundle-core-v1", 1, c24IssuedAt(), c24ExpiresAt(),
 		"/api/v1/workloads/jobs", []string{"operator"}, policy.ResourceClassPrivate,
 		"allow_op", "operator allowed",
 	)
@@ -1344,7 +1349,7 @@ func TestC24_EvaluateWithCache_BundleEvalInput(t *testing.T) {
 		},
 		ResourceID: "job-101",
 		DeadlineMS: 200,
-		EvalTime:   "2026-11-06T12:00:00Z",
+		EvalTime:   time.Now().UTC().Format(time.RFC3339),
 	}
 
 	// First call: cache miss, cached=false

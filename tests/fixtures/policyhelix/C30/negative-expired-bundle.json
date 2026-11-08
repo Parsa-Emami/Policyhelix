@@ -1,0 +1,27 @@
+{
+  "fixture_id": "C30-NEG-04",
+  "commit_id": "C30",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "An expired signed bundle must be rejected without displacing the active valid authority or lowering the monotonic revision floor.",
+  "invariant": "Bundle signature plus freshness and monotonic revision",
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "stage": "Bundle signature plus freshness and monotonic revision",
+      "action": "An expired signed bundle must be rejected without displacing the active valid authority or lowering the monotonic revision floor.",
+      "endpoint": "/api/v1/reference/bundle",
+      "method": "POST",
+      "body": {
+        "expired": true
+      },
+      "expected": {
+        "http_status": 200,
+        "accepted": false,
+        "error_code": "EXPIRED_POLICY_BUNDLE",
+        "active_bundle_retained": true
+      }
+    }
+  ]
+}

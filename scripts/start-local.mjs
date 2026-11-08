@@ -97,8 +97,9 @@ export async function startSupervisor(options = {}) {
   const engineUrl = `http://${host}:${enginePort}`;
 
   // Race health check against premature engine exit
+  let engineHealth;
   try {
-    await Promise.race([
+    engineHealth = await Promise.race([
       waitForEngineHealth(engineUrl, 5000),
       exitPromise,
     ]);
@@ -158,7 +159,9 @@ export async function startSupervisor(options = {}) {
     host,
     port,
     enginePort,
+    storageDir,
     engineUrl,
+    engineHealth,
     engineProcess,
     server,
     stop,
@@ -170,8 +173,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
     const args = process.argv.slice(2);
     const options = { host: '127.0.0.1', port: '4173', enginePort: '4174', root: 'dist/web', config: 'ops/web/runtime-config.json' };
     for (let i = 0; i < args.length; i += 2) {
-      const key = args[i].slice(2);
-      if (!args[i].startsWith('--') || !Object.hasOwn(options, key) || !args[i + 1]) {
+      const key = args[i].startsWith('--') ? args[i].slice(2).replace(/-([a-z])/g, (_, letter) => letter.toUpperCase()) : '';
+      if (!key || !Object.hasOwn(options, key) || !args[i + 1]) {
         throw new Error('Usage: node scripts/start-local.mjs [--host 127.0.0.1] [--port 4173] [--engine-port 4174] [--root dist/web] [--config path]');
       }
       options[key] = args[i + 1];
@@ -183,9 +186,12 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
       host: supervisor.host,
       port: supervisor.port,
       enginePort: supervisor.enginePort,
-      engineReady: false,
-      minimalHealth: true,
-      note: 'Supervising web workspace and loopback Go engine with clean shutdown',
+      engine: supervisor.engineHealth?.engine,
+      version: supervisor.engineHealth?.version,
+      engineReady: true,
+      referenceWorkflow: true,
+      storageDir: supervisor.storageDir,
+      note: 'Supervising the web workspace, loopback Go engine, durable local storage and the owned synthetic upstream',
     }));
 
     for (const signal of ['SIGINT', 'SIGTERM']) {

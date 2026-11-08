@@ -8,11 +8,11 @@ import { request as httpRequest } from 'node:http';
 import { createWebServer } from '../../scripts/serve-web.mjs';
 import { validateRuntimeConfig } from '../../apps/web/src/lib/runtime-config.mjs';
 import { inspectJson } from '../../apps/web/src/lib/preview.mjs';
-const config = { projectId: 'test-project', apiBasePath: '/api', engineEnabled: false, maxPreviewBytes: 1048576 };
+const config = { projectId: 'test-project', apiBasePath: '/api', engineEnabled: true, maxPreviewBytes: 1048576 };
 
-test('public configuration fails closed on engine flags, external endpoints, unknown keys and project mismatch', () => {
-  assert.equal(validateRuntimeConfig(config, 'test-project').engineEnabled, false);
-  for (const patch of [{ engineEnabled: true }, { apiBasePath: 'https://outside.invalid' }, { token: 'secret' }, { maxPreviewBytes: 0 }, { maxPreviewBytes: 1048577 }, { projectId: 'another-project' }]) assert.throws(() => validateRuntimeConfig({ ...config, ...patch }, 'test-project'));
+test('public configuration fails closed on disabled engine, external endpoints, unknown keys and project mismatch', () => {
+  assert.equal(validateRuntimeConfig(config, 'test-project').engineEnabled, true);
+  for (const patch of [{ engineEnabled: false }, { apiBasePath: 'https://outside.invalid' }, { token: 'secret' }, { maxPreviewBytes: 0 }, { maxPreviewBytes: 1048577 }, { projectId: 'another-project' }]) assert.throws(() => validateRuntimeConfig({ ...config, ...patch }, 'test-project'));
 });
 test('preview rejects hostile structure, excessive UTF-8 size and excessive complexity', () => {
   for (const text of ['[]', 'null', '{', '{"__proto__":{}}', '{"deep":{"constructor":1}}']) assert.throws(() => inspectJson(text, 1024));

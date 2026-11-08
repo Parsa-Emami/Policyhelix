@@ -301,9 +301,20 @@ type StorageReadiness struct {
 type ProviderReadiness struct {
 	Ready        bool   `json:"ready"`
 	Status       string `json:"status"` // "connected", "offline", "unresponsive", "corrupted"
+	Verification string `json:"verification,omitempty"` // "http_probe", "embedded_selftest", "synthetic_local_demo", "configured_state"
 	LatencyMs    int64  `json:"latency_ms"`
 	ErrorCode    string `json:"error_code,omitempty"`
 	ErrorMessage string `json:"error_message,omitempty"`
+}
+
+// ProviderProbe is a real, runtime-observed provider check. It is used instead of a default
+// "connected" assumption whenever the engine can actually verify the provider.
+type ProviderProbe struct {
+	Ready        bool
+	Verification string
+	LatencyMs    int64
+	ErrorCode    string
+	Message      string
 }
 
 // ReadinessReport is the complete typed report returned by readiness evaluations.
@@ -420,8 +431,20 @@ func CheckStorageReadiness(storageDir string, ad *storage.Adapter) StorageReadin
 	}
 }
 
-// EvaluateReadiness evaluates readiness across storage and providers.
+// EvaluateReadiness evaluates readiness across storage and providers using configured
+// provider states. It is retained for fixtures and hermetic checks.
 func EvaluateReadiness(ctx context.Context, storageDir string, ad *storage.Adapter, providerStates map[string]string) ReadinessReport {
+	return evaluateReadiness(ctx, storageDir, ad, providerStates, nil)
+}
+
+// EvaluateReadinessWithProbes evaluates readiness using real runtime probes for any provider
+// the engine can verify. An explicit state in providerStates still takes precedence so outage
+// simulation and negative checks remain testable.
+func EvaluateReadinessWithProbes(ctx context.Context, storageDir string, ad *storage.Adapter, providerStates map[string]string, probes map[string]ProviderProbe) ReadinessReport {
+	return evaluateReadiness(ctx, storageDir, ad, providerStates, probes)
+}
+
+func evaluateReadiness(ctx context.Context, storageDir string, ad *storage.Adapter, providerStates map[string]string, probes map[string]ProviderProbe) ReadinessReport {
 	stReadiness := CheckStorageReadiness(storageDir, ad)
 
 	requiredProviders := []string{"local_opa", "self_hosted_keycloak", "owned_synthetic_upstream"}
@@ -436,6 +459,39 @@ func EvaluateReadiness(ctx context.Context, storageDir string, ad *storage.Adapt
 		state := "connected"
 		if s, ok := providerStates[p]; ok && s != "" {
 			state = s
+		}
+
+		// Real runtime probes replace the default assumption when no explicit state was supplied.
+		if state == "connected" {
+			if probe, ok := probes[p]; ok {
+				verification := probe.Verification
+				if verification == "" {
+					verification = "runtime_probe"
+				}
+				if probe.Ready {
+					providersMap[p] = ProviderReadiness{
+						Ready:        true,
+						Status:       "connected",
+						Verification: verification,
+						LatencyMs:    probe.LatencyMs,
+					}
+				} else {
+					errCode := probe.ErrorCode
+					if errCode == "" {
+						errCode = ErrCodeProviderUnavailable
+					}
+					failures = append(failures, fmt.Sprintf("%s: %s (%s)", p, errCode, probe.Message))
+					providersMap[p] = ProviderReadiness{
+						Ready:        false,
+						Status:       "offline",
+						Verification: verification,
+						LatencyMs:    probe.LatencyMs,
+						ErrorCode:    errCode,
+						ErrorMessage: probe.Message,
+					}
+				}
+				continue
+			}
 		}
 
 		switch state {

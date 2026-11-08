@@ -1,142 +1,215 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "project": "PolicyHelix",
-  "status": "planned acceptance contract; not executed domain proof",
-  "engine_implemented": false,
+  "status": "executed acceptance contract for the local clone-to-value workflow; command results and source identity live in docs/evidence/C30.json",
+  "engine_implemented": true,
   "license": "Apache-2.0",
-  "provenance": "repository-authored synthetic licensed fixtures",
-  "description": "Synthetic reference workflow defining PolicyHelix open-source clone-to-value acceptance, observable invariants and negative verification cases.",
+  "provenance": "repository-authored synthetic licensed fixtures; no third-party data, customer traffic or paid provider",
+  "description": "Six-stage local reference workflow executed against the supervised Go engine, durable local storage adapter, signed Ed25519 policy bundles and the owned synthetic upstream, including negative cases plus restart and restore.",
+  "engine": {
+    "binary": "dist/engine/policyhelix",
+    "build_command": "npm run build:engine",
+    "protocol": "http",
+    "bind": "loopback only"
+  },
+  "fixture_manifest": "tests/fixtures/policyhelix/C30/manifest.json",
+  "preserved_fixture_manifest": "tests/fixtures/policyhelix/C01/manifest.json",
   "expected_invariants": [
     "Private resources fail closed",
     "Only authenticated normalized identity enters policy",
     "Bundle signature plus freshness and monotonic revision"
   ],
+  "providers": [
+    {
+      "id": "local_opa",
+      "verification": "embedded_selftest",
+      "description": "The accepted bundle evaluator signs, loads and evaluates a real self-test bundle."
+    },
+    {
+      "id": "self_hosted_keycloak",
+      "verification": "synthetic_local_demo",
+      "description": "Local-demo identity issuer: engine-issued, fingerprint-bound, revocable sessions. A deployed Keycloak is not required for the local-demo profile; this limitation is recorded in the C30 evidence."
+    },
+    {
+      "id": "owned_synthetic_upstream",
+      "verification": "http_probe",
+      "description": "Owned synthetic analytics upstream on loopback, reachable only through a verified gateway origin proof."
+    }
+  ],
   "negative_uat": [
-    "fixture policy در simulator نتیجهٔ expected بدهد و دلیل deny مشخص باشد",
-    "origin مستقیم و header جعلی identity مسیر دسترسی نسازند",
-    "decision/IdP outage، revoke و bundle قدیمی باید رفتار fail-closed مستند داشته باشند"
+    "A synthetic decision fixture produces the expected allow outcome with an explicit reason.",
+    "Spoofed identity headers and direct origin access are rejected before policy evaluation and before any upstream side effect.",
+    "Revoked sessions, unavailable providers and expired bundles fail closed without displacing the active authority."
   ],
   "steps": [
     {
       "step_id": "STEP-01",
       "action": "Simulator fixture evaluation",
-      "summary": "Evaluate synthetic authorization request against candidate policy fixture in the local simulator and produce structured decision output with explicit allow/deny reasons.",
-      "fixture_ref": "tests/fixtures/policyhelix/C01/positive-decision.json",
+      "summary": "Evaluate the frozen C01 synthetic decision fixture against the signed policy and report the expected/observed allow outcome and reason.",
+      "fixture_ref": "tests/fixtures/policyhelix/C30/positive-reference-workflow.json",
+      "engine_endpoints": [
+        "/api/v1/reference/simulate"
+      ],
       "invariants_checked": [
         "Private resources fail closed",
         "Only authenticated normalized identity enters policy"
       ],
       "expected_result": {
-        "allow": true,
-        "reasons": [
-          "policy_allow_role_operator"
-        ],
-        "obligations": []
+        "http_status": 200,
+        "expected_matched": true,
+        "observed_allow": true
       },
-      "execution_status": "planned specification; engine execution unimplemented"
+      "observed_from": "C30-POS-01:STEP-01",
+      "execution_status": "executed by scripts/clone-smoke.mjs against the live engine; results recorded in docs/evidence/C30.json"
     },
     {
       "step_id": "STEP-02",
       "action": "Sign and verify policy bundle",
-      "summary": "Package policy source into versioned signed bundle; verify Ed25519 signature, digest integrity and monotonic revision tracking.",
-      "fixture_ref": "tests/fixtures/policyhelix/C01/positive-decision.json",
+      "summary": "Build a deterministic Ed25519 signed bundle, verify the digest, activate the next monotonic revision durably and reject expired or stale candidates.",
+      "fixture_ref": "tests/fixtures/policyhelix/C30/positive-reference-workflow.json",
+      "engine_endpoints": [
+        "/api/v1/reference/bundle"
+      ],
       "invariants_checked": [
         "Bundle signature plus freshness and monotonic revision"
       ],
       "expected_result": {
-        "signature_valid": true,
+        "http_status": 200,
+        "accepted": true,
+        "signature_verified": true,
+        "durable": true,
         "monotonic_revision_enforced": true
       },
-      "execution_status": "planned specification; engine execution unimplemented"
+      "observed_from": "C30-POS-01:STEP-03",
+      "execution_status": "executed by scripts/clone-smoke.mjs against the live engine; results recorded in docs/evidence/C30.json"
     },
     {
       "step_id": "STEP-03",
       "action": "Protect owned upstream service",
-      "summary": "Route authenticated client traffic through PolicyHelix local gateway to protect a private owned upstream endpoint (dataset report).",
-      "fixture_ref": "tests/fixtures/policyhelix/C01/positive-decision.json",
+      "summary": "Route an authenticated request through the allowlisted gateway to the owned synthetic upstream and return the real upstream response.",
+      "fixture_ref": "tests/fixtures/policyhelix/C30/positive-reference-workflow.json",
+      "engine_endpoints": [
+        "/api/v1/reference/session",
+        "/api/v1/reference/proxy"
+      ],
       "invariants_checked": [
         "Private resources fail closed",
         "Only authenticated normalized identity enters policy"
       ],
       "expected_result": {
-        "proxy_allowed": true,
-        "upstream_protected": true
+        "http_status": 200,
+        "allow": true,
+        "forwarded_to_upstream": true,
+        "upstream_status_code": 200
       },
-      "execution_status": "planned specification; engine execution unimplemented"
+      "observed_from": "C30-POS-01:STEP-04",
+      "execution_status": "executed by scripts/clone-smoke.mjs against the live engine; results recorded in docs/evidence/C30.json"
     },
     {
       "step_id": "STEP-04",
       "action": "Test spoofed header and direct origin bypass",
-      "summary": "Attempt direct origin access and send spoofed identity headers (X-Remote-User: admin); assert fail-closed rejection without entering policy engine.",
-      "fixture_ref": "tests/fixtures/policyhelix/C01/invalid-spoofed-header.json",
+      "summary": "Send forged X-Remote-User/X-Forwarded-User headers through the gateway and contact the origin directly without the gateway proof; both must fail closed.",
+      "fixture_ref": "tests/fixtures/policyhelix/C30/negative-spoofed-header.json",
+      "engine_endpoints": [
+        "/api/v1/reference/spoof"
+      ],
       "invariants_checked": [
         "Private resources fail closed",
         "Only authenticated normalized identity enters policy"
       ],
       "expected_result": {
-        "allow": false,
-        "reasons": [
-          "unauthenticated_normalized_identity_required",
-          "direct_origin_blocked"
-        ],
-        "obligations": [
-          "audit_security_alert_spoofed_header"
-        ]
+        "http_status": 200,
+        "spoofed_allow": false,
+        "spoofed_forwarded_to_upstream": false,
+        "direct_origin_blocked": true,
+        "direct_origin_status_code": 403
       },
-      "execution_status": "planned specification; engine execution unimplemented"
+      "observed_from": "C30-POS-01:STEP-05",
+      "execution_status": "executed by scripts/clone-smoke.mjs against the live engine; results recorded in docs/evidence/C30.json"
     },
     {
       "step_id": "STEP-05",
       "action": "Revoke active session",
-      "summary": "Trigger session revocation epoch update in SQLite session store; subsequent requests with revoked credentials fail closed within 30 seconds bound.",
-      "fixture_ref": "tests/fixtures/policyhelix/C01/invalid-revoked-session.json",
+      "summary": "Revoke the active session epoch and prove the next request is denied within the bounded 30-second stale window without side effects.",
+      "fixture_ref": "tests/fixtures/policyhelix/C30/negative-revoked-session.json",
+      "engine_endpoints": [
+        "/api/v1/reference/revoke",
+        "/api/v1/reference/proxy"
+      ],
       "invariants_checked": [
         "Private resources fail closed",
         "Only authenticated normalized identity enters policy"
       ],
       "expected_result": {
+        "http_status": 403,
         "allow": false,
-        "reasons": [
-          "session_revoked"
-        ],
-        "obligations": [
-          "terminate_client_session"
-        ]
+        "error_code": "REVOKED_SESSION",
+        "side_effects_executed": false
       },
-      "execution_status": "planned specification; engine execution unimplemented"
+      "observed_from": "C30-NEG-03:STEP-01",
+      "execution_status": "executed by scripts/clone-smoke.mjs against the live engine; results recorded in docs/evidence/C30.json"
     },
     {
       "step_id": "STEP-06",
       "action": "Simulate decision outage and expired policy",
-      "summary": "Simulate IdP/decision engine unavailability and expired policy bundle; enforce documented fail-closed behavior.",
-      "fixture_ref": "tests/fixtures/policyhelix/C01/invalid-stale-bundle.json",
+      "summary": "Simulate decision-engine and IdP unavailability and attempt an expired bundle activation; enforce fail-closed behavior while retaining the active authority.",
+      "fixture_ref": "tests/fixtures/policyhelix/C30/negative-expired-bundle.json",
+      "engine_endpoints": [
+        "/api/v1/reference/outage",
+        "/api/v1/reference/bundle"
+      ],
       "invariants_checked": [
         "Private resources fail closed",
         "Bundle signature plus freshness and monotonic revision"
       ],
       "expected_result": {
-        "allow": false,
-        "reasons": [
-          "bundle_freshness_expired_fail_closed",
-          "decision_engine_unreachable_fail_closed"
-        ],
-        "obligations": [
-          "emit_outage_telemetry"
-        ]
+        "http_status": 200,
+        "decision_outage_allow": false,
+        "idp_outage_allow": false,
+        "expired_bundle_accepted": false,
+        "active_bundle_retained": true
       },
-      "execution_status": "planned specification; engine execution unimplemented"
+      "observed_from": "C30-POS-01:STEP-08",
+      "execution_status": "executed by scripts/clone-smoke.mjs against the live engine; results recorded in docs/evidence/C30.json"
     }
   ],
+  "required_negative_cases": [
+    "tests/fixtures/policyhelix/C30/negative-spoofed-header.json",
+    "tests/fixtures/policyhelix/C30/negative-direct-origin.json",
+    "tests/fixtures/policyhelix/C30/negative-revoked-session.json",
+    "tests/fixtures/policyhelix/C30/negative-expired-bundle.json",
+    "tests/fixtures/policyhelix/C30/negative-provider-unavailable.json",
+    "tests/fixtures/policyhelix/C30/negative-malformed-fixture.json",
+    "tests/fixtures/policyhelix/C30/negative-unavailable-runtime.json"
+  ],
+  "restart_and_restore": {
+    "fixture_ref": "tests/fixtures/policyhelix/C30/positive-restart-restore.json",
+    "description": "Restart the supervised engine against the same durable storage directory. The active bundle revision, revision floor, issued sessions and revocation epochs must remain in force; the revoked session stays denied and the still-valid session still reaches the upstream.",
+    "expected_result": {
+      "http_status": 200,
+      "status": "restored",
+      "ready": true,
+      "active_bundle_present": true,
+      "revoked_session_present": true,
+      "upstream_ready": true
+    },
+    "observed_from": "C30-POS-02:STEP-09"
+  },
+  "browser_surface": {
+    "route": "#reference",
+    "spec": "tests/browser/clone-to-value.spec.ts",
+    "description": "The same six stages are run from the browser workspace against the supervised engine."
+  },
   "clean_host_commands": [
     "git clone https://github.com/Parsa-Emami/Policyhelix.git",
     "cd Policyhelix",
     "npm run setup",
     "npm start"
   ],
-  "requires_at_C30": [
-    "real engine and required local providers",
-    "the entire workflow",
-    "restart and restore",
-    "no paid/cloud account or sibling clone"
+  "requires": [
+    "Go engine toolchain and locked Node 24 dependencies",
+    "durable local storage under .local-data",
+    "owned loopback synthetic upstream",
+    "no paid/cloud account, public domain or sibling clone"
   ]
 }

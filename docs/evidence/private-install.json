@@ -1,0 +1,60 @@
+{
+  "schema_version": 1,
+  "record_id": "private-install-c30",
+  "project": "PolicyHelix",
+  "date": "2026-11-08",
+  "commit_id": "C30",
+  "passed": true,
+  "planning_template": false,
+  "scope": "Clean source-clone installation and full local reference workflow for the local-demo profile",
+  "source_identity": "sha256:3b765c14d085e49c63b88cf3a9573235a5d7cd4303c0b989f1c9f677e1936dde",
+  "source_identity_note": "Identity of the staged source snapshot executed by npm run test:clone. Evidence files written after the run are excluded by scripts/source_identity.py.",
+  "clone": {
+    "method": "git clone --no-local --branch snapshot from a temporary bare repository advertising the exact staged tree",
+    "staged_tree": "d4f13284eac69dc9648a2c10fc0c7ef0432b1547",
+    "checkout": "temporary directory outside the repository; removed after the run",
+    "prebuilt_artifacts_reused": false,
+    "source_refs_changed": false
+  },
+  "commands": [
+    {
+      "command": "git clone --no-local --branch snapshot <temporary-bare-source> <temporary-checkout>",
+      "exit_code": 0,
+      "output": "Cloned HEAD tree equals the staged tree d4f13284eac69dc9648a2c10fc0c7ef0432b1547"
+    },
+    {
+      "command": "npm run setup",
+      "exit_code": 0,
+      "output": "npm ci --ignore-scripts --no-fund; npm run build; npm run build:engine (all succeeded inside the clone)"
+    },
+    {
+      "command": "node scripts/start-local.mjs --port <free> --engine-port <free>",
+      "exit_code": 0,
+      "output": "Supervised web workspace and loopback engine ready; local_opa, self_hosted_keycloak and owned_synthetic_upstream all connected"
+    },
+    {
+      "command": "npm run test:clone",
+      "exit_code": 0,
+      "output": "Full six-stage workflow, seven negative fixtures, restart and restore passed; details in docs/evidence/C30.json"
+    }
+  ],
+  "observed": {
+    "node": "v24.19.0",
+    "npm": "11.17.0",
+    "go": "go version go1.26.2 linux/amd64",
+    "platform": "Linux x86_64",
+    "engine_ready": true,
+    "storage_durable": true,
+    "workflow_stages_completed": 6,
+    "negative_fixtures_executed": 7,
+    "restart_restore_verified": true,
+    "active_bundle_revision_after_restart": 1,
+    "revoked_sessions_after_restart": 1,
+    "browser_acceptance_tests_passed": 36
+  },
+  "limitations": [
+    "Executed from a real git transport clone on the supported Linux development host with the documented Go and Node toolchains installed; it did not provision a separate pristine OS image.",
+    "The local-demo identity provider issues engine-local fingerprint-bound revocable sessions; it is not a running Keycloak server and does not certify the local-private profile.",
+    "coreReady and businessFeaturesCompleted remain false; C40 still requires authorized published source/artifacts and installed full-workflow proof."
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "fixture_id": "C30-NEG-03",
+  "commit_id": "C30",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "After revocation the same session must be denied within the 30-second bound with no forwarded request and no side effects.",
+  "invariant": "Private resources fail closed",
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "stage": "Private resources fail closed",
+      "action": "After revocation the same session must be denied within the 30-second bound with no forwarded request and no side effects.",
+      "endpoint": "/api/v1/reference/proxy",
+      "method": "POST",
+      "body": {
+        "session_id": "$SESSION"
+      },
+      "expected": {
+        "http_status": 403,
+        "allow": false,
+        "error_code": "REVOKED_SESSION",
+        "forwarded_to_upstream": false
+      }
+    }
+  ]
+}

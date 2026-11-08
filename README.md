@@ -5,11 +5,11 @@
 [CI source integrity and dependency updates](docs/engineering/CI_SOURCE_INTEGRITY.md)
 
 
-Open-source local-first web application under [Apache-2.0](LICENSE). **Current implementation: web foundation; complete domain workflow pending.**
+Open-source local-first web application under [Apache-2.0](LICENSE). **Current implementation: the complete local reference workflow is verified at [C30](plans/commits/C30.md); the full published OSS v1 remains the [C40](plans/commits/C40.md) evidence gate.**
 
-## Clone and run the current workspace
+## Clone and run the workspace
 
-Prerequisites: Git and Node 24.19+ within Node 24 (npm included).
+Prerequisites: Git, Node 24.19+ within Node 24 (npm included) and Go 1.26+.
 
 ```sh
 git clone https://github.com/Parsa-Emami/Policyhelix.git
@@ -18,13 +18,13 @@ npm run setup
 npm start
 ```
 
-Open http://127.0.0.1:4173. Current features are a roadmap browser and local bounded JSON structure preview. No Python, database, paid/cloud account, public domain or sibling clone is needed for this shell. It does not run the domain engine. [Clone guide](docs/engineering/CLONE_TO_RUN.md).
+Open http://127.0.0.1:4173 and select **Reference Workflow**. Setup installs the locked web dependencies, builds the web workspace and compiles the Go engine. The supervised engine runs on loopback with durable local storage, a signed Ed25519 policy bundle evaluator and an owned synthetic upstream. No paid/cloud account, public domain, database server or sibling clone is needed. The local-demo identity provider issues fingerprint-bound, revocable sessions; this is not a production security certification. [Clone guide](docs/engineering/CLONE_TO_RUN.md).
 
 ## Full product endpoint
 
 Simulator fixture -> sign/verify bundle -> protect owned upstream -> test spoofed header/direct origin -> revoke -> simulate decision/IdP outage and expired policy.
 
-[C30](plans/commits/C30.md) proves the first locally usable supported product from a clean clone, including restart/restore. [C40](plans/commits/C40.md) proves complete published OSS v1. These are future evidence gates, not current shell capability claims. [Runtime resources](ops/runtime-requirements.json).
+[C30](plans/commits/C30.md) proved the first locally usable supported product from a real clean clone, including negative cases, restart and restore (`docs/evidence/C30.json`). [C40](plans/commits/C40.md) remains the evidence gate for complete published OSS v1. [Runtime resources](ops/runtime-requirements.json).
 
 ## Implement the next commit
 

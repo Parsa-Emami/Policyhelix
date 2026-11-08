@@ -1,0 +1,28 @@
+{
+  "fixture_id": "C30-NEG-05",
+  "commit_id": "C30",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "An unavailable identity/policy provider must fail closed for private resources before forwarding or side effects.",
+  "invariant": "Private resources fail closed",
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "stage": "Private resources fail closed",
+      "action": "An unavailable identity/policy provider must fail closed for private resources before forwarding or side effects.",
+      "endpoint": "/api/v1/reference/proxy",
+      "method": "POST",
+      "body": {
+        "session_id": "$SESSION_ACTIVE",
+        "provider_state": "unavailable"
+      },
+      "expected": {
+        "http_status": 403,
+        "allow": false,
+        "error_code": "PROVIDER_UNAVAILABLE",
+        "forwarded_to_upstream": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,26 @@
+{
+  "fixture_id": "C30-NEG-02",
+  "commit_id": "C30",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "A direct request to the owned upstream without the gateway origin proof is rejected with HTTP 403 by the real loopback origin.",
+  "invariant": "Private resources fail closed",
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "stage": "Private resources fail closed",
+      "action": "A direct request to the owned upstream without the gateway origin proof is rejected with HTTP 403 by the real loopback origin.",
+      "endpoint": "/api/v1/reference/spoof",
+      "method": "POST",
+      "body": {
+        "session_id": "$SESSION_ACTIVE"
+      },
+      "expected": {
+        "http_status": 200,
+        "direct_origin_blocked": true,
+        "direct_origin_status_code": 403
+      }
+    }
+  ]
+}

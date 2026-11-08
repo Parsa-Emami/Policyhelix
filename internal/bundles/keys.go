@@ -835,6 +835,13 @@ func (m *KeyRotationManager) Evaluate(ctx context.Context, input policy.BundleEv
 	return m.actMgr.Evaluate(ctx, input)
 }
 
+// ActiveBundle returns the currently active policy bundle and whether a valid authority is in force.
+func (m *KeyRotationManager) ActiveBundle() (policy.LocalPolicyBundle, bool) {
+	m.mu.RLock()
+	defer m.mu.RUnlock()
+	return m.actMgr.Active()
+}
+
 // State returns a snapshot of the current trust key set, removed keys, and active bundle metadata.
 func (m *KeyRotationManager) State() KeyRotationState {
 	m.mu.RLock()

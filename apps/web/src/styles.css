@@ -81,3 +81,28 @@
   .form-row input,.form-row button{width:100%}
   .revocation-summary-grid{grid-template-columns:1fr}
 }
+.reference-page .page-header{margin-bottom:16px}
+.workflow-summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px}
+.workflow-summary>div{display:flex;flex-direction:column;gap:4px;border:1px solid #23354d;background:#0d1522;border-radius:10px;padding:12px 14px;min-width:0}
+.workflow-summary .metric-value{text-align:left;overflow-wrap:anywhere}
+.workflow-actions{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:18px}
+.workflow-actions .muted{margin:0}
+.workflow-note{margin:14px 0 0;overflow-wrap:anywhere}
+.workflow-providers{list-style:none;padding:0;margin:14px 0 0;display:flex;gap:18px;flex-wrap:wrap;font-size:13px;color:#b8c4d5}
+.workflow-providers li{display:flex;align-items:center;gap:8px}
+.workflow-providers .dot{margin-top:0;flex:none}
+.workflow-providers code,.result-grid code{font-family:ui-monospace,monospace;font-size:12px;color:#e2e8f0;background:#0f172a;padding:2px 6px;border-radius:4px;overflow-wrap:anywhere}
+.workflow-stages{list-style:none;padding:0;margin:0 0 24px;display:flex;flex-direction:column;gap:16px}
+.workflow-stage{border:1px solid #26344a;background:#101825;border-radius:16px;padding:22px 24px;min-width:0}
+.workflow-stage.stage-passed{border-color:#23795b}
+.workflow-stage.stage-failed{border-color:#9f1239}
+.workflow-stage-head{display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:start}
+.workflow-stage-head h3{margin:0 0 6px}
+.workflow-stage-head p{margin:0 0 4px}
+.workflow-stage-controls{display:flex;flex-direction:column;align-items:flex-end;gap:10px}
+.workflow-stage-result{margin-top:16px;border-top:1px solid #1e293b;padding-top:14px}
+.workflow-stage-result p{margin:0}
+.result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:0}
+.result-grid dt{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8}
+.result-grid dd{margin:4px 0 0;font-size:14px;color:#e2e8f0;overflow-wrap:anywhere}
+@media(max-width:760px){.workflow-stage{padding:18px}.workflow-stage-head{grid-template-columns:auto 1fr}.workflow-stage-controls{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between;width:100%}.workflow-actions{flex-direction:column;align-items:stretch}.workflow-actions button{width:100%}}

@@ -61,6 +61,14 @@ export function createWebServer({ root, config, projectId, engineUrl }) {
       }
     };
 
+    if (path === '/api/v1/reference/state' && engineUrl) {
+      return await proxyToEngine(`${engineUrl}/api/v1/reference/state`, { methods: ['GET', 'HEAD'], timeoutMs: 5000 });
+    }
+    if (path.startsWith('/api/v1/reference/') && engineUrl) {
+      const referenceRoutes = ['/api/v1/reference/simulate', '/api/v1/reference/session', '/api/v1/reference/bundle', '/api/v1/reference/proxy', '/api/v1/reference/spoof', '/api/v1/reference/revoke', '/api/v1/reference/outage'];
+      if (!referenceRoutes.includes(path)) { send(404, '{"error":"not_found"}'); return; }
+      return await proxyToEngine(`${engineUrl}${path}`, { methods: ['POST'], timeoutMs: 10000 });
+    }
     if (path === '/api/v1/runtime/evaluate-contract' && engineUrl) {
       return await proxyToEngine(`${engineUrl}/v1/runtime/evaluate-contract`);
     }

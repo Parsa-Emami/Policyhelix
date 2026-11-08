@@ -21,6 +21,7 @@ import (
 	"github.com/parsa-emami/policyhelix/internal/gateway"
 	"github.com/parsa-emami/policyhelix/internal/policy"
 	"github.com/parsa-emami/policyhelix/internal/rollout"
+	"github.com/parsa-emami/policyhelix/internal/reference"
 	"github.com/parsa-emami/policyhelix/internal/storage"
 )
 
@@ -181,6 +182,7 @@ func runServer(host string, port int, storageDir string, stopCh <-chan struct{})
 	}
 
 	var ad *storage.Adapter
+	var refRuntime *reference.Runtime
 	if strings.TrimSpace(storageDir) != "" {
 		adapter, _, err := storage.Open(storageDir)
 		if err != nil {
@@ -189,8 +191,19 @@ func runServer(host string, port int, storageDir string, stopCh <-chan struct{})
 		ad = adapter
 		defer ad.Close()
 
-		defaultKeyRotationManager = bundles.NewKeyRotationManagerFromAdapter(ad, nil)
+		trusted, keyErr := reference.TrustedKey()
+		if keyErr != nil {
+			return fmt.Errorf("failed to derive the local reference trust anchor: %w", keyErr)
+		}
+		defaultKeyRotationManager = bundles.NewKeyRotationManagerFromAdapter(ad, bundles.NewKeyring(trusted))
 		_ = defaultKeyRotationManager.Restore(context.Background())
+
+		runtime, rtErr := reference.NewRuntime(ad, storageDir, defaultKeyRotationManager)
+		if rtErr != nil {
+			return fmt.Errorf("failed to initialize the reference workflow runtime: %w", rtErr)
+		}
+		refRuntime = runtime
+		defer refRuntime.Close()
 	}
 
 	addr := fmt.Sprintf("%s:%d", host, port)
@@ -203,7 +216,7 @@ func runServer(host string, port int, storageDir string, stopCh <-chan struct{})
 	actualPort := listener.Addr().(*net.TCPAddr).Port
 
 	server := &http.Server{
-		Handler:      setupRouter(ad),
+		Handler:      setupRouter(ad, refRuntime),
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  30 * time.Second,

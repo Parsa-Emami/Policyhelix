@@ -14,12 +14,14 @@ import (
 	"github.com/parsa-emami/policyhelix/internal/contracts"
 	"github.com/parsa-emami/policyhelix/internal/gateway"
 	"github.com/parsa-emami/policyhelix/internal/policy"
+	"github.com/parsa-emami/policyhelix/internal/reference"
 	"github.com/parsa-emami/policyhelix/internal/rollout"
 	"github.com/parsa-emami/policyhelix/internal/storage"
 )
 
-func setupRouter(ad *storage.Adapter) *http.ServeMux {
+func setupRouter(ad *storage.Adapter, refRuntime *reference.Runtime) *http.ServeMux {
 	mux := http.NewServeMux()
+	reference.RegisterRoutes(mux, refRuntime)
 
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
 		if r.Method != http.MethodGet && r.Method != http.MethodHead {
@@ -61,6 +63,13 @@ func setupRouter(ad *storage.Adapter) *http.ServeMux {
 			ad = nil
 		}
 
+		if refRuntime != nil {
+			rep := gateway.EvaluateReadinessWithProbes(r.Context(), storageDir, ad, providerStates, refRuntime.ReferenceProviderProbes(r.Context()))
+			w.WriteHeader(rep.StatusCode)
+			_ = json.NewEncoder(w).Encode(rep)
+			return
+		}
+
 		rep := gateway.EvaluateReadiness(r.Context(), storageDir, ad, providerStates)
 		w.WriteHeader(rep.StatusCode)
 		_ = json.NewEncoder(w).Encode(rep)
@@ -85,6 +94,8 @@ func setupRouter(ad *storage.Adapter) *http.ServeMux {
 			"status":                    "ready",
 			"engine":                    EngineName,
 			"version":                   EngineVersion,
+			"engineReady":               refRuntime != nil,
+			"referenceWorkflow":         refRuntime != nil,
 			"businessFeaturesCompleted": false,
 			"invariants":                Invariants,
 		})
@@ -105,6 +116,24 @@ func setupRouter(ad *storage.Adapter) *http.ServeMux {
 			return
 		}
 
+		providers := map[string]string{
+			"local_opa":                "not_connected",
+			"self_hosted_keycloak":     "not_connected",
+			"owned_synthetic_upstream": "not_connected",
+		}
+		if refRuntime != nil {
+			for _, p := range refRuntime.ReadinessProviders(r.Context(), true) {
+				name := "local_opa"
+				switch p.Verification {
+				case "synthetic_local_demo":
+					name = "self_hosted_keycloak"
+				case "http_probe":
+					name = "owned_synthetic_upstream"
+				}
+				providers[name] = p.Status
+			}
+		}
+
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusOK)
 		_ = json.NewEncoder(w).Encode(StatusResponse{
@@ -114,12 +143,8 @@ func setupRouter(ad *storage.Adapter) *http.ServeMux {
 			Loopback:                  true,
 			CoreReady:                 false,
 			BusinessFeaturesCompleted: false,
-			Providers: map[string]string{
-				"local_opa":                "not_connected",
-				"self_hosted_keycloak":     "not_connected",
-				"owned_synthetic_upstream": "not_connected",
-			},
-			Invariants: Invariants,
+			Providers:                 providers,
+			Invariants:                Invariants,
 		})
 	})
 

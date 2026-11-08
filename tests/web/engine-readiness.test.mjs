@@ -7,7 +7,7 @@ import { join } from 'node:path';
 import { once } from 'node:events';
 import { createWebServer } from '../../scripts/serve-web.mjs';
 
-const config = { projectId: 'test-project', apiBasePath: '/api', engineEnabled: false, maxPreviewBytes: 1048576 };
+const config = { projectId: 'test-project', apiBasePath: '/api', engineEnabled: true, maxPreviewBytes: 1048576 };
 
 test('C29: Web health vs engine readiness separation and secret-redacted diagnostics proxying', async t => {
   const dir = await mkdtemp(join(tmpdir(), 'web-readiness-'));

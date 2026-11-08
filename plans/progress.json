@@ -1,7 +1,7 @@
 {
   "version": "0.0.0",
   "project": "PolicyHelix",
-  "readiness": "WEB_FOUNDATION",
+  "readiness": "LOCAL_REFERENCE_WORKFLOW_VERIFIED",
   "market_validation": "UNVALIDATED",
   "commits": [
     {
@@ -265,13 +265,14 @@
       "source_identity": "sha256:1fe0d85e823483e92d2990a39240a7e104fe99ed1dd353c8af54d7f22f64e71f",
       "notes": "Engine readiness and redacted diagnostics implemented in internal/gateway/diagnostics.go; storage and required provider (OPA, Keycloak, Upstream) outage visibility and fail-closed 503 errors; ring-buffered telemetry bounded at 100 entries and 4KB message limit; automatic Bearer/JWT/cookie/sentinel credential scrubbing; /readyz and /api/v1/runtime/readiness deep inspection; ops/diagnostics.md, tests/web/engine-readiness.test.mjs, and tests/readiness_test.go verified; Requirement N29 verified."
     },
-
     {
       "id": "C30",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C30.json"
+      ],
+      "source_identity": "sha256:3b765c14d085e49c63b88cf3a9573235a5d7cd4303c0b989f1c9f677e1936dde",
+      "notes": "Clean-clone local reference workflow implemented in internal/reference/reference.go and internal/gateway/live.go; six executed stages, signed Ed25519 bundle activation, owned loopback upstream protection, spoofed-header/direct-origin rejection, bounded revocation, outage/expired-bundle fail-closed, seven required negative fixtures, durable restart/restore and browser acceptance verified through scripts/clone-smoke.mjs and tests/browser/clone-to-value.spec.ts; Requirement N30 verified."
     },
     {
       "id": "C31",
