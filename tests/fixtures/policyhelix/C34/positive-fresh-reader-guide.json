@@ -1,0 +1,55 @@
+{
+  "schema_version": 1,
+  "guide_id": "policyhelix-user-guide",
+  "title": "PolicyHelix User Guide",
+  "target_audience": "Fresh readers, local developers, and policy operators",
+  "prerequisites": [
+    "git",
+    "node >= 24.19.0 < 25",
+    "go >= 1.26"
+  ],
+  "core_task_steps": [
+    {
+      "step": 1,
+      "name": "Clone Repository",
+      "command": "git clone https://github.com/Parsa-Emami/Policyhelix.git && cd Policyhelix"
+    },
+    {
+      "step": 2,
+      "name": "Setup & Bootstrap",
+      "command": "npm run setup"
+    },
+    {
+      "step": 3,
+      "name": "Start Supervised Engine",
+      "command": "npm start"
+    },
+    {
+      "step": 4,
+      "name": "Execute Reference Workflow",
+      "url": "http://127.0.0.1:4173",
+      "stages": [
+        "Simulator Fixture",
+        "Sign & Verify Bundle",
+        "Protect Upstream",
+        "Spoofed Header / Direct Origin Rejection",
+        "Session Revocation",
+        "Outage & Expired Policy Fail-Closed"
+      ]
+    }
+  ],
+  "required_sections": [
+    "installation",
+    "source_builds",
+    "licenses",
+    "data_storage",
+    "limits",
+    "privacy",
+    "recovery",
+    "support",
+    "vulnerability_reporting"
+  ],
+  "external_cloud_required": false,
+  "paid_entitlements_required": false,
+  "local_first_loopback_only": true
+}

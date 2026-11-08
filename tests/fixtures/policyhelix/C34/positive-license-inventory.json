@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "project": "PolicyHelix",
+  "project_license": "Apache-2.0",
+  "spdx_identifier": "Apache-2.0",
+  "license_file": "LICENSE",
+  "notice_file": "NOTICE",
+  "third_party_notices": "THIRD_PARTY_NOTICES.md",
+  "dependencies": [
+    {
+      "name": "github.com/open-policy-agent/opa",
+      "license": "Apache-2.0",
+      "scope": "policy evaluation"
+    },
+    {
+      "name": "github.com/mattn/go-sqlite3",
+      "license": "MIT",
+      "scope": "local state store"
+    },
+    {
+      "name": "react",
+      "license": "MIT",
+      "scope": "browser UI"
+    },
+    {
+      "name": "react-dom",
+      "license": "MIT",
+      "scope": "browser UI DOM rendering"
+    },
+    {
+      "name": "vite",
+      "license": "MIT",
+      "scope": "web build toolchain"
+    },
+    {
+      "name": "typescript",
+      "license": "Apache-2.0",
+      "scope": "typechecking"
+    },
+    {
+      "name": "@playwright/test",
+      "license": "Apache-2.0",
+      "scope": "browser integration tests"
+    }
+  ],
+  "proprietary_components_count": 0,
+  "commercial_licenses_required": false
+}

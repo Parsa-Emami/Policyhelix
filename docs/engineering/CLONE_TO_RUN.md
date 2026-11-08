@@ -1,8 +1,8 @@
-# PolicyHelix: clone to run
+# PolicyHelix: Clone to Run
 
-## Runnable today
+## 1. Runnable Today: Fresh Reader Quickstart
 
-Install Git, Node 24.19+ within Node 24 (npm bundled) and Go 1.26+, then:
+Install prerequisites: Git, Node 24.19+ within Node 24 (npm bundled) and Go 1.26+, then execute:
 
 ```sh
 git clone https://github.com/Parsa-Emami/Policyhelix.git
@@ -11,11 +11,49 @@ npm run setup
 npm start
 ```
 
-Open http://127.0.0.1:4173 and select **Reference Workflow**. Setup installs the committed web lockfile with lifecycle scripts disabled, stops on errors, builds the web workspace and compiles `dist/engine/policyhelix`. `npm start` supervises the loopback Go engine, durable local storage under `.local-data` and an owned synthetic upstream; no second terminal, database server, cloud account or public domain is needed. The browser runs the six-stage reference workflow: simulator fixture, signed bundle activation, protected upstream, spoofed-header/direct-origin rejection, revocation, and outage/expired-policy fail-closed behavior.
+Open http://127.0.0.1:4173 and select **Reference Workflow**.
 
-`npm run setup -- --check` shows preparation without changes. `--skip-install` builds using already installed dependencies. `npm run doctor` reports actual web/core state. `npm run release:check` deliberately exits 2 until full evidence is ready. Ctrl+C stops the current web process. Ports can be selected with `npm start -- --port 4301` when running multiple projects.
+### Bootstrap & Supervision Overview
+- `npm run setup` installs the committed web lockfile with lifecycle scripts disabled, stops on errors, builds the web workspace, and compiles `dist/engine/policyhelix` from local Go source.
+- `npm start` supervises the loopback Go engine, durable local storage under `.local-data/`, and an owned synthetic upstream. No second terminal, database server, cloud account, or public domain is needed.
+- The browser runs the six-stage reference workflow: simulator fixture, signed bundle activation, protected upstream, spoofed-header/direct-origin rejection, revocation, and outage/expired-policy fail-closed behavior.
+- `npm run setup -- --check` shows preparation without changes.
+- `npm run setup -- --skip-install` builds using already installed dependencies.
+- `npm run doctor` reports actual web/core state.
+- `npm run release:check` deliberately exits 2 until full evidence is ready.
+- Ports can be selected with `npm start -- --port 4301` when running multiple local projects.
 
-## Verified local-demo scope
+For a comprehensive user walkthrough, consult the **[User Guide](file:///home/amirreza/Desktop/Projects/Policyhelix/docs/release/USER_GUIDE.md)**.
+
+---
+
+## 2. Independent Source Builds
+
+PolicyHelix does not rely on opaque binary blobs or remote build pipelines. You can compile each component from scratch:
+
+```sh
+# 1. Compile the Go policy engine binary
+npm run build:engine
+# Executable written to dist/engine/policyhelix
+
+# 2. Compile the React 19 web client
+npm run build
+# Production assets written to dist/web/
+
+# 3. Create independent source archive
+npm run package:source
+# Archive written to dist/release/policyhelix-source.tar.gz
+
+# 4. Generate full distributable package with SBOM and checksums
+npm run package
+# Release outputs written to dist/release/
+```
+
+All build targets execute completely offline once toolchain dependencies are cached.
+
+---
+
+## 3. Verified Local-Demo Scope
 
 The same clone/setup/start sequence prepares and supervises the Go engine and its local resources, as verified by `npm run test:clone` and `docs/evidence/C30.json`. No second undocumented terminal, paid account, sibling clone or owned public domain is used. C31 supplies convenience artifacts plus a documented source-build alternative; downloads may be needed to prepare resources, and user payloads are not sent to a compulsory proprietary service. No global runtime install, system trust change or user data deletion occurs implicitly.
 
@@ -23,7 +61,34 @@ Local resources: embedded signed-bundle policy evaluator, a store-round-trip ide
 
 `local-demo` uses synthetic fixtures and isolated development providers; the identity provider issues engine-local, fingerprint-bound, revocable sessions instead of running Keycloak. `local-private` requires real identity/permission, provider durability, revocation and restore evidence before sensitive use. A development provider mode never becomes a production vault/gateway by relabeling it.
 
-## Checks
+---
+
+## 4. Local Data Durability, Limits & Recovery
+
+All runtime state is strictly confined to `.local-data/`:
+- **SQLite Database (`.local-data/store.db`):** Tracks session epochs, bundle revisions, and verification states with WAL durability.
+- **Redacted Audit Log (`.local-data/audit.log`):** Emits structured events with credentials and tokens masked.
+- **Crash Recovery:** Atomic writes and staged updates prevent partial state corruption during system crash or power outage.
+- **Forward Repair:** In the event of disk recovery, restore valid records forward and replay missing events; never overwrite newer accepted state with an older backup.
+- **Operational Limits:**
+  - Decision latency deadline: `<= 200 ms`.
+  - Session revocation propagation bound: `<= 30 s`.
+  - Hardware baseline: 2 vCPU, 4096 MiB RAM, 10240 MiB free disk.
+
+---
+
+## 5. Network Boundaries & Private Hosting
+
+Per Task C32 (Requirement N32), local operation has **zero public domain or public DNS requirements**. The web workspace and loopback Go engine bind strictly to `127.0.0.1` and `::1`.
+
+- **Host validation:** Rejects external or untrusted `Host` headers (`403 {"error":"invalid_host"}`) to defend against DNS-rebinding.
+- **Cross-origin defense:** Cross-origin API requests from untrusted origins are rejected with `403 {"error":"invalid_origin"}`.
+- **Cache boundaries:** All dynamic and API responses strictly return `Cache-Control: no-store`; only fingerprinted static assets in `/assets/` are cached immutably.
+- **Optional private hosting:** For intranet, VPN, or private subnet deployments behind an Nginx TLS reverse proxy, consult [infra/deployment.md](../../infra/deployment.md) and [WEB_RUNBOOK.md](WEB_RUNBOOK.md). Stripped ingress headers (`X-Remote-User`, `X-Forwarded-User`) ensure untrusted identities cannot be injected.
+
+---
+
+## 6. Verification Checks
 
 ```sh
 npm run check
@@ -35,11 +100,8 @@ npm run doctor
 
 `npm run test:clone` performs a real local Git transport clone of the staged/committed source, runs `npm run setup`, starts the supervised engine, verifies real storage/provider readiness, executes every step of `tests/scenarios/clone-to-value.json` (six workflow stages plus seven negative fixtures), restarts the supervisor against the same durable storage and proves the revoked session stays denied while a valid session still reaches the upstream. `tests/browser/clone-to-value.spec.ts` runs the same six stages through the browser workspace. C30 evidence is recorded in `docs/evidence/C30.json`; C40 still requires authorized published-source and installed full-workflow proof.
 
-## Network boundaries & private hosting
+---
 
-Per Task C32 (Requirement N32), local operation has **zero public domain or public DNS requirements**. The web workspace and loopback Go engine bind strictly to `127.0.0.1` and `::1`.
+## 7. Security & Vulnerability Reporting
 
-- **Host validation:** Rejects external or untrusted `Host` headers (`403 {"error":"invalid_host"}`) to defend against DNS-rebinding.
-- **Cross-origin defense:** Cross-origin API requests from untrusted origins are rejected with `403 {"error":"invalid_origin"}`.
-- **Cache boundaries:** All dynamic and API responses strictly return `Cache-Control: no-store`; only fingerprinted static assets in `/assets/` are cached immutably.
-- **Optional private hosting:** For intranet, VPN, or private subnet deployments behind an Nginx TLS reverse proxy, consult [infra/deployment.md](../../infra/deployment.md) and [WEB_RUNBOOK.md](WEB_RUNBOOK.md). Stripped ingress headers (`X-Remote-User`, `X-Forwarded-User`) ensure untrusted identities cannot be injected.
+Security disclosures follow the confirmed private reporting route in **[SECURITY.md](../../SECURITY.md)** (GitHub Private Vulnerability Reporting or `security@policyhelix.org`).

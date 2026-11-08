@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "case_id": "negative-private-fail-closed",
+  "description": "Private resources fail closed under all unauthenticated, spoofed, or interrupted requests",
+  "scenarios": [
+    {
+      "scenario": "missing_authorization_header",
+      "expected_status": 401,
+      "expected_allow": false
+    },
+    {
+      "scenario": "untrusted_ingress_header_spoofing",
+      "header": "X-Remote-User: admin",
+      "expected_status": 401,
+      "expected_allow": false
+    },
+    {
+      "scenario": "untrusted_host_header",
+      "host": "evil.com",
+      "expected_status": 403,
+      "expected_error": "invalid_host"
+    },
+    {
+      "scenario": "cross_origin_request",
+      "origin": "http://attacker.local",
+      "expected_status": 403,
+      "expected_error": "invalid_origin"
+    },
+    {
+      "scenario": "engine_outage",
+      "expected_status": 503,
+      "expected_allow": false
+    }
+  ]
+}

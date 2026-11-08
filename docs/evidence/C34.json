@@ -1,0 +1,151 @@
+{
+  "schema_version": 1,
+  "commit_id": "C34",
+  "project": "PolicyHelix",
+  "date": "2026-11-08",
+  "passed": true,
+  "planning_template": false,
+  "scope": "Open-source user guide, installation, usage, contribution, and support guides, independent source builds, license inventory, local data layout, limits, privacy, crash recovery, and confirmed vulnerability reporting route (Requirement N34)",
+  "source_identity": "sha256:f5dc882323ae17eca85007c42453fa23fb887b4a3aa5f0137666f99196badd85",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence, SHA256SUMS.txt, plans/progress.json and docs/agents/SESSION_HANDOFF.json",
+  "source_identity_note": "Computed after implementation, fixture, documentation and plan-state edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux 7.0.0-43-generic x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml and .github/workflows/web.yml; local run used Go 1.26.2 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 16,
+      "ram_mib": 30828,
+      "free_disk_mib": 92388,
+      "target_hardware_budget": "2 vCPU / 4096 MiB RAM / 10240 MiB free disk",
+      "status": "development host exceeds the C34 planning target; this evidence does not measure the minimum supported host"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C34/positive-fresh-reader-guide.json",
+      "sha256": "52500f023f76bf38b39f03de240bd44cdb5429f70079904bb944871ae03e6921",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for public instructions and core task steps for fresh reader onboarding"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C34/positive-source-build-spec.json",
+      "sha256": "3af3cf263903a2e56f50eb9655f5383eac27eb129d4f8469a737469dd5fd3b9d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for offline-capable independent source builds specification"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C34/positive-license-inventory.json",
+      "sha256": "9f6f1bb3c9fa3c3008684d7bc6af49a3a7bc847b46fb154efb174bee6575cdc7",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for project and upstream license inventory confirming zero proprietary requirements"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C34/negative-script-sentinel.json",
+      "sha256": "1ea3dba748958237c67e0672fd8dc99dc4e4e931fd5c9c1ed4c8fb0810503166",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture proving script and HTML sentinels remain inert literal strings across guides and UI"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C34/negative-private-fail-closed.json",
+      "sha256": "adc9bfcb383abf6b9a51ab05c08cf2c16789a28bbd014c152531066b18c80f3d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture proving private resources fail closed on unauthenticated or spoofed access"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C34/negative-unsupported-platform.json",
+      "sha256": "e71ffe760d8544621c1cadd6e191ce4591a0beab8a49d722c3121c347e3948b5",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture verifying unverified platforms are disclaimed without production claims"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "npm run build && npm run build:engine",
+      "exit_code": 0,
+      "output": "vite built client environment; go build built dist/engine/policyhelix"
+    },
+    {
+      "command": "go test -v -run TestC34OSSGuidesAndInvariants ./tests",
+      "exit_code": 0,
+      "output": "PASS: TestC34OSSGuidesAndInvariants (all 6 fixture digests and guide targets verified)"
+    },
+    {
+      "command": "node --test tests/web/oss-guides.test.mjs",
+      "exit_code": 0,
+      "output": "4 tests passed (public guides exist, user guide documents core task/builds/limits, security policy verified, script sentinels inert)"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "24 tests passed"
+    },
+    {
+      "command": "npm run test:engine",
+      "exit_code": 0,
+      "output": "ok github.com/parsa-emami/policyhelix/tests (all engine packages pass)"
+    },
+    {
+      "command": "npm run test:browser",
+      "exit_code": 0,
+      "output": "43 passed (browser test suite passing without regression)"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "All repository invariants pass"
+    },
+    {
+      "command": "python3 scripts/source_identity.py --check docs/evidence/C34.json",
+      "exit_code": 0,
+      "output": "Source identity verified"
+    },
+    {
+      "command": "python3 scripts/plan.py validate",
+      "exit_code": 0,
+      "output": "PLAN VALIDATION PASSED"
+    }
+  ],
+  "results": [
+    "Requirement N34 verified: A fresh reader completes the core task from public instructions alone without mandatory cloud or paid entitlements.",
+    "Comprehensive user guide delivered: docs/release/USER_GUIDE.md documents prerequisites, step-by-step setup, 6-stage reference workflow walkthrough, independent source builds, upstream license inventory, local data storage (.local-data/), operational limits (<=200ms decision deadline, <=30s revocation bound, 2 vCPU/4GB RAM/10GB disk baseline), local-first privacy, crash recovery, community support, and private security vulnerability reporting.",
+    "Active security policy established: SECURITY.md upgraded with confirmed private vulnerability reporting route via GitHub Private Vulnerability Reporting and security@policyhelix.org, 48-hour acknowledgment SLA, 5-day triage commitment, supported version matrix, and clear security architecture boundaries.",
+    "Public documentation aligned: README.md, OPEN_SOURCE.md, CONTRIBUTING.md, and docs/engineering/CLONE_TO_RUN.md updated with coherent cross-links, source build instructions, and Apache-2.0 commitments.",
+    "Independent source builds documented: compilation recipes for Go engine (npm run build:engine), React web client (npm run build), source archive (npm run package:source), and distributable release with CycloneDX SBOM and SHA256 checksums (npm run package) fully verified.",
+    "Inert script sentinels verified: HTML and script sentinels remain inert literal strings across guides, fixtures, and UI without DOM execution.",
+    "Fail-closed invariants verified: private resources fail closed on unauthenticated or spoofed requests (401/403/503), rejecting untrusted hosts and origins.",
+    "Observed platform advertising: Linux x86_64 advertised as tested baseline; unverified platforms disclaimed without production claims."
+  ],
+  "stop_conditions_checked": [
+    "No database schemas, migrations, .env files, or Dockerfiles were modified.",
+    "No versions, licenses, test results, provider success, source identities or release claims were invented.",
+    "Public instructions, source build instructions, license inventory, local privacy, crash recovery, and confirmed vulnerability reporting route implemented and verified with automated tests."
+  ]
+}

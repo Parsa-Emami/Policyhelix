@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "case_id": "negative-unsupported-platform",
+  "description": "Platforms outside advertised Linux x86_64 baseline must explicitly disclaim verified support and fail closed or warn",
+  "advertised_platforms": [
+    {
+      "os": "linux",
+      "arch": "amd64",
+      "status": "verified_supported"
+    }
+  ],
+  "unsupported_or_experimental_platforms": [
+    {
+      "os": "windows",
+      "arch": "amd64",
+      "status": "unverified_experimental",
+      "support_claim": false
+    },
+    {
+      "os": "darwin",
+      "arch": "arm64",
+      "status": "unverified_experimental",
+      "support_claim": false
+    }
+  ],
+  "policy": "Never advertise unverified platforms as production supported"
+}

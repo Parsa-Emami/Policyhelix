@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "case_id": "negative-script-sentinel",
+  "description": "Script and HTML sentinels must remain inert strings across documentation examples, policy inputs, and UI renderings",
+  "sentinels": [
+    "<script>alert('xss-sentinel')</script>",
+    "<img src=x onerror=alert('xss-img')>",
+    "<iframe src=\"javascript:alert('xss-iframe')\"></iframe>",
+    "javascript:void(0)"
+  ],
+  "expected_behavior": {
+    "execution_prevented": true,
+    "rendered_as_literal_text": true,
+    "raw_html_injection": false,
+    "csp_enforced": true
+  }
+}

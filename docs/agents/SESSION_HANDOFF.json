@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-08",
   "base_commit": "78a555c",
-  "scope": "Task C33: test(ux): verify keyboard mobile failures and compatible updates (Requirement N33)",
+  "scope": "Task C34: docs(oss): complete installation usage contribution and support guides (Requirement N34)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -36,24 +36,25 @@
     "C30",
     "C31",
     "C32",
-    "C33"
+    "C33",
+    "C34"
   ],
   "commands": [
     "npm run validate:plan",
     "npm run build && npm run build:engine",
-    "go test -v -run TestC33UXFixturesAndManifest ./tests",
-    "go test -count=1 ./...",
+    "go test -v -run TestC34OSSGuidesAndInvariants ./tests",
+    "node --test tests/web/oss-guides.test.mjs",
     "npm test",
-    "npm run test:browser -- tests/browser/full-workflow-accessibility.spec.ts",
+    "npm run test:engine",
     "npm run test:browser",
     "python3 scripts/validate_repo.py",
-    "python3 scripts/source_identity.py --check docs/evidence/C33.json"
+    "python3 scripts/source_identity.py --check docs/evidence/C34.json"
   ],
-  "validation_results": "docs/evidence/C33.json",
-  "final_source_identity": "sha256:07300ea2707ceba654572bbd841008225d5e54bbcc6b299e0de781488d603e8e",
+  "validation_results": "docs/evidence/C34.json",
+  "final_source_identity": "sha256:f5dc882323ae17eca85007c42453fa23fb887b4a3aa5f0137666f99196badd85",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C34",
+  "next_task": "C35",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C33 verified. Reference workflow accessibility, sequential keyboard navigation, responsive mobile 360px and desktop 1440px viewports, accessible table equivalent representation, error resilience (empty, invalid, interrupted, provider-outage), N-1 data export compatibility, and observed platform advertising (Linux x86_64) are implemented and verified. Validated via tests/browser/full-workflow-accessibility.spec.ts, tests/c33_ux_fixtures_test.go, machine contracts docs/evidence/ux.json and docs/evidence/C33.json. Ready for C34."
+  "continuation": "Task C34 verified. Comprehensive OSS installation, usage, contribution, and support guides, user guide (docs/release/USER_GUIDE.md), confirmed private vulnerability reporting route in SECURITY.md (GitHub Private Vulnerability Reporting and security@policyhelix.org with 48h SLA), independent offline source build recipes, upstream license inventory, local data layout (.local-data/), operational limits (<=200ms decision deadline, 2 vCPU/4GB RAM/10GB disk), loopback-only privacy, crash recovery and forward repair, and community support channels are documented and verified. Validated via tests/fixtures/policyhelix/C34/, tests/c34_oss_guides_test.go, tests/web/oss-guides.test.mjs, and machine evidence docs/evidence/C34.json. Ready for C35."
 }

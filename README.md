@@ -2,14 +2,17 @@
 
 [![Source](https://github.com/Parsa-Emami/Policyhelix/actions/workflows/contracts.yml/badge.svg?branch=main)](https://github.com/Parsa-Emami/Policyhelix/actions/workflows/contracts.yml?query=branch%3Amain) [![Plan](https://github.com/Parsa-Emami/Policyhelix/actions/workflows/plan.yml/badge.svg?branch=main)](https://github.com/Parsa-Emami/Policyhelix/actions/workflows/plan.yml?query=branch%3Amain) [![Web](https://github.com/Parsa-Emami/Policyhelix/actions/workflows/web.yml/badge.svg?branch=main)](https://github.com/Parsa-Emami/Policyhelix/actions/workflows/web.yml?query=branch%3Amain)
 
-[CI source integrity and dependency updates](docs/engineering/CI_SOURCE_INTEGRITY.md)
+[User Guide](docs/release/USER_GUIDE.md) · [Clone & Run Guide](docs/engineering/CLONE_TO_RUN.md) · [Security Policy](SECURITY.md) · [Open Source Contract](OPEN_SOURCE.md) · [Contributing](CONTRIBUTING.md) · [CI Source Integrity](docs/engineering/CI_SOURCE_INTEGRITY.md)
 
+---
 
-Open-source local-first web application under [Apache-2.0](LICENSE). **Current implementation: the complete local reference workflow is verified at [C30](plans/commits/C30.md); the full published OSS v1 remains the [C40](plans/commits/C40.md) evidence gate.**
+Open-source local-first authorization engine and browser workspace under [Apache-2.0](LICENSE). **Current implementation: the complete local reference workflow is verified at [C30](plans/commits/C30.md); the full published OSS v1 remains the [C40](plans/commits/C40.md) evidence gate.**
 
-## Clone and run the workspace
+No paid accounts, compulsory cloud services, external databases, or proprietary dependencies are required.
 
-Prerequisites: Git, Node 24.19+ within Node 24 (npm included) and Go 1.26+.
+## Quickstart: Clone and Run the Workspace
+
+Prerequisites: Git, Node 24.19+ within Node 24 (npm included), and Go 1.26+.
 
 ```sh
 git clone https://github.com/Parsa-Emami/Policyhelix.git
@@ -18,23 +21,60 @@ npm run setup
 npm start
 ```
 
-Open http://127.0.0.1:4173 and select **Reference Workflow**. Setup installs the locked web dependencies, builds the web workspace and compiles the Go engine. The supervised engine runs on loopback with durable local storage, a signed Ed25519 policy bundle evaluator and an owned synthetic upstream. No paid/cloud account, public domain, database server or sibling clone is needed. The local-demo identity provider issues fingerprint-bound, revocable sessions; this is not a production security certification. [Clone guide](docs/engineering/CLONE_TO_RUN.md).
+Open http://127.0.0.1:4173 and select **Reference Workflow**.
 
-## Full product endpoint
+- `npm run setup` validates the toolchain, installs locked dependencies with lifecycle scripts disabled, compiles the Go engine binary (`dist/engine/policyhelix`), and builds the web client.
+- `npm start` supervises the Go engine on loopback (`127.0.0.1:4174`), mounts durable local SQLite storage in `.local-data/`, and runs the owned synthetic upstream.
+- For complete step-by-step instructions, see the **[User Guide](docs/release/USER_GUIDE.md)** and **[Clone Guide](docs/engineering/CLONE_TO_RUN.md)**.
 
-Simulator fixture -> sign/verify bundle -> protect owned upstream -> test spoofed header/direct origin -> revoke -> simulate decision/IdP outage and expired policy.
+## Independent Source Builds
 
-[C30](plans/commits/C30.md) proved the first locally usable supported product from a real clean clone, including negative cases, restart and restore (`docs/evidence/C30.json`). [C40](plans/commits/C40.md) remains the evidence gate for complete published OSS v1. [Runtime resources](ops/runtime-requirements.json).
+PolicyHelix can be compiled and verified directly from source without pre-built binaries:
 
-## Implement the next commit
+```sh
+# Compile Go engine binary
+npm run build:engine
+
+# Compile React web client
+npm run build
+
+# Package offline source archive
+npm run package:source
+
+# Generate full distributable release with SBOM and checksums
+npm run package
+```
+
+All build and test steps are offline-capable once initial dependencies are cached.
+
+## 6-Stage Reference Workflow
+
+PolicyHelix provides a complete reference authorization lifecycle:
+1. **Simulator Fixture:** Deterministic policy decision evaluation against Rego rules.
+2. **Sign & Verify Bundle:** Ed25519 cryptographic bundle signing and monotonic revision checking.
+3. **Protect Owned Upstream:** Authenticated reverse proxy routing to private upstream service.
+4. **Spoofed Header / Direct Origin Rejection:** Strip unauthenticated ingress headers and reject direct origin bypass.
+5. **Session Revocation:** Epoch-based revocation enforcing fail-closed boundaries within <= 30s.
+6. **Outage & Expired Policy Fail-Closed:** Safe fallback denial (`allow: false`) during evaluator outage or bundle expiration.
+
+Available as interactive cards or an accessible semantic table equivalent, supporting full sequential keyboard navigation and report export/import.
+
+## Privacy, Limits & Local Durability
+
+- **Strict Loopback Privacy:** Binds exclusively to `127.0.0.1` and `[::1]`. Transmits zero analytics or telemetry to third parties.
+- **Durable Local Storage:** All sessions, bundles, and redacted audit logs are persisted locally in `.local-data/`.
+- **Resource Envelope:** Verified baseline target: 2 vCPU / 4096 MiB RAM / 10240 MiB disk. Decision latency deadline <= 200ms.
+- **Fail-Closed Guarantees:** Private resources default to deny on unauthenticated, malformed, or interrupted requests.
+
+## Roadmap & Development Governance
 
 ```sh
 npm run plan -- status
 npm run plan -- next
-npm run plan -- show C07
+npm run plan -- show C34
 npm run check
 ```
 
 Each [work card](plans/COMMIT_ROADMAP.md) specifies paths, actions, resources, fixtures, acceptance, negative tests, command availability and rollback. [AGENTS.md](AGENTS.md) and [execution contract](docs/agents/EXECUTION_CONTRACT.md) let an agent resume from this repository alone. [فارسی](docs/ROADMAP_FA.md).
 
-[Open-source contract](OPEN_SOURCE.md) · [Contributing](CONTRIBUTING.md) · [Third-party inventory](THIRD_PARTY_NOTICES.md) · [Definition of done](docs/release/DEFINITION_OF_DONE.md) · [Security](SECURITY.md). No DB schema, migration, .env or Dockerfile changes are authorized.
+[User Guide](docs/release/USER_GUIDE.md) · [Open-Source Contract](OPEN_SOURCE.md) · [Contributing](CONTRIBUTING.md) · [Third-Party Inventory](THIRD_PARTY_NOTICES.md) · [Definition of Done](docs/release/DEFINITION_OF_DONE.md) · [Security](SECURITY.md). Permanent owner restrictions: No DB schema, migration, .env or Dockerfile changes are authorized.

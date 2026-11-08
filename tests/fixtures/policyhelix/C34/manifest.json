@@ -1,0 +1,43 @@
+{
+  "manifest_version": 1,
+  "commit_id": "C34",
+  "requirement": "N34",
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C34/positive-fresh-reader-guide.json",
+      "sha256": "52500f023f76bf38b39f03de240bd44cdb5429f70079904bb944871ae03e6921",
+      "kind": "positive",
+      "description": "Public instructions and core task steps for fresh reader onboarding"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C34/positive-source-build-spec.json",
+      "sha256": "3af3cf263903a2e56f50eb9655f5383eac27eb129d4f8469a737469dd5fd3b9d",
+      "kind": "positive",
+      "description": "Specification for offline-capable independent source builds"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C34/positive-license-inventory.json",
+      "sha256": "9f6f1bb3c9fa3c3008684d7bc6af49a3a7bc847b46fb154efb174bee6575cdc7",
+      "kind": "positive",
+      "description": "Project and upstream license inventory confirming zero proprietary requirements"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C34/negative-script-sentinel.json",
+      "sha256": "1ea3dba748958237c67e0672fd8dc99dc4e4e931fd5c9c1ed4c8fb0810503166",
+      "kind": "negative",
+      "description": "Script and HTML sentinels remain inert literal strings across guides and UI"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C34/negative-private-fail-closed.json",
+      "sha256": "adc9bfcb383abf6b9a51ab05c08cf2c16789a28bbd014c152531066b18c80f3d",
+      "kind": "negative",
+      "description": "Private resources fail closed on unauthenticated or spoofed access"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C34/negative-unsupported-platform.json",
+      "sha256": "e71ffe760d8544621c1cadd6e191ce4591a0beab8a49d722c3121c347e3948b5",
+      "kind": "negative",
+      "description": "Unverified platforms are disclaimed and do not receive production support claims"
+    }
+  ]
+}
