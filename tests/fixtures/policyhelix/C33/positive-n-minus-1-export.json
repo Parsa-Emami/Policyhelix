@@ -1,0 +1,54 @@
+{
+  "fixture_id": "C33-POS-N-MINUS-1-EXPORT",
+  "commit_id": "C33",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "N-1 schema version (v1) export fixture demonstrating backward-compatible workflow report ingestion and verification.",
+  "exported_at": "2026-11-07T12:00:00Z",
+  "project": "PolicyHelix",
+  "platform": "Linux x86_64",
+  "engine_version": "0.0.1",
+  "workflow": {
+    "total_stages": 6,
+    "passed_stages": 6,
+    "stages": [
+      {
+        "stage": "fixture",
+        "title": "Simulator fixture",
+        "status": "passed",
+        "result": { "fixture_id": "C01-POS-01", "expected_allow": true, "observed_allow": true }
+      },
+      {
+        "stage": "bundle",
+        "title": "Sign and verify bundle",
+        "status": "passed",
+        "result": { "accepted": true, "revision": 1, "signature_verified": true }
+      },
+      {
+        "stage": "protected",
+        "title": "Protect owned upstream",
+        "status": "passed",
+        "result": { "allow": true, "forwarded_to_upstream": true, "upstream_status_code": 200 }
+      },
+      {
+        "stage": "spoof",
+        "title": "Spoofed header and direct origin",
+        "status": "passed",
+        "result": { "spoofed_allow": false, "direct_origin_blocked": true }
+      },
+      {
+        "stage": "revoke",
+        "title": "Revoke session",
+        "status": "passed",
+        "result": { "revoked": true, "subsequent_allow": false, "stopped_within_bound": true }
+      },
+      {
+        "stage": "outage",
+        "title": "Outage and expired policy",
+        "status": "passed",
+        "result": { "decision_outage_allow": false, "idp_outage_allow": false, "active_bundle_retained": true }
+      }
+    ]
+  }
+}

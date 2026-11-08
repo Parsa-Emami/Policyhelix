@@ -294,10 +294,12 @@
     },
     {
       "id": "C33",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C33.json"
+      ],
+      "source_identity": "sha256:07300ea2707ceba654572bbd841008225d5e54bbcc6b299e0de781488d603e8e",
+      "notes": "UX, keyboard navigation, mobile 360px and desktop 1440px viewports, accessible table equivalent representation, failure resilience (empty, invalid, interrupted, provider-outage), N-1 export compatibility, and observed platform advertising implemented and verified; full reference workflow passes at 1440px desktop; zero horizontal overflow verified at 360px mobile; sequential keyboard navigation verified; accessible table equivalent view toggle verified; network interruption abort and 422 failure recovery verified; N-1 v1 report import backward compatibility verified; tampered export rejected fail-closed; observed platform (Linux x86_64) advertised with unverified platform disclaimer; verified via tests/browser/full-workflow-accessibility.spec.ts and tests/c33_ux_fixtures_test.go; Requirement N33 verified."
     },
     {
       "id": "C34",

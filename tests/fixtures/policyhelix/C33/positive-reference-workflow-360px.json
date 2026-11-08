@@ -1,0 +1,26 @@
+{
+  "fixture_id": "C33-POS-MOBILE-360",
+  "commit_id": "C33",
+  "schema_version": 2,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Mobile 360px viewport reference workflow execution constraint asserting zero root horizontal overflow and accessible touch targets.",
+  "viewport": {
+    "width": 360,
+    "height": 640,
+    "device_scale_factor": 2.0,
+    "is_mobile": true
+  },
+  "invariants": [
+    "Private resources fail closed",
+    "Only authenticated normalized identity enters policy",
+    "Bundle signature plus freshness and monotonic revision"
+  ],
+  "constraints": {
+    "max_horizontal_scroll_width": 360,
+    "min_touch_target_size_px": 36,
+    "allow_container_table_scroll": true,
+    "disallow_body_horizontal_overflow": true
+  },
+  "expected_stages": 6
+}

@@ -1,0 +1,53 @@
+{
+  "manifest_version": 1,
+  "commit_id": "C33",
+  "project": "PolicyHelix",
+  "scope": "UX, keyboard navigation, mobile failure resilience and N-1 compatibility fixtures (Requirement N33)",
+  "date": "2026-11-08",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic test fixtures; no third-party data or customer traffic",
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C33/positive-reference-workflow-360px.json",
+      "sha256": "409f7de0fd12c3aec77cc618a897c6b7b2c96daa5065d1e61dcd9b7bc22356e0",
+      "kind": "positive",
+      "description": "Mobile 360px viewport reference workflow execution constraint asserting zero root horizontal overflow and accessible touch targets."
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C33/positive-reference-workflow-1440px.json",
+      "sha256": "1ae65386e1b5a1b8bfdf52840f75b6c2e53137ca1082095f8f7e20921a55a0b5",
+      "kind": "positive",
+      "description": "Desktop 1440px viewport reference workflow execution constraint asserting full sequential keyboard navigation and wide-screen grid readability."
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C33/positive-table-equivalent.json",
+      "sha256": "02a2b73ad6c0e3457f14ca0059e53db7be132783330fedbce35f96cfcabd72e4",
+      "kind": "positive",
+      "description": "Tabular equivalent representation for the six reference workflow stages, providing WCAG-compliant accessible tabular structure alongside the card list."
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C33/positive-n-minus-1-export.json",
+      "sha256": "f36d55ea8d078089a4f0b538c862fd179f031bd6e35b080347752a4ecc377156",
+      "kind": "positive",
+      "description": "N-1 schema version (v1) export fixture demonstrating backward-compatible workflow report ingestion and verification."
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C33/negative-tampered-export.json",
+      "sha256": "f866237ec2dddff47c0670bf0d12b51d039f6f716a7498f7fbe2cff4ed6967a8",
+      "kind": "negative",
+      "description": "Tampered export fixture with invalid schema version and corrupted payload structure that must fail closed on ingestion."
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C33/negative-interrupted-workflow.json",
+      "sha256": "10c404f5ae02abf16af83e750ab98ab23591a68497610b4572068b0b598efcf0",
+      "kind": "negative",
+      "description": "Interrupted execution fixture simulating client abort or network timeout during stage execution, verifying fail-safe UI recovery."
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C33/negative-provider-outage.json",
+      "sha256": "693a86c603720838a1625b9cfbad1c71842f82b33840a6643fd3a89e0ab2638d",
+      "kind": "negative",
+      "description": "Provider outage fixture asserting fail-closed denial when the identity provider or decision engine is unreachable, while preserving active authority."
+    }
+  ]
+}

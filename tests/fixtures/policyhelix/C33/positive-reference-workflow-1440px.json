@@ -1,0 +1,25 @@
+{
+  "fixture_id": "C33-POS-DESKTOP-1440",
+  "commit_id": "C33",
+  "schema_version": 2,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Desktop 1440px viewport reference workflow execution constraint asserting full sequential keyboard navigation and wide-screen grid readability.",
+  "viewport": {
+    "width": 1440,
+    "height": 900,
+    "device_scale_factor": 1.0,
+    "is_mobile": false
+  },
+  "invariants": [
+    "Private resources fail closed",
+    "Only authenticated normalized identity enters policy",
+    "Bundle signature plus freshness and monotonic revision"
+  ],
+  "constraints": {
+    "full_keyboard_tab_order": true,
+    "side_by_side_panels": true,
+    "disallow_body_horizontal_overflow": true
+  },
+  "expected_stages": 6
+}

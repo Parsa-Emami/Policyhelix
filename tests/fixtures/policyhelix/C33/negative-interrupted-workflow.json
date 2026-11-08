@@ -1,0 +1,19 @@
+{
+  "fixture_id": "C33-NEG-INTERRUPTED-WORKFLOW",
+  "commit_id": "C33",
+  "schema_version": 2,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic negative fixture; no third-party data or real traffic",
+  "description": "Interrupted execution fixture simulating client abort or network timeout during stage execution, verifying fail-safe UI recovery.",
+  "interrupted_stage": "protected",
+  "simulated_error": {
+    "name": "AbortError",
+    "message": "The workflow stage execution was interrupted or timed out."
+  },
+  "expected_ui_state": {
+    "running_all": false,
+    "stage_outcome": "failed",
+    "alert_role": "alert",
+    "alert_message": "The reference workflow stopped at \"Protect owned upstream\": The workflow stage execution was interrupted or timed out."
+  }
+}

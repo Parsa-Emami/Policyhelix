@@ -150,20 +150,28 @@ const stageCopy: Record<StageId, { title: string; description: string; invariant
   },
 };
 
-async function callWorkflow<T>(path: string, body?: unknown, method = 'POST'): Promise<{ status: number; data: T }> {
-  const response = await fetch(path, {
-    method,
-    headers: method === 'POST' ? { 'Content-Type': 'application/json' } : undefined,
-    body: method === 'POST' ? JSON.stringify(body ?? {}) : undefined,
-    cache: 'no-store',
-  });
-  let data: T;
+async function callWorkflow<T>(path: string, body?: unknown, method = 'POST', signal?: AbortSignal): Promise<{ status: number; data: T }> {
   try {
-    data = (await response.json()) as T;
-  } catch {
-    throw new Error(`The engine returned an unreadable response (${response.status}).`);
+    const response = await fetch(path, {
+      method,
+      headers: method === 'POST' ? { 'Content-Type': 'application/json' } : undefined,
+      body: method === 'POST' ? JSON.stringify(body ?? {}) : undefined,
+      cache: 'no-store',
+      signal,
+    });
+    let data: T;
+    try {
+      data = (await response.json()) as T;
+    } catch {
+      throw new Error(`The engine returned an unreadable response (${response.status}).`);
+    }
+    return { status: response.status, data };
+  } catch (reason) {
+    if (reason instanceof Error && (reason.name === 'AbortError' || reason.message.includes('interrupted') || reason.message.includes('abort') || reason.message.includes('Failed to fetch') || reason.message.includes('NetworkError'))) {
+      throw new Error('The workflow stage execution was interrupted or timed out.');
+    }
+    throw reason;
   }
-  return { status: response.status, data };
 }
 
 function shortId(value?: string) {
@@ -204,7 +212,9 @@ export function ReferenceWorkflow() {
     fixture: 'idle', bundle: 'idle', protected: 'idle', spoof: 'idle', revoke: 'idle', outage: 'idle',
   });
   const [error, setError] = useState('');
+  const [notice, setNotice] = useState('');
   const [runningAll, setRunningAll] = useState(false);
+  const [viewMode, setViewMode] = useState<'cards' | 'table'>('cards');
   const activeSession = useRef<string>('');
   const busy = useRef(false);
 
@@ -389,6 +399,90 @@ export function ReferenceWorkflow() {
     }
   }
 
+  function getObservedSummary(stage: StageId): string {
+    switch (stage) {
+      case 'fixture':
+        return simulation ? `allow: ${String(simulation.observed_allow)} (${simulation.observed_reasons?.join(', ') || simulation.error_code || 'matched'})` : 'Not run';
+      case 'bundle':
+        return bundle ? `rev ${bundle.revision ?? '—'}, sig: ${String(bundle.signature_verified)}, durable: ${String(bundle.durable)}` : 'Not run';
+      case 'protected':
+        return proxy ? `allow: ${String(proxy.allow)}, forwarded: ${String(proxy.forwarded_to_upstream)}, upstream: ${proxy.upstream_status_code ?? '—'}` : 'Not run';
+      case 'spoof':
+        return spoof ? `spoofed allow: ${String(spoof.spoofed_allow)}, origin blocked: ${String(spoof.direct_origin_blocked)}` : 'Not run';
+      case 'revoke':
+        return revoke ? `revoked: ${String(revoke.revoked)}, subsequent allow: ${String(revoke.subsequent_allow)}` : 'Not run';
+      case 'outage':
+        return outage ? `outage allow: ${String(outage.decision_outage_allow)}, retained: ${String(outage.active_bundle_retained)}` : 'Not run';
+    }
+  }
+
+  function exportReport() {
+    const report = {
+      schema_version: 2,
+      project: 'PolicyHelix',
+      exported_at: new Date().toISOString(),
+      platform: 'Linux x86_64',
+      engine_state: state,
+      outcomes,
+      results: { simulation, bundle, proxy, spoof, revoke, outage },
+    };
+    const blob = new Blob([JSON.stringify(report, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `policyhelix-workflow-report-${Date.now()}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    setNotice('Exported workflow report (schema_version: 2).');
+  }
+
+  function importReport(text: string) {
+    setError('');
+    setNotice('');
+    try {
+      const parsed = JSON.parse(text) as Record<string, unknown>;
+      if (!parsed || typeof parsed !== 'object') {
+        throw new Error('Export payload contains invalid schema or corrupted structure.');
+      }
+      if (parsed.schema_version === 1) {
+        // N-1 schema compatibility
+        const wf = parsed.workflow as { stages?: { stage: string; status: string }[] } | undefined;
+        if (!wf || !Array.isArray(wf.stages)) {
+          throw new Error('Export payload contains invalid schema or corrupted structure.');
+        }
+        const newOutcomes: Record<StageId, StageOutcome> = { ...outcomes };
+        for (const s of wf.stages) {
+          if (stageOrder.includes(s.stage as StageId)) {
+            newOutcomes[s.stage as StageId] = s.status === 'passed' ? 'passed' : 'failed';
+          }
+        }
+        setOutcomes(newOutcomes);
+        setNotice('Successfully loaded and verified N-1 workflow report (v1 schema).');
+        return;
+      }
+      if (parsed.schema_version === 2) {
+        if (!parsed.outcomes || typeof parsed.outcomes !== 'object') {
+          throw new Error('Export payload contains invalid schema or corrupted structure.');
+        }
+        setOutcomes(parsed.outcomes as Record<StageId, StageOutcome>);
+        const res = parsed.results as Record<string, unknown> | undefined;
+        if (res) {
+          if (res.simulation) setSimulation(res.simulation as SimulateResult);
+          if (res.bundle) setBundle(res.bundle as BundleResult);
+          if (res.proxy) setProxy(res.proxy as ProxyResult);
+          if (res.spoof) setSpoof(res.spoof as SpoofResult);
+          if (res.revoke) setRevoke(res.revoke as RevokeResult);
+          if (res.outage) setOutage(res.outage as OutageResult);
+        }
+        setNotice('Successfully loaded and verified workflow report (v2 schema).');
+        return;
+      }
+      throw new Error('Export payload contains invalid schema or corrupted structure.');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Export payload contains invalid schema or corrupted structure.');
+    }
+  }
+
   const ready = Boolean(!loading && state?.ready && state?.storage_durable);
   const passedCount = stageOrder.filter(stage => outcomes[stage] === 'passed').length;
 
@@ -430,72 +524,125 @@ export function ReferenceWorkflow() {
       </ul>}
     </section>
 
+    {notice && <section className="notice" role="status"><span className="dot" aria-hidden="true" /><p>{notice}</p></section>}
     {error && <section className="notice notice-error" role="alert"><span className="dot dot-error" aria-hidden="true" /><p>{error}</p></section>}
 
-    <ol className="workflow-stages">
-      {stageOrder.map((stage, index) => {
-        const copy = stageCopy[stage];
-        const outcome = outcomes[stage];
-        return <li key={stage} className={`workflow-stage stage-${outcome}`}>
-          <div className="workflow-stage-head">
-            <span className="task-id">{String(index + 1).padStart(2, '0')}</span>
-            <div>
-              <h3>{copy.title}</h3>
-              <p>{copy.description}</p>
-              <p className="muted">Invariant: {copy.invariant}</p>
+    {viewMode === 'table' ? (
+      <div className="table-responsive">
+        <table className="workflow-table" role="table" aria-label="Reference workflow stages and results">
+          <caption>Accessible tabular view of the six local reference workflow stages and observed outcomes.</caption>
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Stage</th>
+              <th scope="col">Invariant</th>
+              <th scope="col">Status</th>
+              <th scope="col">Observed Outcome</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {stageOrder.map((stage, index) => {
+              const copy = stageCopy[stage];
+              const outcome = outcomes[stage];
+              return <tr key={stage} className={`table-stage-${outcome}`}>
+                <th scope="row">{String(index + 1).padStart(2, '0')}</th>
+                <td><strong>{copy.title}</strong><br /><span className="muted">{copy.description}</span></td>
+                <td><code>{copy.invariant}</code></td>
+                <td><span className={`state ${outcome === 'passed' ? 'state-allow' : outcome === 'failed' ? 'state-deny' : ''}`} role="status" aria-label={`Stage ${index + 1} status: ${outcome === 'idle' ? 'not run' : outcome}`}>{outcome === 'idle' ? 'not run' : outcome}</span></td>
+                <td>{getObservedSummary(stage)}</td>
+                <td><button type="button" className="button-secondary" onClick={() => void runStage(stage)} disabled={loading || runningAll || !ready} aria-label={`Run stage ${index + 1}: ${copy.title}`}>Run stage</button></td>
+              </tr>;
+            })}
+          </tbody>
+        </table>
+      </div>
+    ) : (
+      <ol className="workflow-stages">
+        {stageOrder.map((stage, index) => {
+          const copy = stageCopy[stage];
+          const outcome = outcomes[stage];
+          return <li key={stage} className={`workflow-stage stage-${outcome}`}>
+            <div className="workflow-stage-head">
+              <span className="task-id">{String(index + 1).padStart(2, '0')}</span>
+              <div>
+                <h3>{copy.title}</h3>
+                <p>{copy.description}</p>
+                <p className="muted">Invariant: {copy.invariant}</p>
+              </div>
+              <div className="workflow-stage-controls">
+                <span className={`state ${outcome === 'passed' ? 'state-allow' : outcome === 'failed' ? 'state-deny' : ''}`} role="status" aria-label={`Stage ${index + 1} status: ${outcome === 'idle' ? 'not run' : outcome}`}>{outcome === 'idle' ? 'not run' : outcome}</span>
+                <button type="button" className="button-secondary" onClick={() => void runStage(stage)} disabled={loading || runningAll || !ready} aria-label={`Run stage ${index + 1}: ${copy.title}`}>Run stage</button>
+              </div>
             </div>
-            <div className="workflow-stage-controls">
-              <span className={`state ${outcome === 'passed' ? 'state-allow' : outcome === 'failed' ? 'state-deny' : ''}`} role="status" aria-label={`Stage ${index + 1} status: ${outcome === 'idle' ? 'not run' : outcome}`}>{outcome === 'idle' ? 'not run' : outcome}</span>
-              <button type="button" className="button-secondary" onClick={() => void runStage(stage)} disabled={loading || runningAll || !ready} aria-label={`Run stage ${index + 1}: ${copy.title}`}>Run stage</button>
+            <div className="workflow-stage-result" role="region" aria-label={`${copy.title} result`}>
+              {stage === 'fixture' && (simulation ? <dl className="result-grid">
+                <div><dt>Fixture</dt><dd><code>{simulation.fixture_id ?? simulation.fixture_ref}</code></dd></div>
+                <div><dt>Expected allow</dt><dd>{String(simulation.expected_allow)}</dd></div>
+                <div><dt>Observed allow</dt><dd>{String(simulation.observed_allow)}</dd></div>
+                <div><dt>Reason</dt><dd><code>{simulation.observed_reasons?.join(', ') || simulation.error_code || '—'}</code></dd></div>
+              </dl> : <p className="muted">Not executed in this browser session.</p>)}
+              {stage === 'bundle' && (bundle ? <dl className="result-grid">
+                <div><dt>Status</dt><dd>{bundle.status}</dd></div>
+                <div><dt>Revision</dt><dd>{bundle.revision ?? '—'} (highest {bundle.highest_revision ?? '—'})</dd></div>
+                <div><dt>Signature verified</dt><dd>{String(bundle.signature_verified)}</dd></div>
+                <div><dt>Durable</dt><dd>{String(bundle.durable)}</dd></div>
+                <div><dt>Digest</dt><dd><code>{shortId(bundle.digest)}</code></dd></div>
+                <div><dt>Expires</dt><dd><code>{bundle.expires_at ?? '—'}</code></dd></div>
+                {bundle.error_code && <div><dt>Rejected</dt><dd><code>{bundle.error_code}</code></dd></div>}
+              </dl> : <p className="muted">Not executed in this browser session.</p>)}
+              {stage === 'protected' && (proxy ? <dl className="result-grid">
+                <div><dt>Allowed</dt><dd>{String(proxy.allow)}</dd></div>
+                <div><dt>Forwarded</dt><dd>{String(proxy.forwarded_to_upstream)}</dd></div>
+                <div><dt>Upstream</dt><dd>{proxy.upstream_status_code ?? '—'}</dd></div>
+                <div><dt>Policy reason</dt><dd><code>{proxy.decision?.reasons?.join(', ') || proxy.error_code || '—'}</code></dd></div>
+                <div><dt>Session</dt><dd><code>{session?.session_id ? `${session.session_id.slice(0, 8)}…` : '—'} (fingerprint bound)</code></dd></div>
+                <div><dt>Roles</dt><dd><code>{session?.roles?.join(', ') ?? '—'}</code></dd></div>
+              </dl> : <p className="muted">Not executed in this browser session.</p>)}
+              {stage === 'spoof' && (spoof ? <dl className="result-grid">
+                <div><dt>Forged header allowed</dt><dd>{String(spoof.spoofed_allow)}</dd></div>
+                <div><dt>Forged header error</dt><dd><code>{spoof.spoofed_error_code ?? '—'}</code></dd></div>
+                <div><dt>Forged request forwarded</dt><dd>{String(spoof.spoofed_forwarded_to_upstream)}</dd></div>
+                <div><dt>Direct origin</dt><dd>{spoof.direct_origin_blocked ? 'blocked' : 'reachable'} ({spoof.direct_origin_status_code})</dd></div>
+              </dl> : <p className="muted">Not executed in this browser session.</p>)}
+              {stage === 'revoke' && (revoke ? <dl className="result-grid">
+                <div><dt>Revoked</dt><dd>{String(revoke.revoked)}</dd></div>
+                <div><dt>Stopped within bound</dt><dd>{String(revoke.stopped_within_bound)}</dd></div>
+                <div><dt>Next request</dt><dd><code>{revoke.subsequent_error_code ?? (revoke.subsequent_allow ? 'allowed' : 'denied')}</code></dd></div>
+                <div><dt>Side effects</dt><dd>{String(revoke.side_effects_executed)}</dd></div>
+              </dl> : <p className="muted">Not executed in this browser session.</p>)}
+              {stage === 'outage' && (outage ? <dl className="result-grid">
+                <div><dt>Decision outage</dt><dd>{outage.decision_outage_allow ? 'allowed' : 'denied'} <code>{outage.decision_outage_error_code ?? ''}</code></dd></div>
+                <div><dt>IdP outage</dt><dd>{outage.idp_outage_allow ? 'allowed' : 'denied'} <code>{outage.idp_outage_error_code ?? ''}</code></dd></div>
+                <div><dt>Expired bundle</dt><dd>{outage.expired_bundle_accepted ? 'accepted' : 'rejected'} <code>{outage.expired_bundle_error_code ?? ''}</code></dd></div>
+                <div><dt>Active authority retained</dt><dd>{String(outage.active_bundle_retained)} (rev {outage.active_revision})</dd></div>
+                <div><dt>Public health bypass</dt><dd>{String(outage.public_health_bypass_ok)}</dd></div>
+              </dl> : <p className="muted">Not executed in this browser session.</p>)}
             </div>
-          </div>
-          <div className="workflow-stage-result" role="region" aria-label={`${copy.title} result`}>
-            {stage === 'fixture' && (simulation ? <dl className="result-grid">
-              <div><dt>Fixture</dt><dd><code>{simulation.fixture_id ?? simulation.fixture_ref}</code></dd></div>
-              <div><dt>Expected allow</dt><dd>{String(simulation.expected_allow)}</dd></div>
-              <div><dt>Observed allow</dt><dd>{String(simulation.observed_allow)}</dd></div>
-              <div><dt>Reason</dt><dd><code>{simulation.observed_reasons?.join(', ') || simulation.error_code || '—'}</code></dd></div>
-            </dl> : <p className="muted">Not executed in this browser session.</p>)}
-            {stage === 'bundle' && (bundle ? <dl className="result-grid">
-              <div><dt>Status</dt><dd>{bundle.status}</dd></div>
-              <div><dt>Revision</dt><dd>{bundle.revision ?? '—'} (highest {bundle.highest_revision ?? '—'})</dd></div>
-              <div><dt>Signature verified</dt><dd>{String(bundle.signature_verified)}</dd></div>
-              <div><dt>Durable</dt><dd>{String(bundle.durable)}</dd></div>
-              <div><dt>Digest</dt><dd><code>{shortId(bundle.digest)}</code></dd></div>
-              <div><dt>Expires</dt><dd><code>{bundle.expires_at ?? '—'}</code></dd></div>
-              {bundle.error_code && <div><dt>Rejected</dt><dd><code>{bundle.error_code}</code></dd></div>}
-            </dl> : <p className="muted">Not executed in this browser session.</p>)}
-            {stage === 'protected' && (proxy ? <dl className="result-grid">
-              <div><dt>Allowed</dt><dd>{String(proxy.allow)}</dd></div>
-              <div><dt>Forwarded</dt><dd>{String(proxy.forwarded_to_upstream)}</dd></div>
-              <div><dt>Upstream</dt><dd>{proxy.upstream_status_code ?? '—'}</dd></div>
-              <div><dt>Policy reason</dt><dd><code>{proxy.decision?.reasons?.join(', ') || proxy.error_code || '—'}</code></dd></div>
-              <div><dt>Session</dt><dd><code>{session?.session_id ? `${session.session_id.slice(0, 8)}…` : '—'} (fingerprint bound)</code></dd></div>
-              <div><dt>Roles</dt><dd><code>{session?.roles?.join(', ') ?? '—'}</code></dd></div>
-            </dl> : <p className="muted">Not executed in this browser session.</p>)}
-            {stage === 'spoof' && (spoof ? <dl className="result-grid">
-              <div><dt>Forged header allowed</dt><dd>{String(spoof.spoofed_allow)}</dd></div>
-              <div><dt>Forged header error</dt><dd><code>{spoof.spoofed_error_code ?? '—'}</code></dd></div>
-              <div><dt>Forged request forwarded</dt><dd>{String(spoof.spoofed_forwarded_to_upstream)}</dd></div>
-              <div><dt>Direct origin</dt><dd>{spoof.direct_origin_blocked ? 'blocked' : 'reachable'} ({spoof.direct_origin_status_code})</dd></div>
-            </dl> : <p className="muted">Not executed in this browser session.</p>)}
-            {stage === 'revoke' && (revoke ? <dl className="result-grid">
-              <div><dt>Revoked</dt><dd>{String(revoke.revoked)}</dd></div>
-              <div><dt>Stopped within bound</dt><dd>{String(revoke.stopped_within_bound)}</dd></div>
-              <div><dt>Next request</dt><dd><code>{revoke.subsequent_error_code ?? (revoke.subsequent_allow ? 'allowed' : 'denied')}</code></dd></div>
-              <div><dt>Side effects</dt><dd>{String(revoke.side_effects_executed)}</dd></div>
-            </dl> : <p className="muted">Not executed in this browser session.</p>)}
-            {stage === 'outage' && (outage ? <dl className="result-grid">
-              <div><dt>Decision outage</dt><dd>{outage.decision_outage_allow ? 'allowed' : 'denied'} <code>{outage.decision_outage_error_code ?? ''}</code></dd></div>
-              <div><dt>IdP outage</dt><dd>{outage.idp_outage_allow ? 'allowed' : 'denied'} <code>{outage.idp_outage_error_code ?? ''}</code></dd></div>
-              <div><dt>Expired bundle</dt><dd>{outage.expired_bundle_accepted ? 'accepted' : 'rejected'} <code>{outage.expired_bundle_error_code ?? ''}</code></dd></div>
-              <div><dt>Active authority retained</dt><dd>{String(outage.active_bundle_retained)} (rev {outage.active_revision})</dd></div>
-              <div><dt>Public health bypass</dt><dd>{String(outage.public_health_bypass_ok)}</dd></div>
-            </dl> : <p className="muted">Not executed in this browser session.</p>)}
-          </div>
-        </li>;
-      })}
-    </ol>
+          </li>;
+        })}
+      </ol>
+    )}
+
+    <section className="panel" aria-label="Workflow view and reports">
+      <div className="eyebrow">Workflow options and reports</div>
+      <h3>Representation and data export</h3>
+      <div className="view-toggle" role="group" aria-label="Workflow view mode">
+        <span className="view-toggle-label">View mode:</span>
+        <button type="button" className={`button-secondary ${viewMode === 'cards' ? 'active' : ''}`} onClick={() => setViewMode('cards')} aria-pressed={viewMode === 'cards'}>Cards</button>
+        <button type="button" className={`button-secondary ${viewMode === 'table' ? 'active' : ''}`} onClick={() => setViewMode('table')} aria-pressed={viewMode === 'table'}>Table equivalent</button>
+      </div>
+      <div className="workflow-actions">
+        <button type="button" className="button-secondary" onClick={exportReport} disabled={loading || runningAll} aria-label="Export workflow report">Export workflow report</button>
+        <label className="file-button">Import report<input aria-label="Import workflow report" type="file" accept=".json,application/json" onChange={event => {
+          const file = event.target.files?.[0];
+          if (file) {
+            file.text().then(importReport).catch(() => setError('Unable to read this file.'));
+          }
+          event.target.value = '';
+        }}/></label>
+      </div>
+    </section>
 
     <section className="panel" aria-label="Restart and restore">
       <div className="eyebrow">Restart and restore</div>
@@ -511,6 +658,16 @@ export function ReferenceWorkflow() {
           : state?.active_bundle
           ? `Restored bundle ${state.active_bundle.bundle_id} at revision ${state.active_bundle.revision}, signer ${state.active_bundle.signer_key_id}.`
           : 'No bundle has been activated yet, so there is nothing to restore.'}
+      </p>
+    </section>
+
+    <section className="panel" aria-label="Advertised platforms">
+      <div className="eyebrow">Observed platform posture</div>
+      <h3>Tested and supported runtime platforms.</h3>
+      <p className="platform-advertised-note">
+        <strong>Observed supported platform:</strong> Linux x86_64 (<code>linux/amd64</code>) on loopback supervisor with Go and Node.js.
+        Verified responsive viewports: 360px mobile to 1440px desktop.
+        Unverified environments (Windows/macOS native desktop installers, mobile app stores, cloud SaaS) are not advertised.
       </p>
     </section>
   </div>;

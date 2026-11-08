@@ -1,0 +1,64 @@
+{
+  "fixture_id": "C33-POS-TABLE-EQUIV",
+  "commit_id": "C33",
+  "schema_version": 2,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Tabular equivalent representation for the six reference workflow stages, providing WCAG-compliant accessible tabular structure alongside the card list.",
+  "table_attributes": {
+    "role": "table",
+    "aria_label": "Reference workflow stages and results",
+    "headers": [
+      { "id": "col-stage", "label": "Stage", "scope": "col" },
+      { "id": "col-invariant", "label": "Invariant", "scope": "col" },
+      { "id": "col-status", "label": "Status", "scope": "col" },
+      { "id": "col-expected", "label": "Expected Outcome", "scope": "col" },
+      { "id": "col-result", "label": "Observed Result", "scope": "col" },
+      { "id": "col-actions", "label": "Actions", "scope": "col" }
+    ]
+  },
+  "rows": [
+    {
+      "stage_id": "fixture",
+      "stage_number": 1,
+      "title": "Simulator fixture",
+      "invariant": "Default deny and normalized identity",
+      "expected_outcome": "allow: true (policy_allow_role_operator)"
+    },
+    {
+      "stage_id": "bundle",
+      "stage_number": 2,
+      "title": "Sign and verify bundle",
+      "invariant": "Signature, freshness and monotonic revision",
+      "expected_outcome": "accepted: true, durable: true"
+    },
+    {
+      "stage_id": "protected",
+      "stage_number": 3,
+      "title": "Protect owned upstream",
+      "invariant": "Private resources fail closed",
+      "expected_outcome": "forwarded: true, status: 200"
+    },
+    {
+      "stage_id": "spoof",
+      "stage_number": 4,
+      "title": "Spoofed header and direct origin",
+      "invariant": "Only authenticated normalized identity enters policy",
+      "expected_outcome": "spoofed_allow: false, origin_blocked: true"
+    },
+    {
+      "stage_id": "revoke",
+      "stage_number": 5,
+      "title": "Revoke session",
+      "invariant": "Private resources fail closed",
+      "expected_outcome": "revoked: true, subsequent_allow: false"
+    },
+    {
+      "stage_id": "outage",
+      "stage_number": 6,
+      "title": "Outage and expired policy",
+      "invariant": "Fail closed and bundle freshness",
+      "expected_outcome": "outage_allow: false, active_bundle_retained: true"
+    }
+  ]
+}

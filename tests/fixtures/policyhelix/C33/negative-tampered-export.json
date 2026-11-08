@@ -1,0 +1,21 @@
+{
+  "fixture_id": "C33-NEG-TAMPERED-EXPORT",
+  "commit_id": "C33",
+  "schema_version": 999,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic negative fixture; no third-party data or real traffic",
+  "description": "Tampered export fixture with invalid schema version and corrupted payload structure that must fail closed on ingestion.",
+  "exported_at": "invalid-timestamp",
+  "project": "UntrustedProject",
+  "platform": "unsupported-synthetic-target",
+  "workflow": {
+    "total_stages": "corrupted_non_numeric",
+    "passed_stages": -5,
+    "stages": "invalid_type_not_array"
+  },
+  "expected_error": {
+    "status": 400,
+    "error_code": "INVALID_EXPORT_SCHEMA",
+    "message": "Export payload contains invalid schema or corrupted structure."
+  }
+}

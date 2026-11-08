@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-08",
   "base_commit": "78a555c",
-  "scope": "Task C32: feat(network): harden local launch and optional private hosting (Requirement N32)",
+  "scope": "Task C33: test(ux): verify keyboard mobile failures and compatible updates (Requirement N33)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -35,21 +35,25 @@
     "C29",
     "C30",
     "C31",
-    "C32"
+    "C32",
+    "C33"
   ],
   "commands": [
     "npm run validate:plan",
-    "node --test tests/web/network-boundaries.test.mjs",
-    "npm test",
+    "npm run build && npm run build:engine",
+    "go test -v -run TestC33UXFixturesAndManifest ./tests",
     "go test -count=1 ./...",
+    "npm test",
+    "npm run test:browser -- tests/browser/full-workflow-accessibility.spec.ts",
+    "npm run test:browser",
     "python3 scripts/validate_repo.py",
-    "python3 scripts/source_identity.py --check docs/evidence/C32.json"
+    "python3 scripts/source_identity.py --check docs/evidence/C33.json"
   ],
-  "validation_results": "docs/evidence/C32.json",
-  "final_source_identity": "sha256:c92b3c452c642fd48618ad72615b2343e4afdbb600b678f32550e3c93d125206",
+  "validation_results": "docs/evidence/C33.json",
+  "final_source_identity": "sha256:07300ea2707ceba654572bbd841008225d5e54bbcc6b299e0de781488d603e8e",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C33",
+  "next_task": "C34",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C32 verified. Hardened local launch with zero public domain requirement is implemented and verified. scripts/serve-web.mjs enforces loopback authority (localhost, 127.0.0.1, [::1]) and rejects external Host headers (DNS-rebinding defense); rejects untrusted cross-origin requests (invalid_origin); strictly enforces Cache-Control: no-store on all dynamic and API routes while serving immutable static assets. Optional private hosting ingress is documented in infra/deployment.md, with machine contract in docs/evidence/domain.json and runbook updates in docs/engineering/CLONE_TO_RUN.md. Verified via tests/fixtures/policyhelix/C32/, tests/web/network-boundaries.test.mjs, and full check suites. Evidence recorded in docs/evidence/C32.json. Ready for C33 (build(container): rootless single-host container recipe and compose file)."
+  "continuation": "Task C33 verified. Reference workflow accessibility, sequential keyboard navigation, responsive mobile 360px and desktop 1440px viewports, accessible table equivalent representation, error resilience (empty, invalid, interrupted, provider-outage), N-1 data export compatibility, and observed platform advertising (Linux x86_64) are implemented and verified. Validated via tests/browser/full-workflow-accessibility.spec.ts, tests/c33_ux_fixtures_test.go, machine contracts docs/evidence/ux.json and docs/evidence/C33.json. Ready for C34."
 }

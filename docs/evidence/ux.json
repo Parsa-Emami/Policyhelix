@@ -1,0 +1,73 @@
+{
+  "schema_version": 1,
+  "commit_id": "C33",
+  "project": "PolicyHelix",
+  "scope": "UX, keyboard accessibility, responsive viewports, error resilience, and N-1 compatibility (Requirement N33)",
+  "date": "2026-11-08",
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic verification evidence; no third-party data or real traffic",
+  "viewports": {
+    "mobile_360px": {
+      "verified": true,
+      "dimensions": "360x640",
+      "root_horizontal_overflow": false,
+      "touch_targets_accessible": true,
+      "table_internal_scroll": true
+    },
+    "desktop_1440px": {
+      "verified": true,
+      "dimensions": "1440x900",
+      "full_workflow_passed": true,
+      "stages_completed": 6
+    }
+  },
+  "keyboard_accessibility": {
+    "sequential_tab_order": true,
+    "enter_space_activation": true,
+    "visible_focus_states": true,
+    "table_cards_toggle": true
+  },
+  "representations": {
+    "cards_view": true,
+    "table_equivalent": true,
+    "wcag_table_semantics": [
+      "role=table",
+      "caption",
+      "th[scope=col]",
+      "th[scope=row]"
+    ]
+  },
+  "failure_resilience": {
+    "empty_initial_state": "0 of 6 passed, clean idle presentation",
+    "invalid_schema_rejection": "alert role banner with stage name and error details",
+    "interrupted_network_call": "graceful recovery, timeout/abort notification without hanging",
+    "provider_outage": "fail-closed allow=false, dot-error indicator, active authority retained"
+  },
+  "backward_compatibility": {
+    "export_version": 2,
+    "n_minus_1_import_version": 1,
+    "n_minus_1_fixture": "tests/fixtures/policyhelix/C33/positive-n-minus-1-export.json",
+    "backward_compatible_reader": true,
+    "tampered_export_rejection": "tests/fixtures/policyhelix/C33/negative-tampered-export.json fails closed"
+  },
+  "advertised_platforms": {
+    "observed_supported": [
+      {
+        "platform": "linux/amd64",
+        "os": "Linux x86_64",
+        "runtime": "Node.js >=24.19.0, Go >=1.24",
+        "browsers": "Chromium, Firefox, WebKit"
+      }
+    ],
+    "unverified_not_advertised": [
+      "Windows native installer",
+      "macOS native installer",
+      "iOS / Android mobile app store",
+      "Multi-tenant public cloud SaaS"
+    ]
+  },
+  "test_suites": [
+    "tests/browser/full-workflow-accessibility.spec.ts",
+    "tests/c33_ux_fixtures_test.go"
+  ]
+}

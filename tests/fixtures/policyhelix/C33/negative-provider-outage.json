@@ -1,0 +1,22 @@
+{
+  "fixture_id": "C33-NEG-PROVIDER-OUTAGE",
+  "commit_id": "C33",
+  "schema_version": 2,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic negative fixture; no third-party data or real traffic",
+  "description": "Provider outage fixture asserting fail-closed denial when the identity provider or decision engine is unreachable, while preserving active authority.",
+  "invariants": [
+    "Private resources fail closed",
+    "Bundle signature plus freshness and monotonic revision"
+  ],
+  "simulated_outage": {
+    "idp_unreachable": true,
+    "decision_engine_unreachable": true
+  },
+  "expected_outcome": {
+    "decision_outage_allow": false,
+    "idp_outage_allow": false,
+    "active_bundle_retained": true,
+    "fail_closed_status": "enforced"
+  }
+}

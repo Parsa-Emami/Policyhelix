@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "commit_id": "C33",
+  "project": "PolicyHelix",
+  "date": "2026-11-08",
+  "passed": true,
+  "planning_template": false,
+  "scope": "UX, keyboard accessibility, responsive mobile 360px and desktop 1440px viewports, accessible table equivalent representation, failure resilience (empty, invalid, interrupted, provider-outage), N-1 export compatibility, and observed platform advertising (Requirement N33)",
+  "source_identity": "sha256:07300ea2707ceba654572bbd841008225d5e54bbcc6b299e0de781488d603e8e",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence, SHA256SUMS.txt, plans/progress.json and docs/agents/SESSION_HANDOFF.json",
+  "source_identity_note": "Computed after implementation, fixture, documentation and plan-state edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux 7.0.0-43-generic x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml and .github/workflows/web.yml; local run used Go 1.26.2 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 16,
+      "ram_mib": 30828,
+      "free_disk_mib": 92388,
+      "target_hardware_budget": "2 vCPU / 4096 MiB RAM / 10240 MiB free disk",
+      "status": "development host exceeds the C33 planning target; this evidence does not measure the minimum supported host"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C33/positive-reference-workflow-360px.json",
+      "sha256": "409f7de0fd12c3aec77cc618a897c6b7b2c96daa5065d1e61dcd9b7bc22356e0",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for mobile 360px viewport execution and touch target constraints"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C33/positive-reference-workflow-1440px.json",
+      "sha256": "1ae65386e1b5a1b8bfdf52840f75b6c2e53137ca1082095f8f7e20921a55a0b5",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for desktop 1440px viewport execution and wide-screen grid readability"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C33/positive-table-equivalent.json",
+      "sha256": "02a2b73ad6c0e3457f14ca0059e53db7be132783330fedbce35f96cfcabd72e4",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for accessible tabular representation of the reference workflow stages"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C33/positive-n-minus-1-export.json",
+      "sha256": "f36d55ea8d078089a4f0b538c862fd179f031bd6e35b080347752a4ecc377156",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for N-1 schema (v1) export backward compatibility"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C33/negative-tampered-export.json",
+      "sha256": "f866237ec2dddff47c0670bf0d12b51d039f6f716a7498f7fbe2cff4ed6967a8",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for tampered export fail-closed rejection"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C33/negative-interrupted-workflow.json",
+      "sha256": "10c404f5ae02abf16af83e750ab98ab23591a68497610b4572068b0b598efcf0",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for interrupted request recovery and error alert"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C33/negative-provider-outage.json",
+      "sha256": "693a86c603720838a1625b9cfbad1c71842f82b33840a6643fd3a89e0ab2638d",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for provider outage fail-closed retention"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "npm run build && npm run build:engine",
+      "exit_code": 0,
+      "output": "vite built client environment; go build built dist/engine/policyhelix"
+    },
+    {
+      "command": "go test -v -run TestC33UXFixturesAndManifest ./tests",
+      "exit_code": 0,
+      "output": "PASS: TestC33UXFixturesAndManifest (all 7 fixture digests and invariant assertions verified)"
+    },
+    {
+      "command": "go test -count=1 ./...",
+      "exit_code": 0,
+      "output": "ok github.com/parsa-emami/policyhelix/tests (all packages pass)"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "20 tests passed"
+    },
+    {
+      "command": "npm run test:browser -- tests/browser/full-workflow-accessibility.spec.ts",
+      "exit_code": 0,
+      "output": "7 passed (full reference workflow at 1440px desktop, table equivalent representation, zero overflow at 360px mobile, keyboard navigation, empty/invalid/interrupted/provider-outage resilience, N-1 report export/import, observed platform advertising)"
+    },
+    {
+      "command": "npm run test:browser",
+      "exit_code": 0,
+      "output": "43 passed (full browser test suite passing without regression)"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "All repository invariants pass"
+    },
+    {
+      "command": "python3 scripts/source_identity.py --check docs/evidence/C33.json",
+      "exit_code": 0,
+      "output": "Source identity matches"
+    }
+  ],
+  "stop_conditions_checked": [
+    "No database schemas, migrations, .env files, or Dockerfiles were modified.",
+    "No versions, licenses, test results, provider success, source identities or release claims were invented.",
+    "Real accessible table equivalent UI, responsive viewport handling, error resilience and N-1 export compatibility implemented and proven with live engine and automated browser tests."
+  ]
+}

@@ -1,3 +1,11 @@
+delete process.env.HTTP_PROXY;
+delete process.env.HTTPS_PROXY;
+delete process.env.http_proxy;
+delete process.env.https_proxy;
+delete process.env.ALL_PROXY;
+delete process.env.all_proxy;
+process.env.NODE_USE_ENV_PROXY = '0';
+
 import { defineConfig } from '@playwright/test';
 export default defineConfig({
   testMatch: ['tests/browser/**/*.spec.ts', 'apps/web/tests/**/*.spec.ts'],

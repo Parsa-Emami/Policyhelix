@@ -105,4 +105,14 @@
 .result-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;margin:0}
 .result-grid dt{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8}
 .result-grid dd{margin:4px 0 0;font-size:14px;color:#e2e8f0;overflow-wrap:anywhere}
+.view-toggle{display:inline-flex;gap:8px;align-items:center;margin:12px 0 8px}
+.view-toggle-label{font-size:13px;color:#94a3b8;font-weight:500}
+.workflow-table{width:100%;border-collapse:collapse;font-size:13px;margin:12px 0;text-align:left}
+.workflow-table caption{text-align:left;font-size:12px;color:#64748b;margin-bottom:8px;caption-side:bottom}
+.workflow-table th,.workflow-table td{padding:10px 12px;border-bottom:1px solid #1e293b;vertical-align:middle}
+.workflow-table thead th{color:#94a3b8;font-size:11px;text-transform:uppercase;letter-spacing:.06em;background:#090e17}
+.workflow-table tbody tr:hover{background:#0e1726}
+.workflow-table tbody th{color:#cbd5e1;font-weight:500}
+.workflow-table code{background:#0a111e;padding:2px 6px;border-radius:4px;font-family:ui-monospace,monospace;font-size:12px}
+.platform-advertised-note{font-size:13px;color:#94a3b8;margin-top:10px;line-height:1.5}
 @media(max-width:760px){.workflow-stage{padding:18px}.workflow-stage-head{grid-template-columns:auto 1fr}.workflow-stage-controls{grid-column:1/-1;flex-direction:row;align-items:center;justify-content:space-between;width:100%}.workflow-actions{flex-direction:column;align-items:stretch}.workflow-actions button{width:100%}}
