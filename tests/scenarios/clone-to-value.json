@@ -1,11 +1,20 @@
 {
   "schema_version": 2,
   "project": "PolicyHelix",
-  "status": "executed acceptance contract for the local clone-to-value workflow; command results and source identity live in docs/evidence/C30.json",
+  "status": "executed acceptance contract for the local clone-to-value workflow; command results and source identity live in docs/evidence/C30.json; independent clean onboarding repeated and verified in C36 (docs/evidence/C36.json)",
   "engine_implemented": true,
   "license": "Apache-2.0",
   "provenance": "repository-authored synthetic licensed fixtures; no third-party data, customer traffic or paid provider",
   "description": "Six-stage local reference workflow executed against the supervised Go engine, durable local storage adapter, signed Ed25519 policy bundles and the owned synthetic upstream, including negative cases plus restart and restore.",
+  "onboarding_verification": {
+    "commit_id": "C36",
+    "requirement": "N36",
+    "public_guide": "docs/release/USER_GUIDE.md",
+    "results_doc": "docs/product/ONBOARDING_RESULTS.md",
+    "fixture_manifest": "tests/fixtures/policyhelix/C36/manifest.json",
+    "evidence": "docs/evidence/C36.json",
+    "independence_assertion": "A separate clean environment or independent contributor follows only the public guide and completes the actual core workflow. Customer demand and five pilots are not prerequisites for OSS usability."
+  },
   "engine": {
     "binary": "dist/engine/policyhelix",
     "build_command": "npm run build:engine",

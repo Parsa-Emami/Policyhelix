@@ -1,0 +1,66 @@
+{
+  "fixture_id": "C36-POS-02",
+  "commit_id": "C36",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Restart and restore proof: the durable active bundle revision, session revocation epoch and still-valid session survive a process restart and produce the documented outcomes.",
+  "invariants": [
+    "Private resources fail closed",
+    "Only authenticated normalized identity enters policy",
+    "Bundle signature plus freshness and monotonic revision"
+  ],
+  "steps": [
+    {
+      "step_id": "STEP-09",
+      "stage": "restart-restore",
+      "action": "Read restored durable workflow state after restart",
+      "endpoint": "/api/v1/reference/state",
+      "method": "GET",
+      "body": {},
+      "expected": {
+        "http_status": 200,
+        "status": "restored",
+        "ready": true,
+        "storage_durable": true,
+        "active_bundle_present": true,
+        "revoked_session_present": true,
+        "upstream_ready": true,
+        "provider_count": 3
+      }
+    },
+    {
+      "step_id": "STEP-10",
+      "stage": "restart-restore",
+      "action": "The revoked session must remain denied after restart",
+      "endpoint": "/api/v1/reference/proxy",
+      "method": "POST",
+      "body": {
+        "session_id": "$SESSION"
+      },
+      "expected": {
+        "http_status": 403,
+        "allow": false,
+        "error_code": "REVOKED_SESSION",
+        "forwarded_to_upstream": false
+      }
+    },
+    {
+      "step_id": "STEP-11",
+      "stage": "restart-restore",
+      "action": "The still-valid session must keep working after restart",
+      "endpoint": "/api/v1/reference/proxy",
+      "method": "POST",
+      "body": {
+        "session_id": "$SESSION_ACTIVE"
+      },
+      "expected": {
+        "http_status": 200,
+        "allow": true,
+        "forwarded_to_upstream": true,
+        "upstream_status_code": 200,
+        "decision_allow": true
+      }
+    }
+  ]
+}

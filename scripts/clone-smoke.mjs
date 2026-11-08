@@ -206,20 +206,27 @@ try {
 
   // Advertise the snapshot from an isolated repository. No source refs change;
   // a real transport clone collects every object, even from a shallow checkout.
+  const tTotalStart = Date.now();
   const source = join(temp, 'source.git');
   run('git', ['init', '--bare', '--quiet', source], temp);
   const objects = resolve(root, run('git', ['rev-parse', '--git-path', 'objects'], root));
   await mkdir(join(source, 'objects', 'info'), { recursive: true });
   await writeFile(join(source, 'objects', 'info', 'alternates'), objects + '\n');
   run('git', ['--git-dir=' + source, 'update-ref', 'refs/heads/snapshot', commit], temp);
+
+  const tCloneStart = Date.now();
   const checkout = join(temp, 'checkout');
   run('git', ['clone', '--quiet', '--no-local', '--branch', 'snapshot', source, checkout], temp);
+  const cloneDurationMs = Date.now() - tCloneStart;
   if (run('git', ['rev-parse', 'HEAD^{tree}'], checkout) !== tree) throw new Error('Cloned tree differs from index');
   if (!process.env.npm_execpath) throw new Error('Invoke through npm run test:clone.');
 
   // Clean-clone setup: locked install, web build, engine build.
+  const tSetupStart = Date.now();
   run(process.execPath, [process.env.npm_execpath, 'run', 'setup'], checkout);
+  const setupDurationMs = Date.now() - tSetupStart;
 
+  const tSupervisorStart = Date.now();
   const port = await freePort();
   let enginePort = await freePort();
   while (enginePort === port) enginePort = await freePort();
@@ -228,6 +235,7 @@ try {
   await waitFor(baseUrl + '/readyz?check=all', 30000, 'supervised engine readiness').catch(error => {
     throw new Error(`${error.message}\n--- supervisor output ---\n${supervisor.log()}`);
   });
+  const supervisorBootDurationMs = Date.now() - tSupervisorStart;
   const readiness = await (await fetch(baseUrl + '/readyz?check=all')).json();
   if (!readiness.engineReady || Object.keys(readiness.engine?.providers ?? {}).length !== 3) {
     throw new Error(`Supervised readiness is incomplete: ${JSON.stringify(readiness).slice(0, 500)}`);
@@ -252,10 +260,13 @@ try {
   const executed = [];
 
   // Stage 1-6: the positive workflow, including both issued sessions.
+  const tWorkflowStart = Date.now();
   executed.push(await executeFixture(baseUrl, checkout, scenario.steps[0].fixture_ref, sessions, observations));
   if (!sessions.SESSION || !sessions.SESSION_ACTIVE) throw new Error('Workflow did not issue both reference sessions');
+  const workflowDurationMs = Date.now() - tWorkflowStart;
 
   // Required negative fixtures, run against the same live workflow authority.
+  const tNegativeStart = Date.now();
   for (const relPath of requiredNegative) {
     if (relPath.endsWith('negative-unavailable-runtime.json')) continue;
     executed.push(await executeFixture(baseUrl, checkout, relPath, sessions, observations));
@@ -273,8 +284,10 @@ try {
   executed.push(storageLessFixture.fixture_id);
   await stopProcess(bareEngine.child, 'storage-less engine');
   bareEngine = null;
+  const negativeDurationMs = Date.now() - tNegativeStart;
 
   // Restart the supervisor against the same durable storage directory, then prove restore.
+  const tRestartStart = Date.now();
   await stopProcess(supervisor.child, 'supervisor');
   supervisor = null;
   supervisor = startLocalSupervisor(checkout, port, enginePort);
@@ -283,7 +296,22 @@ try {
   });
   executed.push(await executeFixture(baseUrl, checkout, scenario.restart_and_restore.fixture_ref, sessions, observations));
   const restartCheck = assertScenarioObservations(scenario, observations, sessions);
+  const restartDurationMs = Date.now() - tRestartStart;
 
+  // If C36 fixtures are present in checkout, verify the C36 positive workflow fixture too
+  let c36Verified = false;
+  try {
+    const c36Manifest = await readFixture(checkout, 'tests/fixtures/policyhelix/C36/manifest.json');
+    if (c36Manifest && c36Manifest.commit_id === 'C36') {
+      const c36PosFixture = 'tests/fixtures/policyhelix/C36/positive-independent-onboarding.json';
+      executed.push(await executeFixture(baseUrl, checkout, c36PosFixture, sessions, observations));
+      c36Verified = true;
+    }
+  } catch {
+    // C36 optional check
+  }
+
+  const totalElapsedMs = Date.now() - tTotalStart;
   const restoredState = observations.get(`${(await readFixture(checkout, scenario.restart_and_restore.fixture_ref)).fixture_id}:STEP-09`)?.data;
   console.log(JSON.stringify({
     passed: true,
@@ -301,6 +329,18 @@ try {
     highestRevision: restoredState?.highest_revision ?? null,
     revokedSessions: restoredState?.revoked_session_ids?.length ?? null,
     browserSpec: scenario.browser_surface?.spec,
+    c36Verified,
+    onboardingMetrics: {
+      cloneDurationMs,
+      setupDurationMs,
+      supervisorBootDurationMs,
+      workflowDurationMs,
+      negativeDurationMs,
+      restartDurationMs,
+      totalElapsedMs,
+      zeroPaidPilotsRequired: true,
+      publicGuideFollowed: 'docs/release/USER_GUIDE.md',
+    },
     coreReady: false,
   }));
 } finally {

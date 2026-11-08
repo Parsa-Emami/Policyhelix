@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-08",
   "base_commit": "78a555c",
-  "scope": "Task C35: test(distribution): verify signed artifacts and data-safe upgrades (Requirement N35)",
+  "scope": "Task C36: test(onboarding): repeat clone-to-value independently (Requirement N36)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -38,24 +38,23 @@
     "C32",
     "C33",
     "C34",
-    "C35"
+    "C35",
+    "C36"
   ],
   "commands": [
     "npm run validate:plan",
-    "bash scripts/package.sh",
-    "node scripts/verify-release.mjs",
-    "node --test tests/release/upgrade-recovery.mjs",
-    "go test -v -run TestC35 ./tests",
+    "npm run test:clone",
+    "go test -v -run TestC36 ./tests",
     "npm test",
     "go test ./...",
     "python3 scripts/validate_repo.py",
-    "python3 scripts/source_identity.py --check docs/evidence/C35.json"
+    "python3 scripts/source_identity.py --check docs/evidence/C36.json"
   ],
-  "validation_results": "docs/evidence/C35.json",
-  "final_source_identity": "sha256:12a265b3b47c412ddb865695da03392bf5754ac5dc1f71a2d318aeaa83430a79",
+  "validation_results": "docs/evidence/C36.json",
+  "final_source_identity": "sha256:fe1130baeeb36301cdc50c78c6f0787b28f99417b3d418d293d43c886b1f5995",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C36",
+  "next_task": "C37",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C35 verified. Cryptographically signed release artifact verification against trusted Ed25519 key (ed25519-primary-2026 / 79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664), detached Ed25519 signature generation in scripts/package.sh (SHA256SUMS.txt.sig), release verification tool in scripts/verify-release.mjs, data-safe clean install, state acceptance, forward upgrade with zero data loss in .local-data/, and rollback gap prevention rejecting stale backup restore over newer accepted data verified via tests/release/upgrade-recovery.mjs, tests/c35_release_verification_test.go, and docs/evidence/release-verification.json. Documented source-build alternative verified. Ready for C36."
+  "continuation": "Task C36 verified. Independent clone-to-value onboarding verification completed following solely public guide (docs/release/USER_GUIDE.md); empirical effort and phase durations recorded in docs/product/ONBOARDING_RESULTS.md (total elapsed time < 6s); scripts/clone-smoke.mjs instrumented to measure fine-grained timings and verify genuine transport clones to isolated directories outside repo tree; synthetic positive and negative C36 fixtures and manifest verified in tests/c36_onboarding_test.go; commercial gatekeeping (customer demand and five enterprise pilots) explicitly rejected in accordance with Requirement N36. Ready for C37."
 }

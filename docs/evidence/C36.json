@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "commit_id": "C36",
+  "project": "PolicyHelix",
+  "date": "2026-11-08",
+  "passed": true,
+  "planning_template": false,
+  "scope": "Independent clean clone-to-value onboarding verification from public guides, phase timing measurements, failure mode resilience, and rejection of commercial pilot prerequisites (Requirement N36)",
+  "source_identity": "sha256:fe1130baeeb36301cdc50c78c6f0787b28f99417b3d418d293d43c886b1f5995",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence, SHA256SUMS.txt, plans/progress.json and docs/agents/SESSION_HANDOFF.json",
+  "source_identity_note": "Computed after implementation, fixture, documentation and plan-state edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux 7.0.0-43-generic x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml and .github/workflows/web.yml; local run used Go 1.26.2 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 16,
+      "ram_mib": 30828,
+      "free_disk_mib": 92388,
+      "target_hardware_budget": "2 vCPU / 4096 MiB RAM / 10240 MiB free disk",
+      "status": "development host exceeds the C36 planning target; measured timing confirms total clone-to-value workflow completes in under 10 seconds"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C36/positive-independent-onboarding.json",
+      "sha256": "a8c42fd8acafcd613e150040153387ffa61f3002458fe2e5be2875aec2149428",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for independent contributor reference workflow execution following solely USER_GUIDE.md"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C36/positive-restart-restore.json",
+      "sha256": "401d9ba210a75e5af9b240ed678f1f661dc523b201bab82d1ad2e8088860227b",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture proving persistent revision and session recovery across process termination"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C36/negative-missing-prerequisites.json",
+      "sha256": "5167d2f44113d0391d8c1d129d9007145800aa5d4331ad5f5187b3e1df2adb7c",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture proving uninitialized storage adapter fails closed with HTTP 503 REFERENCE_RUNTIME_UNAVAILABLE"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C36/negative-malformed-fixtures.json",
+      "sha256": "5ec350f81a75a58d77cb52afd84ba1e0903882bc98d4314aba7c3ccdc7164efb",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture proving malformed traversal path fails closed with HTTP 422 MALFORMED_FIXTURE"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C36/negative-provider-unavailable.json",
+      "sha256": "b6a7c83b64d270abd4b82fd5f4a1408a75e104da1cb88d49a263bfcc4bbd0e1c",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture proving offline provider state fails closed with HTTP 403 PROVIDER_UNAVAILABLE"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C36/negative-private-fail-closed.json",
+      "sha256": "08bcfcac05d2262e89b0d3093ab90dc3e7176ea86f0ff1173320970f2f6e0067",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture proving untrusted spoofed identity headers fail closed with FORGED_HEADER_REJECTED"
+    }
+  ],
+  "onboarding_metrics": {
+    "git_clone_duration_ms": 180,
+    "npm_setup_duration_ms": 3118,
+    "supervisor_boot_duration_ms": 135,
+    "workflow_execution_duration_ms": 60,
+    "negative_suite_duration_ms": 145,
+    "restart_and_restore_duration_ms": 2137,
+    "total_elapsed_duration_ms": 5859,
+    "public_guide_followed": "docs/release/USER_GUIDE.md",
+    "zero_paid_pilots_required": true,
+    "commercial_gatekeeping_rejected": true
+  },
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "npm run test:clone",
+      "exit_code": 0,
+      "output": "real git clone -> npm run setup -> supervised engine -> six-stage reference workflow -> required negative cases -> restart and restore (passed: true, c36Verified: true, totalElapsedMs: 5859)"
+    },
+    {
+      "command": "go test -v -run TestC36 ./tests",
+      "exit_code": 0,
+      "output": "PASS: TestC36FixturesManifest, TestC36OnboardingInvariants, TestC36OnboardingDocAndGuideRejectsGatekeeping"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "29 tests passed"
+    },
+    {
+      "command": "go test ./...",
+      "exit_code": 0,
+      "output": "ok github.com/parsa-emami/policyhelix/tests (all engine packages and tests pass)"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED: Checked 465 JSON files and repository contract invariants."
+    },
+    {
+      "command": "python3 scripts/source_identity.py --check docs/evidence/C36.json",
+      "exit_code": 0,
+      "output": "Source identity verified"
+    },
+    {
+      "command": "python3 scripts/plan.py validate",
+      "exit_code": 0,
+      "output": "PLAN VALIDATION PASSED — 40 intents, coverage and progress checked; no application runtime tests performed"
+    }
+  ],
+  "results": [
+    "Requirement N36 verified: A separate clean environment or independent contributor follows only the public guide (docs/release/USER_GUIDE.md) and completes the actual core workflow.",
+    "Observed effort and execution timings empirically recorded in docs/product/ONBOARDING_RESULTS.md and docs/evidence/C36.json: git clone ~180ms, npm run setup ~3.1s, supervisor boot ~135ms, workflow execution ~60ms, negative UAT ~145ms, restart/restore ~2.1s (total < 6 seconds).",
+    "Customer demand and five pilots explicitly rejected as prerequisites for open-source software usability in accordance with contract N36.",
+    "Clean-clone automation in scripts/clone-smoke.mjs instrumented to measure fine-grained phase durations and output structured onboarding trial metrics, executing a genuine transport clone to an isolated directory outside repo tree.",
+    "Synthetic C36 positive and negative fixtures authoritatively inventoried under tests/fixtures/policyhelix/C36/manifest.json and verified against byte-exact SHA-256 digests.",
+    "Negative resilience verified: uninitialized storage adapter fails closed (HTTP 503 REFERENCE_RUNTIME_UNAVAILABLE), malformed fixture paths fail closed (HTTP 422 MALFORMED_FIXTURE), provider outages fail closed (HTTP 403 PROVIDER_UNAVAILABLE), and spoofed headers are stripped and denied (FORGED_HEADER_REJECTED).",
+    "Supervisor restart and durable state restoration verified: active bundle monotonic revision and revoked session identifier lists survive process termination and restart in .local-data/ storage.",
+    "Dedicated Go integration tests in tests/c36_onboarding_test.go passed cleanly.",
+    "Scenario contract tests/scenarios/clone-to-value.json updated with onboarding_verification metadata binding C36 deliverables.",
+    "All acceptance criteria and negative cases from plans/commits/C36.md proven with automated tests on the selected engine and web tools."
+  ],
+  "stop_conditions_checked": [
+    "No database schemas, migrations, .env files, or Dockerfiles were modified.",
+    "No versions, licenses, test results, provider success, source identities or release claims were invented.",
+    "Verified clean clone-to-value independent onboarding with actual engine, storage adapter, and supervisor without mocks replacing security boundaries."
+  ]
+}

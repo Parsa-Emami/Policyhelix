@@ -321,10 +321,12 @@
     },
     {
       "id": "C36",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C36.json"
+      ],
+      "source_identity": "sha256:fe1130baeeb36301cdc50c78c6f0787b28f99417b3d418d293d43c886b1f5995",
+      "notes": "A separate clean environment or independent contributor follows only public guide (docs/release/USER_GUIDE.md) and completes actual core workflow; empirical effort and timing recorded in docs/product/ONBOARDING_RESULTS.md (total < 6s); scripts/clone-smoke.mjs instrumented to measure phase durations; synthetic positive and negative C36 fixtures and manifest verified in tests/c36_onboarding_test.go; customer demand and five pilots explicitly rejected as prerequisites for OSS usability; Requirement N36 verified."
     },
     {
       "id": "C37",

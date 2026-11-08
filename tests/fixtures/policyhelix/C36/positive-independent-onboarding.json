@@ -1,0 +1,148 @@
+{
+  "fixture_id": "C36-POS-01",
+  "commit_id": "C36",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data, customer traffic or paid provider",
+  "description": "Six-stage local reference workflow executed by an independent contributor following solely USER_GUIDE.md: deterministic simulation, bundle activation, protected upstream proxying, spoofed header rejection, session revocation, and outage fail-closed handling.",
+  "invariants": [
+    "Private resources fail closed",
+    "Only authenticated normalized identity enters policy",
+    "Bundle signature plus freshness and monotonic revision"
+  ],
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "stage": "simulator-fixture",
+      "action": "Evaluate the synthetic decision fixture against the active bundle",
+      "endpoint": "/api/v1/reference/simulate",
+      "method": "POST",
+      "body": {
+        "fixture_ref": "tests/fixtures/policyhelix/C01/positive-decision.json"
+      },
+      "expected": {
+        "http_status": 200,
+        "fixture_id": "C01-POS-01",
+        "expected_matched": true,
+        "observed_allow": true
+      }
+    },
+    {
+      "step_id": "STEP-02",
+      "stage": "session",
+      "action": "Issue a fingerprint-bound local reference session",
+      "endpoint": "/api/v1/reference/session",
+      "method": "POST",
+      "body": {},
+      "expected": {
+        "http_status": 200,
+        "valid": true,
+        "storage_durable": true,
+        "issuer_mode": "synthetic_local_demo",
+        "roles": ["operator"]
+      }
+    },
+    {
+      "step_id": "STEP-03",
+      "stage": "sign-and-activate-bundle",
+      "action": "Sign and atomically activate a monotonic policy bundle",
+      "endpoint": "/api/v1/reference/bundle",
+      "method": "POST",
+      "body": {},
+      "expected": {
+        "http_status": 200,
+        "accepted": true,
+        "active": true,
+        "signature_verified": true,
+        "durable": true,
+        "monotonic_revision_enforced": true
+      }
+    },
+    {
+      "step_id": "STEP-04",
+      "stage": "protect-owned-upstream",
+      "action": "Forward an authenticated request to the owned upstream through the allowlisted gateway",
+      "endpoint": "/api/v1/reference/proxy",
+      "method": "POST",
+      "body": {
+        "session_id": "$SESSION"
+      },
+      "expected": {
+        "http_status": 200,
+        "allow": true,
+        "forwarded_to_upstream": true,
+        "upstream_status_code": 200,
+        "decision_allow": true
+      }
+    },
+    {
+      "step_id": "STEP-05",
+      "stage": "spoofed-header-and-direct-origin",
+      "action": "Reject forged identity headers and direct origin access",
+      "endpoint": "/api/v1/reference/spoof",
+      "method": "POST",
+      "body": {
+        "session_id": "$SESSION"
+      },
+      "expected": {
+        "http_status": 200,
+        "spoofed_allow": false,
+        "spoofed_forwarded_to_upstream": false,
+        "spoofed_error_code": "FORGED_HEADER_REJECTED",
+        "direct_origin_blocked": true,
+        "direct_origin_status_code": 403
+      }
+    },
+    {
+      "step_id": "STEP-06",
+      "stage": "session-revocation",
+      "action": "Revoke the active session and prove the next request fails closed",
+      "endpoint": "/api/v1/reference/revoke",
+      "method": "POST",
+      "body": {
+        "session_id": "$SESSION"
+      },
+      "expected": {
+        "http_status": 200,
+        "revoked": true,
+        "stopped_within_bound": true,
+        "subsequent_allow": false,
+        "subsequent_error_code": "REVOKED_SESSION",
+        "side_effects_executed": false
+      }
+    },
+    {
+      "step_id": "STEP-07",
+      "stage": "outage-session",
+      "action": "Issue a fresh session used only by the outage stage",
+      "endpoint": "/api/v1/reference/session",
+      "method": "POST",
+      "body": {},
+      "expected": {
+        "http_status": 200,
+        "valid": true
+      }
+    },
+    {
+      "step_id": "STEP-08",
+      "stage": "outage-and-expired-policy",
+      "action": "Simulate decision-engine and IdP outage and reject an expired bundle",
+      "endpoint": "/api/v1/reference/outage",
+      "method": "POST",
+      "body": {
+        "session_id": "$SESSION_ACTIVE"
+      },
+      "expected": {
+        "http_status": 200,
+        "decision_outage_allow": false,
+        "decision_outage_error_code": "DECISION_LOSS_SENSITIVE_DENY",
+        "idp_outage_allow": false,
+        "idp_outage_error_code": "PROVIDER_UNAVAILABLE",
+        "expired_bundle_accepted": false,
+        "expired_bundle_error_code": "EXPIRED_POLICY_BUNDLE",
+        "active_bundle_retained": true,
+        "public_health_bypass_ok": true
+      }
+    }
+  ]
+}

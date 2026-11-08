@@ -1,0 +1,26 @@
+{
+  "fixture_id": "C36-NEG-01",
+  "commit_id": "C36",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Negative case: starting or querying the engine without initialized durable storage or missing required prerequisites produces an explicit typed error rather than false success.",
+  "invariants": [
+    "Private resources fail closed"
+  ],
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "stage": "uninitialized-storage",
+      "action": "Query engine reference state without initializing durable storage adapter",
+      "endpoint": "/api/v1/reference/state",
+      "method": "GET",
+      "body": {},
+      "expected": {
+        "http_status": 503,
+        "status": "unavailable",
+        "error": "REFERENCE_RUNTIME_UNAVAILABLE"
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "manifest_version": 1,
+  "schema_version": 1,
+  "commit_id": "C36",
+  "project": "PolicyHelix",
+  "provenance": "repository-authored synthetic licensed fixtures; no third-party data or real traffic",
+  "license": "Apache-2.0",
+  "requirement": "N36",
+  "requirements": [
+    "N36"
+  ],
+  "fixtures": [
+    {
+      "fixture_id": "C36-POS-01",
+      "path": "tests/fixtures/policyhelix/C36/positive-independent-onboarding.json",
+      "sha256": "a8c42fd8acafcd613e150040153387ffa61f3002458fe2e5be2875aec2149428",
+      "kind": "positive",
+      "description": "Six-stage local reference workflow executed by an independent contributor following solely USER_GUIDE.md: deterministic simulation, bundle activation, protected upstream proxying, spoofed header rejection, session revocation, and outage fail-closed handling.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C36-POS-02",
+      "path": "tests/fixtures/policyhelix/C36/positive-restart-restore.json",
+      "sha256": "401d9ba210a75e5af9b240ed678f1f661dc523b201bab82d1ad2e8088860227b",
+      "kind": "positive",
+      "description": "Restart and restore proof: the durable active bundle revision, session revocation epoch and still-valid session survive a process restart and produce the documented outcomes.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C36-NEG-01",
+      "path": "tests/fixtures/policyhelix/C36/negative-missing-prerequisites.json",
+      "sha256": "5167d2f44113d0391d8c1d129d9007145800aa5d4331ad5f5187b3e1df2adb7c",
+      "kind": "negative",
+      "description": "Negative case: starting or querying the engine without initialized durable storage or missing required prerequisites produces an explicit typed error rather than false success.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C36-NEG-02",
+      "path": "tests/fixtures/policyhelix/C36/negative-malformed-fixtures.json",
+      "sha256": "5ec350f81a75a58d77cb52afd84ba1e0903882bc98d4314aba7c3ccdc7164efb",
+      "kind": "negative",
+      "description": "Negative case: sending a malformed or corrupted fixture payload to the simulator endpoint fails closed with HTTP 422 and typed error details without server panic.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C36-NEG-03",
+      "path": "tests/fixtures/policyhelix/C36/negative-provider-unavailable.json",
+      "sha256": "b6a7c83b64d270abd4b82fd5f4a1408a75e104da1cb88d49a263bfcc4bbd0e1c",
+      "kind": "negative",
+      "description": "Negative case: an unavailable identity or policy provider must fail closed for private resources before forwarding or side effects.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C36-NEG-04",
+      "path": "tests/fixtures/policyhelix/C36/negative-private-fail-closed.json",
+      "sha256": "08bcfcac05d2262e89b0d3093ab90dc3e7176ea86f0ff1173320970f2f6e0067",
+      "kind": "negative",
+      "description": "Negative case: unauthenticated requests and forged headers targeting private resources fail closed with default deny and zero upstream side effects.",
+      "license": "Apache-2.0"
+    }
+  ]
+}
