@@ -330,10 +330,12 @@
     },
     {
       "id": "C37",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C37.json"
+      ],
+      "source_identity": "sha256:7b000d9b5792e1b25cfd6f871996d9dc8a62e032a1a54b4147fe5e7fb0b7ecf9",
+      "notes": "Fix actual C30/C33/C35/C36 failures with targeted regressions and repeat affected checks; packaging race resolved via atomic staging directory swap in scripts/package.sh; clone-smoke git snapshotting verified; storage-less runtime fail-closed HTTP 503 verified; mobile layout and rollback gap prevention verified; comprehensive beta fixes and explicit boundaries documented in docs/product/BETA_FIXES.md; tests/c37_beta_fixes_test.go verified; Requirement N37 verified."
     },
     {
       "id": "C38",

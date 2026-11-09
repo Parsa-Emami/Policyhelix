@@ -1,0 +1,27 @@
+{
+  "fixture_id": "C37-NEG-02",
+  "commit_id": "C37",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Negative case: sending a malformed or corrupted fixture payload to the simulator endpoint fails closed with HTTP 422 and typed error details without server panic.",
+  "invariants": [
+    "Private resources fail closed"
+  ],
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "stage": "malformed-fixture",
+      "action": "Submit invalid fixture reference to simulation endpoint",
+      "endpoint": "/api/v1/reference/simulate",
+      "method": "POST",
+      "body": {
+        "fixture_ref": "../../README.md"
+      },
+      "expected": {
+        "http_status": 422,
+        "error_code": "MALFORMED_FIXTURE"
+      }
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 {
   "project": "PolicyHelix",
-  "date": "2026-11-08",
+  "date": "2026-11-09",
   "base_commit": "78a555c",
-  "scope": "Task C36: test(onboarding): repeat clone-to-value independently (Requirement N36)",
+  "scope": "Task C37: fix(acceptance): resolve observed installation and workflow blockers (Requirement N37)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -39,22 +39,23 @@
     "C33",
     "C34",
     "C35",
-    "C36"
+    "C36",
+    "C37"
   ],
   "commands": [
     "npm run validate:plan",
     "npm run test:clone",
-    "go test -v -run TestC36 ./tests",
+    "go test -v -run TestC37 ./tests",
     "npm test",
     "go test ./...",
     "python3 scripts/validate_repo.py",
-    "python3 scripts/source_identity.py --check docs/evidence/C36.json"
+    "python3 scripts/source_identity.py --check docs/evidence/C37.json"
   ],
-  "validation_results": "docs/evidence/C36.json",
-  "final_source_identity": "sha256:fe1130baeeb36301cdc50c78c6f0787b28f99417b3d418d293d43c886b1f5995",
+  "validation_results": "docs/evidence/C37.json",
+  "final_source_identity": "sha256:7b000d9b5792e1b25cfd6f871996d9dc8a62e032a1a54b4147fe5e7fb0b7ecf9",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C37",
+  "next_task": "C38",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C36 verified. Independent clone-to-value onboarding verification completed following solely public guide (docs/release/USER_GUIDE.md); empirical effort and phase durations recorded in docs/product/ONBOARDING_RESULTS.md (total elapsed time < 6s); scripts/clone-smoke.mjs instrumented to measure fine-grained timings and verify genuine transport clones to isolated directories outside repo tree; synthetic positive and negative C36 fixtures and manifest verified in tests/c36_onboarding_test.go; commercial gatekeeping (customer demand and five enterprise pilots) explicitly rejected in accordance with Requirement N36. Ready for C37."
+  "continuation": "Task C37 verified. Systematic beta fix and blocker resolution completed across packaging concurrency, git snapshotting in clone-smoke, storage-less runtime fail-closed handling, mobile layout accessibility, and rollback gap rejection; docs/product/BETA_FIXES.md created with explicit boundary documentation; tests/c37_beta_fixes_test.go verified; Requirement N37 verified. Ready for C38."
 }

@@ -247,8 +247,12 @@ EOF
 
 # 15. Atomic Promotion: Rename Staging Directory to dist/release
 TARGET_DIR="dist/release"
-rm -rf "${TARGET_DIR}"
+STAGE_OLD="dist/.old-release-$$"
+if [ -d "${TARGET_DIR}" ]; then
+  mv "${TARGET_DIR}" "${STAGE_OLD}"
+fi
 mv "${STAGE_DIR}" "${TARGET_DIR}"
+rm -rf "${STAGE_OLD}"
 trap - EXIT INT TERM
 
 # 16. Final Integrity Verification

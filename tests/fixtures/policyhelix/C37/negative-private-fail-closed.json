@@ -1,0 +1,34 @@
+{
+  "fixture_id": "C37-NEG-04",
+  "commit_id": "C37",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Negative case: unauthenticated requests and forged headers targeting private resources fail closed with default deny and zero upstream side effects.",
+  "invariants": [
+    "Private resources fail closed",
+    "Only authenticated normalized identity enters policy"
+  ],
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "stage": "forged-header-rejection",
+      "action": "Send forged identity headers and verify stripping and denial",
+      "endpoint": "/api/v1/reference/spoof",
+      "method": "POST",
+      "body": {
+        "session_id": "$SESSION_ACTIVE",
+        "forged_headers": {
+          "X-Remote-User": "unauthorized-attacker",
+          "X-Forwarded-User": "admin"
+        }
+      },
+      "expected": {
+        "http_status": 200,
+        "spoofed_allow": false,
+        "spoofed_forwarded_to_upstream": false,
+        "spoofed_error_code": "FORGED_HEADER_REJECTED"
+      }
+    }
+  ]
+}
