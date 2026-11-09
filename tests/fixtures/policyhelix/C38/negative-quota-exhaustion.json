@@ -1,0 +1,30 @@
+{
+  "fixture_id": "C38-NEG-03",
+  "commit_id": "C38",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Negative case: disk or quota exhaustion when creating records or proxying requests fails closed with an explicit error rather than partial write or silent corruption.",
+  "invariants": [
+    "Private resources fail closed"
+  ],
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "stage": "provider-outage-quota",
+      "action": "Attempt proxy request when downstream or provider quota is unavailable",
+      "endpoint": "/api/v1/reference/proxy",
+      "method": "POST",
+      "body": {
+        "session_id": "$SESSION_ACTIVE",
+        "provider_state": "unavailable"
+      },
+      "expected": {
+        "http_status": 403,
+        "allow": false,
+        "error_code": "PROVIDER_UNAVAILABLE",
+        "forwarded_to_upstream": false
+      }
+    }
+  ]
+}

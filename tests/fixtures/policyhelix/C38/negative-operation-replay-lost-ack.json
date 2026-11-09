@@ -1,0 +1,27 @@
+{
+  "fixture_id": "C38-NEG-02",
+  "commit_id": "C38",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Negative case: replaying an operation after a lost ACK does not duplicate side effects or corrupt state; replaying with a conflicting payload is rejected with OPERATION_ID_CONFLICT.",
+  "invariants": [
+    "Private resources fail closed"
+  ],
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "stage": "replay-conflict",
+      "action": "Submit invalid or conflicting fixture reference to simulator endpoint",
+      "endpoint": "/api/v1/reference/simulate",
+      "method": "POST",
+      "body": {
+        "fixture_ref": "../../README.md"
+      },
+      "expected": {
+        "http_status": 422,
+        "error_code": "MALFORMED_FIXTURE"
+      }
+    }
+  ]
+}

@@ -1,0 +1,62 @@
+{
+  "manifest_version": 1,
+  "schema_version": 1,
+  "commit_id": "C38",
+  "project": "PolicyHelix",
+  "provenance": "repository-authored synthetic licensed fixtures; no third-party data or real traffic",
+  "license": "Apache-2.0",
+  "requirement": "N38",
+  "requirements": [
+    "N38"
+  ],
+  "fixtures": [
+    {
+      "fixture_id": "C38-POS-01",
+      "path": "tests/fixtures/policyhelix/C38/positive-service-policy.json",
+      "sha256": "d310cde84f80ba03d74093955e395b2e1d5eff63321daffe5904a79b38cd710b",
+      "kind": "positive",
+      "description": "Validation of service policy: verifies local data layout under .local-data/, exportable state retrieval, and supported operational profiles (local-demo and self-hosted) with zero hosted subscriptions.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C38-POS-02",
+      "path": "tests/fixtures/policyhelix/C38/positive-maintenance-lifecycle.json",
+      "sha256": "1c8df2569a5013ca32113be7084dc9bd20daeb543a8ae0d5610118d320dbcd34",
+      "kind": "positive",
+      "description": "Validation of maintenance lifecycle: verifies clean startup recovery, state persistence across restart, and zero unearned SLA / zero paid subscription compliance.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C38-NEG-01",
+      "path": "tests/fixtures/policyhelix/C38/negative-writer-kill-staged-boundary.json",
+      "sha256": "881490fa21df644ae6bb811d7d6a7aefca6ed163a6e7f36fc2fa4a4e478d9969",
+      "kind": "negative",
+      "description": "Negative case: terminating or crashing the writer at the staged-byte/manifest boundary is cleaned up on startup; restart exposes only the complete prior valid state.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C38-NEG-02",
+      "path": "tests/fixtures/policyhelix/C38/negative-operation-replay-lost-ack.json",
+      "sha256": "c698fe2452e96f496e1f58c540f89e2659bfb314b6d21156f3df4d3d9bccd8af",
+      "kind": "negative",
+      "description": "Negative case: replaying an operation after a lost ACK does not duplicate side effects or corrupt state; replaying with a conflicting payload is rejected with OPERATION_ID_CONFLICT.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C38-NEG-03",
+      "path": "tests/fixtures/policyhelix/C38/negative-quota-exhaustion.json",
+      "sha256": "7b9a8277395b5b19c8ede80badbc35873d8dc64ea1047c9564d4a14f9c3d8f90",
+      "kind": "negative",
+      "description": "Negative case: disk or quota exhaustion when creating records or proxying requests fails closed with an explicit error rather than partial write or silent corruption.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C38-NEG-04",
+      "path": "tests/fixtures/policyhelix/C38/negative-private-fail-closed.json",
+      "sha256": "4588007f5ce56af19e5de5edb47f5c6dda50e53d4be3f8082f220646a21ab498",
+      "kind": "negative",
+      "description": "Negative case: unauthenticated requests and forged headers targeting private resources fail closed with default deny and zero upstream side effects.",
+      "license": "Apache-2.0"
+    }
+  ]
+}

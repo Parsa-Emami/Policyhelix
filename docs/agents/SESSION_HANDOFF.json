@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-09",
   "base_commit": "78a555c",
-  "scope": "Task C37: fix(acceptance): resolve observed installation and workflow blockers (Requirement N37)",
+  "scope": "Task C38: docs(release): freeze local privacy limits and maintenance policy (Requirement N38)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -40,22 +40,23 @@
     "C34",
     "C35",
     "C36",
-    "C37"
+    "C37",
+    "C38"
   ],
   "commands": [
     "npm run validate:plan",
     "npm run test:clone",
-    "go test -v -run TestC37 ./tests",
+    "go test -v -run TestC38 ./tests",
     "npm test",
     "go test ./...",
     "python3 scripts/validate_repo.py",
-    "python3 scripts/source_identity.py --check docs/evidence/C37.json"
+    "python3 scripts/source_identity.py --check docs/evidence/C38.json"
   ],
-  "validation_results": "docs/evidence/C37.json",
-  "final_source_identity": "sha256:7b000d9b5792e1b25cfd6f871996d9dc8a62e032a1a54b4147fe5e7fb0b7ecf9",
+  "validation_results": "docs/evidence/C38.json",
+  "final_source_identity": "sha256:8c36d090aca64cadb759b96f82310f845660b91d2286a3657fb9dba508380576",
   "protected_paths_changed": [],
   "current_core_ready": false,
-  "next_task": "C38",
+  "next_task": "C39",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C37 verified. Systematic beta fix and blocker resolution completed across packaging concurrency, git snapshotting in clone-smoke, storage-less runtime fail-closed handling, mobile layout accessibility, and rollback gap rejection; docs/product/BETA_FIXES.md created with explicit boundary documentation; tests/c37_beta_fixes_test.go verified; Requirement N37 verified. Ready for C38."
+  "continuation": "Task C38 verified. Local data locations, export/deletion/retention/backup/recovery, supported profiles and maintenance/dependency policy authoritatively documented in docs/release/SERVICE_POLICY.md and docs/release/MAINTENANCE.md; zero hosted subscriptions and no unearned SLA codified; crash recovery at staged-byte/manifest boundary, lost-ACK operation replay, and quota limits verified via tests/c38_service_policy_test.go; Requirement N38 verified. Ready for C39."
 }

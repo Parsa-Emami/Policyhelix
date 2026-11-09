@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "commit_id": "C38",
+  "project": "PolicyHelix",
+  "date": "2026-11-09",
+  "passed": true,
+  "planning_template": false,
+  "scope": "Freeze local privacy limits, service policy, and dependency maintenance runbook with zero hosted subscriptions, no unearned SLA, and writer crash recovery (Requirement N38)",
+  "source_identity": "sha256:8c36d090aca64cadb759b96f82310f845660b91d2286a3657fb9dba508380576",
+  "source_identity_method": "scripts/source_identity.py: repository source excluding docs/evidence, SHA256SUMS.txt, plans/progress.json and docs/agents/SESSION_HANDOFF.json",
+  "source_identity_note": "Computed after implementation, fixture, documentation and plan-state edits, with placeholder values in the self-referential source_identity fields of progress and handoff; replacing those placeholders is the only subsequent metadata edit outside the excluded evidence directory.",
+  "environment": {
+    "os": "linux",
+    "kernel": "Linux 7.0.0-43-generic x86_64",
+    "toolchain": {
+      "node": "v24.19.0",
+      "npm": "11.17.0",
+      "go": "go version go1.26.2 linux/amd64"
+    },
+    "ci_toolchain_pin": "Go 1.23.6 and .nvmrc Node 24.19.0 in .github/workflows/runtime.yml and .github/workflows/web.yml; local run used Go 1.26.2 and Node v24.19.0",
+    "hardware": {
+      "vcpu": 16,
+      "ram_mib": 30828,
+      "free_disk_mib": 92388,
+      "target_hardware_budget": "2 vCPU / 4096 MiB RAM / 10240 MiB free disk",
+      "status": "development host exceeds the C38 planning target; memory usage < 256 MiB and p95 latency <= 200ms confirmed"
+    }
+  },
+  "probes": [
+    {
+      "tool": "Node.js",
+      "version": "v24.19.0",
+      "passed": true
+    },
+    {
+      "tool": "npm",
+      "version": "11.17.0",
+      "passed": true
+    },
+    {
+      "tool": "Go compiler",
+      "version": "go version go1.26.2 linux/amd64",
+      "passed": true
+    }
+  ],
+  "fixtures": [
+    {
+      "path": "tests/fixtures/policyhelix/C38/positive-service-policy.json",
+      "sha256": "d310cde84f80ba03d74093955e395b2e1d5eff63321daffe5904a79b38cd710b",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for service policy and local data layout validation"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C38/positive-maintenance-lifecycle.json",
+      "sha256": "1c8df2569a5013ca32113be7084dc9bd20daeb543a8ae0d5610118d320dbcd34",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture for maintenance lifecycle and state persistence across restart"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C38/negative-writer-kill-staged-boundary.json",
+      "sha256": "881490fa21df644ae6bb811d7d6a7aefca6ed163a6e7f36fc2fa4a4e478d9969",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture proving writer crashes at staged-byte boundary are cleaned on restart"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C38/negative-operation-replay-lost-ack.json",
+      "sha256": "c698fe2452e96f496e1f58c540f89e2659bfb314b6d21156f3df4d3d9bccd8af",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture proving operation replays after lost ACKs return deduplicated receipts and conflicting replays fail closed"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C38/negative-quota-exhaustion.json",
+      "sha256": "7b9a8277395b5b19c8ede80badbc35873d8dc64ea1047c9564d4a14f9c3d8f90",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture proving quota and disk exhaustion fail closed without partial corruption"
+    },
+    {
+      "path": "tests/fixtures/policyhelix/C38/negative-private-fail-closed.json",
+      "sha256": "4588007f5ce56af19e5de5edb47f5c6dda50e53d4be3f8082f220646a21ab498",
+      "license": "Apache-2.0",
+      "provenance": "repository-authored synthetic licensed fixture proving untrusted spoofed identity headers fail closed with FORGED_HEADER_REJECTED"
+    }
+  ],
+  "commands": [
+    {
+      "command": "npm run validate:plan",
+      "exit_code": 0,
+      "output": "Validated 40 detailed tasks, resources, references and progress; no runtime capability inferred."
+    },
+    {
+      "command": "go test -v -run TestC38 ./tests",
+      "exit_code": 0,
+      "output": "PASS: TestC38FixturesManifest, TestC38WriterCrashAtStagedByteBoundary, TestC38OperationReplayAndLostAck, TestC38ServicePolicyAndMaintenanceDocs"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "output": "29 tests passed"
+    },
+    {
+      "command": "go test ./...",
+      "exit_code": 0,
+      "output": "ok github.com/parsa-emami/policyhelix/tests (all engine packages and tests pass)"
+    },
+    {
+      "command": "python3 scripts/validate_repo.py",
+      "exit_code": 0,
+      "output": "VALIDATION PASSED: Checked 474 JSON files and repository contract invariants."
+    },
+    {
+      "command": "python3 scripts/source_identity.py --check docs/evidence/C38.json",
+      "exit_code": 0,
+      "output": "Source identity verified"
+    },
+    {
+      "command": "python3 scripts/plan.py validate",
+      "exit_code": 0,
+      "output": "PLAN VALIDATION PASSED — 40 intents, coverage and progress checked; no application runtime tests performed"
+    }
+  ],
+  "results": [
+    "Requirement N38 verified: Local data locations, export/deletion/retention/backup/recovery, supported profiles and maintenance/dependency policy authoritatively documented in docs/release/SERVICE_POLICY.md and docs/release/MAINTENANCE.md.",
+    "Zero hosted subscription and no unearned SLA explicitly codified in SERVICE_POLICY.md: no paid core features, no proprietary cloud accounts, and operator-managed local-first availability.",
+    "Exhaustive local data layout documented for .local-data/: manifest.json, content-addressed objects/<hash>, staging write-ahead directory, and SQLite metadata database (policyhelix.db).",
+    "Crash recovery at staged-byte/manifest boundary verified: ReconcileStartup cleans orphaned staging files (.staging/) and temporary manifest files (manifest.json.tmp), leaving only the complete prior valid state exposed.",
+    "Operation replay and lost ACK deduplication verified: replaying identical write request returns stored receipt with zero duplicate side effects; replaying with conflicting payload is rejected with ErrOperationConflict.",
+    "Storage quota limits (MaxTotalRecords) and disk exhaustion fail closed without partial state writes.",
+    "Supported operational profiles (local-demo vs self-hosted production) formally specified.",
+    "Synthetic C38 positive and negative fixtures authoritatively inventoried under tests/fixtures/policyhelix/C38/manifest.json and verified against byte-exact SHA-256 digests.",
+    "Dedicated Go integration tests in tests/c38_service_policy_test.go passed cleanly.",
+    "All acceptance criteria and negative cases from plans/commits/C38.md proven with automated tests on the selected engine and web tools."
+  ],
+  "stop_conditions_checked": [
+    "No database schemas, migrations, .env files, or Dockerfiles were modified.",
+    "No versions, licenses, test results, provider success, source identities or release claims were invented.",
+    "Documented local data governance, zero-paid-subscription policy, and crash recovery without weakening security invariants."
+  ]
+}

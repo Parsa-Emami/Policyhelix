@@ -1,0 +1,28 @@
+{
+  "fixture_id": "C38-POS-02",
+  "commit_id": "C38",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Validation of maintenance lifecycle: verifies clean startup recovery, state persistence across restart, and zero unearned SLA / zero paid subscription compliance.",
+  "invariants": [
+    "Private resources fail closed",
+    "Bundle signature plus freshness and monotonic revision"
+  ],
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "stage": "maintenance-recovery-state",
+      "action": "Query persisted state following recovery to verify monotonic revisions and active sessions",
+      "endpoint": "/api/v1/reference/state",
+      "method": "GET",
+      "expected": {
+        "http_status": 200,
+        "ready": true,
+        "storage_durable": true,
+        "active_bundle_present": true,
+        "provider_count": 3
+      }
+    }
+  ]
+}

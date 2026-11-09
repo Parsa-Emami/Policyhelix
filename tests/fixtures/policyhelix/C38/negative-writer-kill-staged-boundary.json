@@ -1,0 +1,27 @@
+{
+  "fixture_id": "C38-NEG-01",
+  "commit_id": "C38",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Negative case: terminating or crashing the writer at the staged-byte/manifest boundary is cleaned up on startup; restart exposes only the complete prior valid state.",
+  "invariants": [
+    "Private resources fail closed",
+    "Bundle signature plus freshness and monotonic revision"
+  ],
+  "steps": [
+    {
+      "step_id": "STEP-01",
+      "stage": "uninitialized-runtime",
+      "action": "Query engine reference state without valid durable storage initialization",
+      "endpoint": "/api/v1/reference/state",
+      "method": "GET",
+      "body": {},
+      "expected": {
+        "http_status": 503,
+        "status": "unavailable",
+        "error": "REFERENCE_RUNTIME_UNAVAILABLE"
+      }
+    }
+  ]
+}
