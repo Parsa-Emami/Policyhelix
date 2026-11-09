@@ -1,0 +1,22 @@
+{
+  "fixture_id": "C39-NEG-01",
+  "commit_id": "C39",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Negative case: terminating or crashing the writer at the staged-byte/manifest boundary is cleaned up on startup; restart exposes only the complete prior valid state.",
+  "invariants": [
+    "Writer crash cleanup at startup",
+    "Only complete prior or new authoritative state exposed"
+  ],
+  "scenario": {
+    "interrupted_stage": "staged_byte_boundary",
+    "injected_orphans": [
+      ".staging/temp-op-crashed-writer",
+      "manifest.json.tmp"
+    ],
+    "recovery_action": "startup_reconciliation",
+    "expected_cleaned_orphans": 2,
+    "expected_exposed_revision": 1
+  }
+}

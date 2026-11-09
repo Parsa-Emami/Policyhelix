@@ -1,0 +1,18 @@
+{
+  "fixture_id": "C39-NEG-05",
+  "commit_id": "C39",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Negative case: altered source identity, tampered evidence checksum, or planning template causes the release gate to fail closed with exit code 2.",
+  "invariants": [
+    "Altered source identity fails the release gate",
+    "Tampered evidence checksum fails closed with exit code 2",
+    "Planning template fails closed with exit code 2"
+  ],
+  "test_condition": {
+    "simulated_tamper": "altered_source_identity",
+    "expected_gate_exit_code": 2,
+    "expected_gate_status": "RELEASE GATE CHECK FAILED"
+  }
+}

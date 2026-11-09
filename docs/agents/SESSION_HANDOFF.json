@@ -2,7 +2,7 @@
   "project": "PolicyHelix",
   "date": "2026-11-09",
   "base_commit": "78a555c",
-  "scope": "Task C38: docs(release): freeze local privacy limits and maintenance policy (Requirement N38)",
+  "scope": "Task C39: ci(release): enforce evidence-backed open-source v1 readiness (Requirement N39)",
   "core_tasks_verified": [
     "C01",
     "C02",
@@ -41,22 +41,23 @@
     "C35",
     "C36",
     "C37",
-    "C38"
+    "C38",
+    "C39"
   ],
   "commands": [
     "npm run validate:plan",
-    "npm run test:clone",
-    "go test -v -run TestC38 ./tests",
+    "npm run release:check",
+    "go test -v -run TestC39 ./tests",
     "npm test",
     "go test ./...",
     "python3 scripts/validate_repo.py",
-    "python3 scripts/source_identity.py --check docs/evidence/C38.json"
+    "python3 scripts/source_identity.py --check docs/evidence/C39.json"
   ],
-  "validation_results": "docs/evidence/C38.json",
-  "final_source_identity": "sha256:8c36d090aca64cadb759b96f82310f845660b91d2286a3657fb9dba508380576",
+  "validation_results": "docs/evidence/C39.json",
+  "final_source_identity": "sha256:d48c666b2c223427b4d1aae7e770b0fe5e9021f470604bb2c7b3082e8f50b57d",
   "protected_paths_changed": [],
-  "current_core_ready": false,
-  "next_task": "C39",
+  "current_core_ready": true,
+  "next_task": "C40",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C38 verified. Local data locations, export/deletion/retention/backup/recovery, supported profiles and maintenance/dependency policy authoritatively documented in docs/release/SERVICE_POLICY.md and docs/release/MAINTENANCE.md; zero hosted subscriptions and no unearned SLA codified; crash recovery at staged-byte/manifest boundary, lost-ACK operation replay, and quota limits verified via tests/c38_service_policy_test.go; Requirement N38 verified. Ready for C39."
+  "continuation": "Task C39 verified. Evidence-backed open-source v1 readiness gate enforced across all C01-C38 prerequisites, clone-to-value, packaging authenticity, dependency/fixture licenses, and fail-closed security/recovery in docs/evidence/v1-gate.json, .github/workflows/release-gate.yml, scripts/roadmap.mjs, and tests/c39_release_gate_test.go; core_ready certified in plans/release-gates.json; Requirement N39 verified. Ready for C40."
 }

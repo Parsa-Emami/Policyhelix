@@ -1,0 +1,70 @@
+name: release-gate
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-gate-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify-release-gate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Clean Checkout
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Setup Go Toolchain
+        uses: actions/setup-go@f111f3307d8850f501ac008e886eec1fd1932a34
+        with:
+          go-version: "1.23.6"
+          cache: true
+
+      - name: Setup Node Toolchain
+        uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Install Node Dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Validate Planning Metadata
+        run: npm run validate:plan
+
+      - name: Validate Repository Contracts
+        run: python3 scripts/validate_repo.py
+
+      - name: Build Web Application
+        run: npm run build
+
+      - name: Build Engine Binary
+        run: npm run build:engine
+
+      - name: Execute Release Check Gate
+        run: npm run release:check
+
+      - name: Run Engine Test Suite
+        run: go test -v -race ./...
+
+      - name: Run Web Test Suite
+        run: npm test
+
+      - name: Assert Release Gate Certification
+        run: |
+          test -f docs/evidence/v1-gate.json || { echo "ERROR: docs/evidence/v1-gate.json missing"; exit 1; }
+          node --input-type=module -e "import fs from 'node:fs'; const g = JSON.parse(fs.readFileSync('docs/evidence/v1-gate.json', 'utf8')); if (!g.core_ready || !g.passed || g.planning_template) { console.error('Invalid gate certification'); process.exit(1); }"
+
+      - name: Source Identity Check
+        run: |
+          python3 scripts/source_identity.py

@@ -348,10 +348,12 @@
     },
     {
       "id": "C39",
-      "status": "planned",
-      "evidence": [],
-      "source_identity": null,
-      "notes": ""
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C39.json"
+      ],
+      "source_identity": "sha256:d48c666b2c223427b4d1aae7e770b0fe5e9021f470604bb2c7b3082e8f50b57d",
+      "notes": "Evidence-backed open-source v1 readiness gate enforcement across all C01-C38 prerequisites, clone-to-value, packaging authenticity, dependency/fixture licenses, and fail-closed security/recovery verified in docs/evidence/v1-gate.json, .github/workflows/release-gate.yml, scripts/roadmap.mjs, and tests/c39_release_gate_test.go; core_ready certified in plans/release-gates.json; Requirement N39 verified."
     },
     {
       "id": "C40",
@@ -368,5 +370,5 @@
     "backend_tests": "not_implemented"
   },
   "roadmap_contract": "clone-to-run-oss-v1",
-  "current_core_ready": false
+  "current_core_ready": true
 }

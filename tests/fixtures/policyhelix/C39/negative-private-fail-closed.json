@@ -1,0 +1,15 @@
+{
+  "fixture_id": "C39-NEG-03",
+  "commit_id": "C39",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Negative case: unauthenticated requests and forged headers targeting private resources fail closed with default deny.",
+  "invariants": [
+    "Private resources fail closed",
+    "Unauthenticated requests rejected with ErrUnauthenticatedIdentity",
+    "Untrusted headers stripped"
+  ],
+  "expected_status": "denied",
+  "expected_error": "UNAUTHENTICATED_IDENTITY"
+}

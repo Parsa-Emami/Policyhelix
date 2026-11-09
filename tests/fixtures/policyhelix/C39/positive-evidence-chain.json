@@ -1,0 +1,20 @@
+{
+  "fixture_id": "C39-POS-02",
+  "commit_id": "C39",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Validation of continuous evidence chain across C01-C38: zero planning templates, all passed=true, matching source identities, and all command exits 0.",
+  "invariants": [
+    "Continuous verified evidence chain from C01 to C38",
+    "Zero planning templates allowed in release gate",
+    "All verification commands exit 0"
+  ],
+  "evidence_summary": {
+    "tasks_checked": 38,
+    "planning_templates_found": 0,
+    "non_zero_exits_found": 0,
+    "source_mismatches_found": 0,
+    "chain_verified": true
+  }
+}

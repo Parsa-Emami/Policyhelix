@@ -1,0 +1,24 @@
+{
+  "fixture_id": "C39-POS-01",
+  "commit_id": "C39",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data, customer traffic or paid provider",
+  "description": "Validation of full open-source v1 release readiness: verifies C01-C38 prerequisites, core_ready=true, clean clone-to-value proof, signed release packaging, and Apache-2.0 compatibility.",
+  "invariants": [
+    "Core readiness requires C01-C30 proof and C01-C38 prerequisites",
+    "Release gate exits 0 only when all prerequisites and proofs are verified",
+    "Private resources fail closed",
+    "Zero commercial pilot and zero paid cloud requirement"
+  ],
+  "gate_assertion": {
+    "core_ready": true,
+    "usable_at": "C30",
+    "oss_v1_at": "C40",
+    "prerequisites_verified": 38,
+    "clone_to_value_status": "passed",
+    "packaging_status": "passed",
+    "licenses_status": "compliant_apache2",
+    "expected_exit_code": 0
+  }
+}

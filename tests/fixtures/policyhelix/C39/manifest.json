@@ -1,0 +1,70 @@
+{
+  "manifest_version": 1,
+  "schema_version": 1,
+  "commit_id": "C39",
+  "project": "PolicyHelix",
+  "provenance": "repository-authored synthetic licensed fixtures; no third-party data or real traffic",
+  "license": "Apache-2.0",
+  "requirement": "N39",
+  "requirements": [
+    "N39"
+  ],
+  "fixtures": [
+    {
+      "fixture_id": "C39-POS-01",
+      "path": "tests/fixtures/policyhelix/C39/positive-v1-readiness-gate.json",
+      "sha256": "b2b02ea774afbaa939b2974bfe8cf5499de4c96c625cc204eaf3ac5516d3abcb",
+      "kind": "positive",
+      "description": "Validation of full open-source v1 release readiness: verifies C01-C38 prerequisites, core_ready=true, clean clone-to-value proof, signed release packaging, and Apache-2.0 compatibility.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C39-POS-02",
+      "path": "tests/fixtures/policyhelix/C39/positive-evidence-chain.json",
+      "sha256": "d3f76ffe109aedeae09c352fc62b095367ef2df187ff1f127481d96e0446102c",
+      "kind": "positive",
+      "description": "Validation of continuous evidence chain across C01-C38: zero planning templates, all passed=true, matching source identities, and all command exits 0.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C39-NEG-01",
+      "path": "tests/fixtures/policyhelix/C39/negative-writer-crash-recovery.json",
+      "sha256": "a8d51a62976626e8065526f45c9fc04a042649c228af37978e7c7480da99753f",
+      "kind": "negative",
+      "description": "Negative case: terminating or crashing the writer at the staged-byte/manifest boundary is cleaned up on startup; restart exposes only the complete prior valid state.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C39-NEG-02",
+      "path": "tests/fixtures/policyhelix/C39/negative-operation-replay-quota.json",
+      "sha256": "04cb8f0c82f7f2aa010c5585bfabdf3da482fcb7f19d688c93566e2a1aaf0c73",
+      "kind": "negative",
+      "description": "Negative case: replaying an operation after a lost ACK returns deduplicated receipt without duplicate side effects; replaying with conflicting payload or quota exhaustion fails closed.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C39-NEG-03",
+      "path": "tests/fixtures/policyhelix/C39/negative-private-fail-closed.json",
+      "sha256": "f461f635321ff89dadcc2daf172c6f525cd2110217a1e2bb29dc520d95847def",
+      "kind": "negative",
+      "description": "Negative case: unauthenticated requests and forged headers targeting private resources fail closed with default deny.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C39-NEG-04",
+      "path": "tests/fixtures/policyhelix/C39/negative-unverified-prerequisite.json",
+      "sha256": "1e8b74fdee27f7586cd928307e95a55483a2da4b731d689d05c166bb9d6e5277",
+      "kind": "negative",
+      "description": "Negative case: missing prerequisite tasks or unverified proofs fail the release gate check with exit code 2.",
+      "license": "Apache-2.0"
+    },
+    {
+      "fixture_id": "C39-NEG-05",
+      "path": "tests/fixtures/policyhelix/C39/negative-tampered-evidence.json",
+      "sha256": "1af5e3cf40b31774f818a313e45bb8eeb2d7a9f4296f840de0b17a43bc2edb36",
+      "kind": "negative",
+      "description": "Negative case: altered source identity, tampered evidence checksum, or planning template causes the release gate to fail closed with exit code 2.",
+      "license": "Apache-2.0"
+    }
+  ]
+}

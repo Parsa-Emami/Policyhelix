@@ -1,0 +1,31 @@
+{
+  "fixture_id": "C39-NEG-02",
+  "commit_id": "C39",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Negative case: replaying an operation after a lost ACK returns deduplicated receipt without duplicate side effects; replaying with conflicting payload or quota exhaustion fails closed.",
+  "invariants": [
+    "Idempotent operation replay",
+    "ErrOperationConflict on payload mismatch",
+    "Quota and disk limit fail closed"
+  ],
+  "scenarios": [
+    {
+      "name": "lost_ack_replay",
+      "operation_id": "op-c39-replay-01",
+      "expected_replayed": true,
+      "duplicate_side_effects": 0
+    },
+    {
+      "name": "conflict_replay",
+      "operation_id": "op-c39-replay-01",
+      "expected_error": "OPERATION_ID_CONFLICT"
+    },
+    {
+      "name": "quota_exhaustion",
+      "operation_id": "op-c39-quota-01",
+      "expected_error": "QUOTA_EXHAUSTED"
+    }
+  ]
+}

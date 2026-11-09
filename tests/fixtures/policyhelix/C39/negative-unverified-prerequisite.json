@@ -1,0 +1,17 @@
+{
+  "fixture_id": "C39-NEG-04",
+  "commit_id": "C39",
+  "schema_version": 1,
+  "license": "Apache-2.0",
+  "provenance": "repository-authored synthetic fixture; no third-party data or real traffic",
+  "description": "Negative case: missing prerequisite tasks or unverified proofs fail the release gate check with exit code 2.",
+  "invariants": [
+    "Prerequisite tasks must all be verified before release gate passes",
+    "Missing proof fails closed with exit code 2"
+  ],
+  "test_condition": {
+    "simulated_missing_task": "C38",
+    "expected_gate_exit_code": 2,
+    "expected_gate_status": "RELEASE GATE CHECK FAILED"
+  }
+}
