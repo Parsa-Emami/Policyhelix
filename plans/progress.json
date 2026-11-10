@@ -357,10 +357,10 @@
     },
     {
       "id": "C40",
-      "status": "planned",
+      "status": "in_progress",
       "evidence": [],
       "source_identity": null,
-      "notes": ""
+      "notes": "Publication automation and installed acceptance are implemented. Verification requires the public release and its successful installed workflow."
     }
   ],
   "web_progress": "plans/web-roadmap.json",

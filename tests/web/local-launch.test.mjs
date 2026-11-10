@@ -51,7 +51,7 @@ test('supervisor starts loopback web and engine, exposes runtime status, and shu
   const engineHealth = await (await fetch(`${engineBase}/healthz`)).json();
   assert.equal(engineHealth.status, 'ok');
   assert.equal(engineHealth.engine, 'policyhelix-engine');
-  assert.equal(engineHealth.version, '0.0.1');
+  assert.equal(engineHealth.version, '1.0.0');
   assert.equal(engineHealth.loopback, true);
 
   // 3. Web readyz maintains engineReady: false contract
@@ -64,7 +64,7 @@ test('supervisor starts loopback web and engine, exposes runtime status, and shu
   assert.equal(statusRes.status, 200);
   const status = await statusRes.json();
   assert.equal(status.engine, 'policyhelix-engine');
-  assert.equal(status.version, '0.0.1');
+  assert.equal(status.version, '1.0.0');
   assert.equal(status.loopback, true);
   assert.equal(status.coreReady, false);
   assert.equal(status.businessFeaturesCompleted, false);

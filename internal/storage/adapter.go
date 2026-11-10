@@ -17,13 +17,13 @@ import (
 )
 
 const (
-	SchemaVersion      = "1"
-	MaxPayloadBytes    = 65536 // 64 KiB max per write
-	MaxTotalRecords    = 1024  // Bounded repository limit
-	ManifestFileName   = "manifest.json"
-	ObjectsDirName     = "objects"
-	StagingDirName     = ".staging"
-	LockFileName       = ".lock"
+	SchemaVersion    = "1"
+	MaxPayloadBytes  = 65536 // 64 KiB max per write
+	MaxTotalRecords  = 1024  // Bounded repository limit
+	ManifestFileName = "manifest.json"
+	ObjectsDirName   = "objects"
+	StagingDirName   = ".staging"
+	LockFileName     = ".lock"
 )
 
 // Typed Error Codes for C05 Storage Port
@@ -110,15 +110,15 @@ type Manifest struct {
 }
 
 type WriteReceipt struct {
-	SchemaVersion    string `json:"schema_version"`
-	OperationID      string `json:"operation_id"`
-	RecordID         string `json:"record_id"`
-	Revision         int64  `json:"revision"`
-	ObjectDigest     string `json:"object_digest"`
-	RequestHash      string `json:"request_hash"`
-	Replayed         bool   `json:"replayed"`
-	CommittedAt      string `json:"committed_at"`
-	OrphansCleaned   int    `json:"orphans_cleaned,omitempty"`
+	SchemaVersion  string `json:"schema_version"`
+	OperationID    string `json:"operation_id"`
+	RecordID       string `json:"record_id"`
+	Revision       int64  `json:"revision"`
+	ObjectDigest   string `json:"object_digest"`
+	RequestHash    string `json:"request_hash"`
+	Replayed       bool   `json:"replayed"`
+	CommittedAt    string `json:"committed_at"`
+	OrphansCleaned int    `json:"orphans_cleaned,omitempty"`
 }
 
 type SimulatedFaults struct {
@@ -128,10 +128,11 @@ type SimulatedFaults struct {
 }
 
 type Adapter struct {
-	rootDir  string
-	mu       sync.Mutex
-	lockFile *os.File
-	Faults   SimulatedFaults
+	rootDir       string
+	mu            sync.Mutex
+	lockFile      *os.File
+	writeBoundary func(published bool)
+	Faults        SimulatedFaults
 }
 
 func CalculateSHA256(data []byte) string {
@@ -462,6 +463,9 @@ func (a *Adapter) WriteRecord(ctx context.Context, req WriteRequest) (*WriteRece
 				Retryable: false,
 			}
 		}
+		if err := syncDir(a.rootDir); err != nil {
+			return nil, &StorageError{Code: ErrDiskFullOrWriteFailed, Message: "manifest directory sync failed", Retryable: true}
+		}
 		return &WriteReceipt{
 			SchemaVersion: SchemaVersion,
 			OperationID:   existingOp.OperationID,
@@ -532,7 +536,9 @@ func (a *Adapter) WriteRecord(ctx context.Context, req WriteRequest) (*WriteRece
 		_ = os.Remove(stagingFile)
 		return nil, &StorageError{Code: ErrDiskFullOrWriteFailed, Message: fmt.Sprintf("failed to publish object: %v", err), Retryable: true}
 	}
-	_ = syncDir(filepath.Join(a.rootDir, ObjectsDirName))
+	if err := syncDir(filepath.Join(a.rootDir, ObjectsDirName)); err != nil {
+		return nil, &StorageError{Code: ErrDiskFullOrWriteFailed, Message: "object directory sync failed", Retryable: true}
+	}
 
 	if a.Faults.InterruptBeforeManifest {
 		return nil, &StorageError{
@@ -593,11 +599,19 @@ func (a *Adapter) WriteRecord(ctx context.Context, req WriteRequest) (*WriteRece
 
 	// Step 6: Atomic rename of manifest.json and parent directory flush
 	finalManifest := filepath.Join(a.rootDir, ManifestFileName)
+	if a.writeBoundary != nil {
+		a.writeBoundary(false)
+	}
 	if err := os.Rename(tmpManifest, finalManifest); err != nil {
 		_ = os.Remove(tmpManifest)
 		return nil, &StorageError{Code: ErrDiskFullOrWriteFailed, Message: fmt.Sprintf("atomic manifest rename failed: %v", err), Retryable: true}
 	}
-	_ = syncDir(a.rootDir)
+	if err := syncDir(a.rootDir); err != nil {
+		return nil, &StorageError{Code: ErrDiskFullOrWriteFailed, Message: "manifest directory sync failed", Retryable: true}
+	}
+	if a.writeBoundary != nil {
+		a.writeBoundary(true)
+	}
 
 	return &WriteReceipt{
 		SchemaVersion: SchemaVersion,
@@ -678,4 +692,3 @@ func (a *Adapter) RootDir() string {
 	}
 	return a.rootDir
 }
-

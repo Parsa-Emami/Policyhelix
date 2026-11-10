@@ -31,7 +31,7 @@ var defaultKeyRotationManager = bundles.NewKeyRotationManager(nil, nil, nil)
 
 const (
 	EngineName    = "policyhelix-engine"
-	EngineVersion = "0.0.1"
+	EngineVersion = "1.0.0"
 )
 
 var Invariants = []string{

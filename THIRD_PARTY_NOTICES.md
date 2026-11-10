@@ -8,23 +8,23 @@ From the committed `package-lock.json`:
 
 | Resource | Version | Declared license | Upstream Repository / Homepage |
 |---|---|---|---|
-| `@oxc-project/types` | 0.154.0 | MIT | https://github.com/oxc-project/oxc |
+| `@oxc-project/types` | 0.156.0 | MIT | https://github.com/oxc-project/oxc |
 | `@playwright/test` | 1.64.1 | Apache-2.0 | https://github.com/microsoft/playwright |
-| `@rolldown/binding-android-arm-eabi` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
-| `@rolldown/binding-android-arm64` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
-| `@rolldown/binding-darwin-arm64` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
-| `@rolldown/binding-darwin-x64` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
-| `@rolldown/binding-freebsd-x64` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
-| `@rolldown/binding-linux-arm-gnueabihf` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
-| `@rolldown/binding-linux-arm64-gnu` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
-| `@rolldown/binding-linux-arm64-musl` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
-| `@rolldown/binding-linux-ppc64-gnu` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
-| `@rolldown/binding-linux-s390x-gnu` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
-| `@rolldown/binding-linux-x64-gnu` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
-| `@rolldown/binding-linux-x64-musl` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
-| `@rolldown/binding-openharmony-arm64` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
-| `@rolldown/binding-win32-arm64-msvc` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
-| `@rolldown/binding-win32-x64-msvc` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
+| `@rolldown/binding-android-arm-eabi` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
+| `@rolldown/binding-android-arm64` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
+| `@rolldown/binding-darwin-arm64` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
+| `@rolldown/binding-darwin-x64` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
+| `@rolldown/binding-freebsd-x64` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
+| `@rolldown/binding-linux-arm-gnueabihf` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
+| `@rolldown/binding-linux-arm64-gnu` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
+| `@rolldown/binding-linux-arm64-musl` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
+| `@rolldown/binding-linux-ppc64-gnu` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
+| `@rolldown/binding-linux-s390x-gnu` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
+| `@rolldown/binding-linux-x64-gnu` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
+| `@rolldown/binding-linux-x64-musl` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
+| `@rolldown/binding-openharmony-arm64` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
+| `@rolldown/binding-win32-arm64-msvc` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
+| `@rolldown/binding-win32-x64-msvc` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
 | `@rolldown/pluginutils` | 1.0.1 | MIT | https://github.com/rolldown/rolldown |
 | `@types/react` | 19.3.0 | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
 | `@types/react-dom` | 19.3.0 | MIT | https://github.com/DefinitelyTyped/DefinitelyTyped |
@@ -69,10 +69,10 @@ From the committed `package-lock.json`:
 | `picomatch` | 4.0.7 | MIT | https://github.com/micromatch/picomatch |
 | `playwright` | 1.64.1 | Apache-2.0 | https://github.com/microsoft/playwright |
 | `playwright-core` | 1.64.1 | Apache-2.0 | https://github.com/microsoft/playwright |
-| `postcss` | 8.5.30 | MIT | https://github.com/postcss/postcss |
+| `postcss` | 8.5.32 | MIT | https://github.com/postcss/postcss |
 | `react` | 19.3.1 | MIT | https://github.com/facebook/react |
 | `react-dom` | 19.3.1 | MIT | https://github.com/facebook/react |
-| `rolldown` | 1.2.14 | MIT | https://github.com/rolldown/rolldown |
+| `rolldown` | 1.2.16 | MIT | https://github.com/rolldown/rolldown |
 | `scheduler` | 0.28.0 | MIT | https://github.com/facebook/react |
 | `source-map-js` | 1.2.2 | BSD-3-Clause | https://github.com/7070/source-map-js |
 | `tinyglobby` | 0.2.17 | MIT | https://github.com/SuperchupuDev/tinyglobby |

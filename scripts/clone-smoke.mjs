@@ -6,6 +6,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('../', import.meta.url));
+const installed = process.env.POLICYHELIX_INSTALLED_RELEASE;
 const temp = await mkdtemp(join(tmpdir(), 'oss-clone-'));
 let supervisor;
 let bareEngine;
@@ -48,9 +49,9 @@ async function waitFor(url, timeoutMs, label) {
 }
 
 function startLocalSupervisor(checkout, port, enginePort) {
-  const child = spawn(process.execPath, [
-    'scripts/start-local.mjs', '--port', String(port), '--engine-port', String(enginePort),
-  ], { cwd: checkout, stdio: ['ignore', 'pipe', 'pipe'] });
+  const args = ['scripts/start-local.mjs', '--port', String(port), '--engine-port', String(enginePort), '--storage-dir', join(temp, 'storage')];
+  if (installed) args.push('--root', 'web', '--engine-bin', 'engine/policyhelix');
+  const child = spawn(process.execPath, args, { cwd: checkout, stdio: ['ignore', 'pipe', 'pipe'] });
   let log = '';
   child.stdout.on('data', chunk => { log += chunk.toString(); });
   child.stderr.on('data', chunk => { log += chunk.toString(); });
@@ -143,8 +144,8 @@ async function executeStep(baseUrl, step, sessions) {
   return { response_status: response.status, data };
 }
 
-async function executeFixture(baseUrl, checkout, relPath, sessions, observations) {
-  const fixture = await readFixture(checkout, relPath);
+async function executeFixture(baseUrl, fixtureRoot, relPath, sessions, observations) {
+  const fixture = await readFixture(fixtureRoot, relPath);
   if (!fixture.fixture_id || !Array.isArray(fixture.steps) || fixture.steps.length === 0) {
     throw new Error(`Fixture ${relPath} is missing its identity or executable steps`);
   }
@@ -177,7 +178,7 @@ function assertScenarioObservations(scenario, observations, sessions, includeRes
 
 async function engineWithoutStorage(checkout) {
   const port = await freePort();
-  const binary = resolve(checkout, 'dist', 'engine', 'policyhelix');
+  const binary = resolve(checkout, installed ? 'engine/policyhelix' : 'dist/engine/policyhelix');
   const child = spawn(binary, ['--host', '127.0.0.1', '--port', String(port)], {
     cwd: checkout, stdio: ['ignore', 'pipe', 'pipe'],
   });
@@ -195,36 +196,42 @@ async function engineWithoutStorage(checkout) {
 }
 
 try {
-  // Test the index so contributors can verify a proposed commit before pushing.
-  const tree = run('git', ['write-tree'], root);
-  const identity = {
-    ...process.env,
-    GIT_AUTHOR_NAME: 'Clone smoke', GIT_AUTHOR_EMAIL: 'clone@example.invalid',
-    GIT_COMMITTER_NAME: 'Clone smoke', GIT_COMMITTER_EMAIL: 'clone@example.invalid',
-  };
-  const commit = run('git', ['commit-tree', tree, '-m', 'temporary staged source proof'], root, { env: identity });
-
-  // Advertise the snapshot from an isolated repository. No source refs change;
-  // a real transport clone collects every object, even from a shallow checkout.
   const tTotalStart = Date.now();
-  const source = join(temp, 'source.git');
-  run('git', ['init', '--bare', '--quiet', source], temp);
-  const objects = resolve(root, run('git', ['rev-parse', '--git-path', 'objects'], root));
-  await mkdir(join(source, 'objects', 'info'), { recursive: true });
-  await writeFile(join(source, 'objects', 'info', 'alternates'), objects + '\n');
-  run('git', ['--git-dir=' + source, 'update-ref', 'refs/heads/snapshot', commit], temp);
+  const checkout = installed ? resolve(installed) : join(temp, 'checkout');
+  const fixtureRoot = installed ? root : checkout;
+  let tree = null;
+  let cloneDurationMs = null;
+  let setupDurationMs = null;
+  if (!installed) {
+    // Test the index so contributors can verify a proposed commit before pushing.
+    tree = run('git', ['write-tree'], root);
+    const identity = {
+      ...process.env,
+      GIT_AUTHOR_NAME: 'Clone smoke', GIT_AUTHOR_EMAIL: 'clone@example.invalid',
+      GIT_COMMITTER_NAME: 'Clone smoke', GIT_COMMITTER_EMAIL: 'clone@example.invalid',
+    };
+    const commit = run('git', ['commit-tree', tree, '-m', 'temporary staged source proof'], root, { env: identity });
 
-  const tCloneStart = Date.now();
-  const checkout = join(temp, 'checkout');
-  run('git', ['clone', '--quiet', '--no-local', '--branch', 'snapshot', source, checkout], temp);
-  const cloneDurationMs = Date.now() - tCloneStart;
-  if (run('git', ['rev-parse', 'HEAD^{tree}'], checkout) !== tree) throw new Error('Cloned tree differs from index');
-  if (!process.env.npm_execpath) throw new Error('Invoke through npm run test:clone.');
+    // Advertise the snapshot from an isolated repository. No source refs change;
+    // a real transport clone collects every object, even from a shallow checkout.
+    const source = join(temp, 'source.git');
+    run('git', ['init', '--bare', '--quiet', source], temp);
+    const objects = resolve(root, run('git', ['rev-parse', '--git-path', 'objects'], root));
+    await mkdir(join(source, 'objects', 'info'), { recursive: true });
+    await writeFile(join(source, 'objects', 'info', 'alternates'), objects + '\n');
+    run('git', ['--git-dir=' + source, 'update-ref', 'refs/heads/snapshot', commit], temp);
 
-  // Clean-clone setup: locked install, web build, engine build.
-  const tSetupStart = Date.now();
-  run(process.execPath, [process.env.npm_execpath, 'run', 'setup'], checkout);
-  const setupDurationMs = Date.now() - tSetupStart;
+    const tCloneStart = Date.now();
+    run('git', ['clone', '--quiet', '--no-local', '--branch', 'snapshot', source, checkout], temp);
+    cloneDurationMs = Date.now() - tCloneStart;
+    if (run('git', ['rev-parse', 'HEAD^{tree}'], checkout) !== tree) throw new Error('Cloned tree differs from index');
+    if (!process.env.npm_execpath) throw new Error('Invoke through npm run test:clone.');
+
+    // Clean-clone setup: locked install, web build, engine build.
+    const tSetupStart = Date.now();
+    run(process.execPath, [process.env.npm_execpath, 'run', 'setup'], checkout);
+    setupDurationMs = Date.now() - tSetupStart;
+  }
 
   const tSupervisorStart = Date.now();
   const port = await freePort();
@@ -251,7 +258,7 @@ try {
     throw new Error(`Web shell proof failed: / returned ${webShell.status}, healthz scope ${webHealth.scope}`);
   }
 
-  const scenario = JSON.parse(await readFile(resolve(checkout, 'tests/scenarios/clone-to-value.json'), 'utf8'));
+  const scenario = JSON.parse(await readFile(resolve(fixtureRoot, 'tests/scenarios/clone-to-value.json'), 'utf8'));
   const requiredNegative = scenario.required_negative_cases ?? [];
   if (requiredNegative.length === 0) throw new Error('Scenario declares no required negative cases');
 
@@ -261,7 +268,7 @@ try {
 
   // Stage 1-6: the positive workflow, including both issued sessions.
   const tWorkflowStart = Date.now();
-  executed.push(await executeFixture(baseUrl, checkout, scenario.steps[0].fixture_ref, sessions, observations));
+  executed.push(await executeFixture(baseUrl, fixtureRoot, scenario.steps[0].fixture_ref, sessions, observations));
   if (!sessions.SESSION || !sessions.SESSION_ACTIVE) throw new Error('Workflow did not issue both reference sessions');
   const workflowDurationMs = Date.now() - tWorkflowStart;
 
@@ -269,13 +276,13 @@ try {
   const tNegativeStart = Date.now();
   for (const relPath of requiredNegative) {
     if (relPath.endsWith('negative-unavailable-runtime.json')) continue;
-    executed.push(await executeFixture(baseUrl, checkout, relPath, sessions, observations));
+    executed.push(await executeFixture(baseUrl, fixtureRoot, relPath, sessions, observations));
   }
 
   const scenarioChecks = assertScenarioObservations(scenario, observations, sessions, false);
 
   // The missing-prerequisite case runs the actual engine binary without durable storage.
-  const storageLessFixture = await readFixture(checkout, 'tests/fixtures/policyhelix/C30/negative-unavailable-runtime.json');
+  const storageLessFixture = await readFixture(fixtureRoot, 'tests/fixtures/policyhelix/C30/negative-unavailable-runtime.json');
   bareEngine = await engineWithoutStorage(checkout);
   for (const step of storageLessFixture.steps) {
     const { response_status, data } = await executeStep(bareEngine.baseUrl, step, sessions);
@@ -294,17 +301,17 @@ try {
   await waitFor(baseUrl + '/readyz?check=all', 30000, 'restarted supervised engine readiness').catch(error => {
     throw new Error(`${error.message}\n--- restarted supervisor output ---\n${supervisor.log()}`);
   });
-  executed.push(await executeFixture(baseUrl, checkout, scenario.restart_and_restore.fixture_ref, sessions, observations));
+  executed.push(await executeFixture(baseUrl, fixtureRoot, scenario.restart_and_restore.fixture_ref, sessions, observations));
   const restartCheck = assertScenarioObservations(scenario, observations, sessions);
   const restartDurationMs = Date.now() - tRestartStart;
 
   // If C36 fixtures are present in checkout, verify the C36 positive workflow fixture too
   let c36Verified = false;
   try {
-    const c36Manifest = await readFixture(checkout, 'tests/fixtures/policyhelix/C36/manifest.json');
+    const c36Manifest = await readFixture(fixtureRoot, 'tests/fixtures/policyhelix/C36/manifest.json');
     if (c36Manifest && c36Manifest.commit_id === 'C36') {
       const c36PosFixture = 'tests/fixtures/policyhelix/C36/positive-independent-onboarding.json';
-      executed.push(await executeFixture(baseUrl, checkout, c36PosFixture, sessions, observations));
+      executed.push(await executeFixture(baseUrl, fixtureRoot, c36PosFixture, sessions, observations));
       c36Verified = true;
     }
   } catch {
@@ -312,13 +319,15 @@ try {
   }
 
   const totalElapsedMs = Date.now() - tTotalStart;
-  const restoredState = observations.get(`${(await readFixture(checkout, scenario.restart_and_restore.fixture_ref)).fixture_id}:STEP-09`)?.data;
+  const restoredState = observations.get(`${(await readFixture(fixtureRoot, scenario.restart_and_restore.fixture_ref)).fixture_id}:STEP-09`)?.data;
   console.log(JSON.stringify({
     passed: true,
     stagedTree: tree,
-    commands: ['git clone', 'npm run setup', 'npm start (loopback supervisor)'],
-    proof: 'real git clone -> npm run setup -> supervised engine -> six-stage reference workflow -> required negative cases -> restart and restore',
-    webOnlyProof: 'git clone -> npm run setup -> web workspace / and /healthz (web-shell) served',
+    sourceProof: installed ? 'installed artifact' : 'staged Git checkout',
+    installedRelease: installed ? JSON.parse(await readFile(join(checkout, 'release.json'), 'utf8')) : null,
+    commands: installed ? ['node scripts/start-local.mjs --root web --engine-bin engine/policyhelix'] : ['git clone', 'npm run setup', 'npm start (loopback supervisor)'],
+    proof: (installed ? 'installed artifact' : 'clean Git clone and npm setup') + ' -> supervised engine -> reference workflow -> negative cases -> restart and restore',
+    webOnlyProof: 'web workspace / and /healthz (web-shell) served',
     engineReady: readiness.engineReady,
     providers: Object.fromEntries(Object.entries(readiness.engine.providers).map(([name, state]) => [name, state.status])),
     workflowStages: scenario.steps.length,

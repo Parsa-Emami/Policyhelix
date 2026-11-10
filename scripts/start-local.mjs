@@ -171,11 +171,11 @@ export async function startSupervisor(options = {}) {
 if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1])).href) {
   try {
     const args = process.argv.slice(2);
-    const options = { host: '127.0.0.1', port: '4173', enginePort: '4174', root: 'dist/web', config: 'ops/web/runtime-config.json' };
+    const options = { host: '127.0.0.1', port: '4173', enginePort: '4174', root: 'dist/web', config: 'ops/web/runtime-config.json', engineBin: 'dist/engine/policyhelix', storageDir: undefined };
     for (let i = 0; i < args.length; i += 2) {
       const key = args[i].startsWith('--') ? args[i].slice(2).replace(/-([a-z])/g, (_, letter) => letter.toUpperCase()) : '';
       if (!key || !Object.hasOwn(options, key) || !args[i + 1]) {
-        throw new Error('Usage: node scripts/start-local.mjs [--host 127.0.0.1] [--port 4173] [--engine-port 4174] [--root dist/web] [--config path]');
+        throw new Error('Usage: node scripts/start-local.mjs [--host 127.0.0.1] [--port 4173] [--engine-port 4174] [--root dist/web] [--config path] [--engine-bin path] [--storage-dir path]');
       }
       options[key] = args[i + 1];
     }

@@ -80,8 +80,9 @@ test('C31 packaging: dist/release contains all complete product artifacts and va
   assert.equal(sbom.specVersion, '1.5');
   assert.ok(Array.isArray(sbom.components) && sbom.components.length > 0);
   assert.ok(sbom.components.some(c => c.name === 'policyhelix-engine'));
-  assert.ok(sbom.components.some(c => c.name === 'go-runtime'));
-  assert.ok(sbom.components.some(c => c.name === 'open-policy-agent'));
+  assert.equal(sbom.components.find(c => c.name === 'go-runtime')?.version, releaseJson.toolchain.go);
+  assert.equal(sbom.components.find(c => c.name === 'open-policy-agent')?.scope, 'excluded');
+  assert.equal(sbom.components.find(c => c.name === 'keycloak')?.scope, 'excluded');
 
   // 4. Verify SHA256SUMS.txt integrity
   const checksumContent = await readFile(join(releaseDir, 'SHA256SUMS.txt'), 'utf8');

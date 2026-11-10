@@ -1,0 +1,76 @@
+name: installed-release
+
+on:
+  workflow_call:
+    inputs:
+      public-release:
+        required: true
+        type: boolean
+
+permissions: {}
+
+jobs:
+  verify:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 18
+    permissions:
+      contents: read
+      attestations: read
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        if: ${{ !inputs.public-release }}
+        with:
+          name: policyhelix-v1-candidate
+          path: ${{ runner.temp }}/assets
+      - name: Download public release assets
+        if: inputs.public-release
+        run: bash scripts/release-assets.sh download "$RUNNER_TEMP/assets" "$GITHUB_SHA"
+      - name: Verify provenance before extraction and test the installed bytes
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PUBLIC_RELEASE: ${{ inputs.public-release }}
+        run: |
+          set -euo pipefail
+          install="$RUNNER_TEMP/policyhelix-install"
+          report="$RUNNER_TEMP/installed-proof"
+          mkdir -p "$report"
+          bash scripts/release-assets.sh verify "$RUNNER_TEMP/assets" "$GITHUB_SHA" "$install" | tee "$report/assets.log"
+          changed=$(mktemp -d)
+          cp "$RUNNER_TEMP/assets/"* "$changed/"
+          printf '\n' >> "$changed/release.json"
+          if bash scripts/release-assets.sh verify "$changed" "$GITHUB_SHA" > "$report/tamper.log" 2>&1; then
+            echo "Altered release metadata passed verification"
+            exit 1
+          fi
+          grep -Fx 'release.json: FAILED' "$report/tamper.log"
+          rm -r -- "$changed"
+          unset GH_TOKEN
+          npm ci --ignore-scripts
+          npx --no-install playwright install --with-deps chromium
+          POLICYHELIX_INSTALLED_RELEASE="$install" node scripts/clone-smoke.mjs > "$report/workflow.json"
+          POLICYHELIX_INSTALLED_RELEASE="$install" npx --no-install playwright test tests/browser/clone-to-value.spec.ts --reporter=line | tee "$report/browser.log"
+          jq -e --arg sha "$GITHUB_SHA" --argjson published "$PUBLIC_RELEASE" \
+            --slurpfile fixture tests/fixtures/policyhelix/C40/scenarios.json '
+            $fixture[0].positive as $expected |
+            select(.passed == true and .sourceProof == "installed artifact" and
+              .installedRelease.sourceCommit == $sha and .installedRelease.profile == $expected.published_profile and
+              .engineReady == true and .workflowStages == $expected.workflow_stages and
+              .negativeFixtures > 0 and .scenarioChecks > .workflowStages and
+              .activeBundleRevision == .highestRevision and .revokedSessions > 0) |
+            . + {published: $published, attestation_verified: true, tamper_rejected: true, browser_verified: true}
+          ' "$report/workflow.json" > "$report/report.json"
+          jq '{passed,published,sourceProof,installedRelease,providers,workflowStages,negativeFixtures,scenarioChecks,activeBundleRevision,highestRevision,revokedSessions,browser_verified}' "$report/report.json"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
+        with:
+          name: policyhelix-installed-${{ inputs.public-release && 'public' || 'candidate' }}
+          path: ${{ runner.temp }}/installed-proof/
+          retention-days: 30
+          if-no-files-found: error

@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "task": "C40",
+  "tag": "v1.0.0",
+  "profile": "local-demo",
+  "passed": false,
+  "published": false,
+  "public_installation_verified": false,
+  "release_manifest": "docs/release/RELEASE_MANIFEST.json",
+  "evidence": "docs/evidence/C40.json"
+}

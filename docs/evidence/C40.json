@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "commit_id": "C40",
+  "date": "2026-11-10",
+  "planning_template": false,
+  "passed": false,
+  "source_identity": "sha256:3526badc01726cdb555c924815fe87e14b819e43613136d2cea6ec047ec7bd94",
+  "source_identity_method": "Sorted tracked paths and SHA-256 file bytes, excluding historical checksum manifest and evidence records",
+  "toolchain": {
+    "go": "1.26.2",
+    "node": "24.22.1",
+    "npm": "11.9.0",
+    "actionlint": "1.7.12"
+  },
+  "fixture": {
+    "path": "tests/fixtures/policyhelix/C40/scenarios.json",
+    "license": "Apache-2.0",
+    "sha256": "7262418192914af621e680a6c469b05fe95fba6d638f3e54d38a51c889d69061"
+  },
+  "commands": [
+    {
+      "command": "npm run check",
+      "exit_code": 0,
+      "result": "TypeScript, web and engine builds, 29 Node checks including C35 recovery, and the Go suite passed."
+    },
+    {
+      "command": "go test -race -count=1 ./...",
+      "exit_code": 0,
+      "result": "All collected Go packages passed."
+    },
+    {
+      "command": "go vet ./...",
+      "exit_code": 0,
+      "result": "No findings."
+    },
+    {
+      "command": "go test -count=1 -v ./internal/storage -run TestC40",
+      "exit_code": 0,
+      "result": "Real SIGKILL before and after manifest publication, authoritative restart, acknowledgment replay and quota rejection passed."
+    },
+    {
+      "command": "npm run release:check",
+      "exit_code": 0,
+      "result": "The C01-C38 readiness gate passed."
+    },
+    {
+      "command": "actionlint .github/workflows/release.yml .github/workflows/installed-release.yml",
+      "exit_code": 0,
+      "result": "No findings."
+    }
+  ],
+  "results": {
+    "publication_verified": false,
+    "installed_public_workflow_verified": false
+  }
+}

@@ -9,6 +9,17 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "${ROOT_DIR}"
 
+if [[ ${POLICYHELIX_PUBLIC_PACKAGE:-0} == 1 && -n "$(git status --porcelain)" ]]; then
+  echo "Public packaging requires a clean source commit." >&2
+  exit 1
+fi
+export RELEASE_SOURCE_COMMIT="$(git rev-parse HEAD)"
+export RELEASE_SOURCE_TIMESTAMP="$(git show -s --format=%cI HEAD)"
+export RELEASE_SOURCE_DIRTY=false
+if [[ -n "$(git status --porcelain)" ]]; then
+  export RELEASE_SOURCE_DIRTY=true
+fi
+
 echo "=== PolicyHelix Complete Product Packaging ==="
 
 # 1. Verify Toolchain
@@ -25,7 +36,7 @@ npm run build
 # 3. Build Go Engine Binary
 echo "--> Building Go engine executable..."
 mkdir -p dist/engine
-go build -ldflags="-s -w" -o dist/engine/policyhelix ./cmd/policyhelix
+CGO_ENABLED=0 go build -trimpath -buildvcs=false -ldflags="-s -w" -o dist/engine/policyhelix ./cmd/policyhelix
 
 # 4. Initialize Atomic Staging Directory
 STAGE_DIR="dist/.staging-release-$$"
@@ -76,136 +87,80 @@ cp THIRD_PARTY_NOTICES.md "${STAGE_DIR}/THIRD_PARTY_NOTICES.md"
 echo "--> Creating reproducible source archive..."
 node scripts/package-source.mjs --output-dir "${STAGE_DIR}"
 
-# 10. Generate Machine-Readable SBOM
-echo "--> Generating Software Bill of Materials (SBOM)..."
-STAGE_DIR="${STAGE_DIR}" node - << 'EOF'
+mkdir -p "${STAGE_DIR}/licenses"
+cp "$(go env GOROOT)/LICENSE" "${STAGE_DIR}/licenses/go-LICENSE"
+for dependency in react react-dom scheduler; do
+  cp "node_modules/$dependency/LICENSE" "${STAGE_DIR}/licenses/$dependency-LICENSE"
+done
+
+STAGE_DIR="${STAGE_DIR}" node --input-type=module - << 'EOF'
+import { execFileSync } from 'node:child_process';
+import { createHash } from 'node:crypto';
 import { readFile, writeFile } from 'node:fs/promises';
-import { resolve } from 'node:path';
+import { join } from 'node:path';
 
-const stageDir = process.env.STAGE_DIR;
+const stage = process.env.STAGE_DIR;
 const pkg = JSON.parse(await readFile('package.json', 'utf8'));
-const notices = await readFile('THIRD_PARTY_NOTICES.md', 'utf8');
-
+const lock = JSON.parse(await readFile('package-lock.json', 'utf8'));
+const toolchain = JSON.parse(await readFile('docs/engineering/toolchain-lock.json', 'utf8'));
+const command = (name, args) => execFileSync(name, args, { encoding: 'utf8' }).trim();
+const engine = JSON.parse(command(join(stage, 'engine/policyhelix'), ['--version']));
+if (engine.version !== pkg.version) throw new Error('Engine and package versions differ.');
+const goVersion = command('go', ['version']).split(' ')[2].replace(/^go/, '');
+const license = id => [{ license: { id } }];
+const allowed = new Set(['MIT', 'Apache-2.0', 'BSD-3-Clause', 'MPL-2.0', 'ISC']);
 const components = [
-  {
-    type: 'application',
-    name: 'policyhelix-engine',
-    version: '0.0.1',
-    description: 'PolicyHelix authorization engine and loopback supervisor',
-    licenses: [{ license: { id: 'Apache-2.0' } }],
-    purl: 'pkg:golang/github.com/parsa-emami/policyhelix@0.0.1'
-  },
-  {
-    type: 'application',
-    name: pkg.name,
-    version: pkg.version,
-    description: pkg.description,
-    licenses: [{ license: { id: pkg.license } }],
-    purl: `pkg:npm/${pkg.name}@${pkg.version}`
-  },
-  {
-    type: 'library',
-    name: 'go-runtime',
-    version: '1.26.2',
-    licenses: [{ license: { id: 'BSD-3-Clause' } }],
-    supplier: 'Google / Go Authors'
-  },
-  {
-    type: 'library',
-    name: 'open-policy-agent',
-    version: 'v1.2.0',
-    licenses: [{ license: { id: 'Apache-2.0' } }],
-    supplier: 'Styra / Open Policy Agent'
-  },
-  {
-    type: 'library',
-    name: 'keycloak',
-    version: '26.1.3',
-    licenses: [{ license: { id: 'Apache-2.0' } }],
-    supplier: 'Red Hat / Keycloak Community'
-  }
+  { type: 'application', name: 'policyhelix-engine', version: engine.version, licenses: license('Apache-2.0') },
+  { type: 'library', name: 'go-runtime', version: goVersion, licenses: license('BSD-3-Clause') }
 ];
-
-// Parse dependencies from package.json
-for (const [name, version] of Object.entries(pkg.dependencies || {})) {
+for (const [name, provider] of [
+  ['open-policy-agent', toolchain.providers.local_opa],
+  ['keycloak', toolchain.providers.self_hosted_keycloak]
+]) {
+  if (!allowed.has(provider.license)) throw new Error(`Unsupported provider license: ${name}`);
   components.push({
-    type: 'library',
-    name,
-    version,
-    licenses: [{ license: { id: 'MIT' } }],
-    purl: `pkg:npm/${name}@${version}`
+    type: 'application', name, version: provider.version, scope: 'excluded', licenses: license(provider.license),
+    externalReferences: [{ type: 'website', url: provider.source_url }]
   });
 }
-
-for (const [name, version] of Object.entries(pkg.devDependencies || {})) {
+for (const [path, dependency] of Object.entries(lock.packages)) {
+  if (!path) continue;
+  const name = path.split('node_modules/').at(-1);
+  if (!allowed.has(dependency.license)) throw new Error(`Unsupported dependency license: ${name}`);
+  const segments = name.split('/').map(encodeURIComponent);
   components.push({
-    type: 'framework',
-    name,
-    version,
-    licenses: [{ license: { id: name.includes('playwright') || name.includes('typescript') ? 'Apache-2.0' : 'MIT' } }],
-    purl: `pkg:npm/${name}@${version}`
+    type: 'library', name, version: dependency.version,
+    scope: dependency.dev ? 'excluded' : 'required',
+    licenses: license(dependency.license),
+    purl: `pkg:npm/${segments.join('/')}@${dependency.version}`
   });
 }
-
 const sbom = {
-  bomFormat: 'CycloneDX',
-  specVersion: '1.5',
-  serialNumber: 'urn:uuid:policyhelix-release-sbom-v1',
-  version: 1,
+  bomFormat: 'CycloneDX', specVersion: '1.5', version: 1,
   metadata: {
-    timestamp: new Date().toISOString(),
-    tools: [
-      { vendor: 'PolicyHelix', name: 'package.sh', version: '1.0.0' }
-    ],
-    component: {
-      type: 'application',
-      name: 'policyhelix-complete',
-      version: pkg.version,
-      licenses: [{ license: { id: 'Apache-2.0' } }]
-    }
+    timestamp: new Date(process.env.RELEASE_SOURCE_TIMESTAMP).toISOString(),
+    component: { type: 'application', name: 'policyhelix-complete', version: pkg.version, licenses: license(pkg.license) }
   },
   components
 };
-
-await writeFile(`${stageDir}/sbom.json`, JSON.stringify(sbom, null, 2) + '\n');
-EOF
-
-# 11. Generate Provenance Metadata (release.json)
-SOURCE_COMMIT="$(git rev-parse HEAD)"
-DIRTY="false"
-[ -n "$(git status --porcelain --untracked-files=normal)" ] && DIRTY="true"
-
-SIGNER_KEY_ID="${POLICYHELIX_RELEASE_KEY_ID:-ed25519-primary-2026}"
-RELEASE_PUBKEY_HEX="79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664"
-
-cat << EOF > "${STAGE_DIR}/release.json"
-{
-  "project": "PolicyHelix",
-  "version": "0.0.1",
-  "scope": "policyhelix-complete",
-  "sourceCommit": "${SOURCE_COMMIT}",
-  "dirty": ${DIRTY},
-  "engineReady": true,
-  "reproducible": true,
-  "offlineRulesIncluded": true,
-  "signature": {
-    "algorithm": "ed25519",
-    "signerKeyId": "${SIGNER_KEY_ID}",
-    "publicKeyHex": "${RELEASE_PUBKEY_HEX}",
-    "signatureFile": "SHA256SUMS.txt.sig"
+const publicPackage = process.env.POLICYHELIX_PUBLIC_PACKAGE === '1';
+const release = {
+  project: 'PolicyHelix', version: pkg.version, scope: 'policyhelix-complete',
+  profile: 'local-demo', sourceCommit: process.env.RELEASE_SOURCE_COMMIT,
+  dirty: process.env.RELEASE_SOURCE_DIRTY === 'true', engineReady: true, reproducible: true,
+  offlineRulesIncluded: true, timestamp: sbom.metadata.timestamp,
+  toolchain: { go: goVersion, node: process.version, npm: command('npm', ['--version']), platform: `${process.platform}/${process.arch}` },
+  sourceArchiveSha256: createHash('sha256').update(await readFile(join(stage, 'policyhelix-source.tar.gz'))).digest('hex'),
+  signature: publicPackage ? { algorithm: 'github-artifact-attestation', subject: 'public SHA256SUMS.txt' } : {
+    algorithm: 'ed25519', purpose: 'local-test',
+    signerKeyId: process.env.POLICYHELIX_RELEASE_KEY_ID || 'ed25519-primary-2026',
+    publicKeyHex: '79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664',
+    signatureFile: 'SHA256SUMS.txt.sig'
   },
-  "artifacts": [
-    "engine/policyhelix",
-    "web/",
-    "rules/",
-    "policyhelix-source.tar.gz",
-    "sbom.json",
-    "ops/web/",
-    "scripts/",
-    "docs/"
-  ],
-  "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
-}
+  artifacts: ['engine/policyhelix', 'web/', 'rules/', 'policyhelix-source.tar.gz', 'sbom.json', 'ops/web/', 'scripts/', 'docs/', 'licenses/']
+};
+await writeFile(join(stage, 'sbom.json'), JSON.stringify(sbom, null, 2) + '\n');
+await writeFile(join(stage, 'release.json'), JSON.stringify(release, null, 2) + '\n');
 EOF
 
 # 12. Generate Checksums (SHA256SUMS.txt) in Staging
@@ -219,6 +174,7 @@ echo "--> Generating cryptographic checksums..."
 )
 
 # 13. Cryptographically Sign Release Checksums (Requirement N35 / Commit C35)
+if [[ ${POLICYHELIX_PUBLIC_PACKAGE:-0} != 1 ]]; then
 echo "--> Generating cryptographic Ed25519 release signature..."
 STAGE_DIR="${STAGE_DIR}" node - << 'EOF'
 import { readFile, writeFile } from 'node:fs/promises';
@@ -238,6 +194,7 @@ const checksumContent = await readFile(`${stageDir}/SHA256SUMS.txt`);
 const signature = crypto.sign(null, checksumContent, privKey);
 await writeFile(`${stageDir}/SHA256SUMS.txt.sig`, signature.toString('hex') + '\n');
 EOF
+fi
 
 # 14. Verify Staged Checksums Before Atomic Promotion
 (

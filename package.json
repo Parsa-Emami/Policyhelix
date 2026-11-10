@@ -1,6 +1,6 @@
 {
   "name": "@parsa-emami/policyhelix-web",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "PolicyHelix web application foundation",

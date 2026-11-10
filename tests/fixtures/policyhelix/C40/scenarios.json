@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "task": "C40",
+  "license": "Apache-2.0",
+  "provenance": "Repository-authored synthetic authorization and publication scenarios. The installed HTTP workflow uses the licensed C30 fixture inputs.",
+  "positive": {
+    "workflow_stages": 6,
+    "reference_contract": "tests/scenarios/clone-to-value.json",
+    "published_profile": "local-demo"
+  },
+  "negative": {
+    "private_resource_without_trusted_identity": "deny before any upstream side effect",
+    "writer_killed_before_manifest_rename": "retain prior committed state and allow retry",
+    "writer_killed_after_directory_sync": "retain new committed state and replay lost acknowledgment",
+    "metadata_quota": "reject without publication or retry",
+    "changed_download": "reject before extraction"
+  }
+}

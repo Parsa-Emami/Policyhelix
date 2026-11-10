@@ -59,5 +59,12 @@
   "current_core_ready": true,
   "next_task": "C40",
   "next_command": "npm run plan -- next",
-  "continuation": "Task C39 verified. Evidence-backed open-source v1 readiness gate enforced across all C01-C38 prerequisites, clone-to-value, packaging authenticity, dependency/fixture licenses, and fail-closed security/recovery in docs/evidence/v1-gate.json, .github/workflows/release-gate.yml, scripts/roadmap.mjs, and tests/c39_release_gate_test.go; core_ready certified in plans/release-gates.json; Requirement N39 verified. Ready for C40."
+  "continuation": "Task C39 verified. Evidence-backed open-source v1 readiness gate enforced across all C01-C38 prerequisites, clone-to-value, packaging authenticity, dependency/fixture licenses, and fail-closed security/recovery in docs/evidence/v1-gate.json, .github/workflows/release-gate.yml, scripts/roadmap.mjs, and tests/c39_release_gate_test.go; core_ready certified in plans/release-gates.json; Requirement N39 verified. Ready for C40.",
+  "c40_handoff": {
+    "base_commit": "579d1d601bb374e4250f4510c347935606bd1059",
+    "status": "in_progress",
+    "release_workflow": ".github/workflows/release.yml",
+    "local_evidence": "docs/evidence/C40.json",
+    "next_task": "Verify the GitHub release and clean installation from its public downloads."
+  }
 }
