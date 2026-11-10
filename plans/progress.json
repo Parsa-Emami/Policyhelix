@@ -1,7 +1,7 @@
 {
-  "version": "0.0.0",
+  "version": "1.0.0",
   "project": "PolicyHelix",
-  "readiness": "LOCAL_REFERENCE_WORKFLOW_VERIFIED",
+  "readiness": "OSS_V1_PUBLISHED",
   "market_validation": "UNVALIDATED",
   "commits": [
     {
@@ -357,10 +357,12 @@
     },
     {
       "id": "C40",
-      "status": "in_progress",
-      "evidence": [],
-      "source_identity": null,
-      "notes": "Publication automation and installed acceptance are implemented. Verification requires the public release and its successful installed workflow."
+      "status": "verified",
+      "evidence": [
+        "docs/evidence/C40.json"
+      ],
+      "source_identity": "sha256:2c24c725c608dc86954ad7483c43d2a99962093822466bc3917c38fb25795ed4",
+      "notes": "Public v1.0.0 was source-attested, downloaded and installed on a fresh GitHub runner. The reference workflow, browser, fail-closed cases and restart/restore passed."
     }
   ],
   "web_progress": "plans/web-roadmap.json",

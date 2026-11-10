@@ -1,6 +1,6 @@
 # Continue PolicyHelix
 
-Current: local reference workflow verified at C30; full published OSS v1 pending C40.
+Current: C01–C40 verified. [PolicyHelix v1.0.0](https://github.com/Parsa-Emami/Policyhelix/releases/tag/v1.0.0) passed the local-demo reference workflow from the public download.
 
 ```sh
 npm run setup

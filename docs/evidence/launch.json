@@ -3,9 +3,49 @@
   "task": "C40",
   "tag": "v1.0.0",
   "profile": "local-demo",
-  "passed": false,
-  "published": false,
-  "public_installation_verified": false,
+  "passed": true,
+  "published": true,
+  "public_installation_verified": true,
   "release_manifest": "docs/release/RELEASE_MANIFEST.json",
-  "evidence": "docs/evidence/C40.json"
+  "evidence": "docs/evidence/C40.json",
+  "source_commit": "11ff08ad67cf3b1c9987ce00e7fc32ea00022989",
+  "source_tree": "55b308c7b98b473a3b3af55df43a506f8d71dfbd",
+  "source_archive_sha256": "0e4e5b3398fa2587fb6e0cd6fd6a840020c0c56fe9889f92dc46e87e26de4442",
+  "release_id": 439987156,
+  "release_url": "https://github.com/Parsa-Emami/Policyhelix/releases/tag/v1.0.0",
+  "published_at": "2026-11-10T05:38:47Z",
+  "workflow_url": "https://github.com/Parsa-Emami/Policyhelix/actions/runs/42763039509",
+  "installed_job_url": "https://github.com/Parsa-Emami/Policyhelix/actions/runs/42763039509/job/129654236311",
+  "assets": [
+    {
+      "id": 730260264,
+      "name": "policyhelix-v1.0.0-linux-x64.tar.gz",
+      "size": 4268383,
+      "digest": "sha256:7f3dddc9b8817f4872efa769f6b09573f523d88d653814b5b18b2a42105e299f"
+    },
+    {
+      "id": 730260266,
+      "name": "policyhelix-v1.0.0-source.tar.gz",
+      "size": 868325,
+      "digest": "sha256:0e4e5b3398fa2587fb6e0cd6fd6a840020c0c56fe9889f92dc46e87e26de4442"
+    },
+    {
+      "id": 730260265,
+      "name": "policyhelix-v1.0.0.cdx.json",
+      "size": 22770,
+      "digest": "sha256:3445e27172a920bd21e28036afae7f174e1a830021b076e4f06bd55b532a678c"
+    },
+    {
+      "id": 730260258,
+      "name": "release.json",
+      "size": 859,
+      "digest": "sha256:995e820b034e2df388ed999e6c0be643502ed4b02881aaf28a1bce9e0c151381"
+    },
+    {
+      "id": 730260262,
+      "name": "SHA256SUMS.txt",
+      "size": 374,
+      "digest": "sha256:0a1491c6b7bc5f3a495d04f46b3bfb98d266cb944b9b0c94387f409b03bb5f6a"
+    }
+  ]
 }

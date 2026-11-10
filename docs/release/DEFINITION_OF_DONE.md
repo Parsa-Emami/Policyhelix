@@ -1,6 +1,6 @@
 # PolicyHelix: completion endpoint
 
-Current: WEB_FOUNDATION; full core is not ready.
+Current: C01–C40 verified. [The launch record](../evidence/launch.json) links the public release and installed acceptance.
 
 ## C30: locally usable
 

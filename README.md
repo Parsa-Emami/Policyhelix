@@ -6,7 +6,7 @@
 
 ---
 
-Open-source local-first authorization engine and browser workspace under [Apache-2.0](LICENSE). **Current implementation: the complete local reference workflow is verified at [C30](plans/commits/C30.md); the full published OSS v1 remains the [C40](plans/commits/C40.md) evidence gate.**
+Open-source local-first authorization engine and browser workspace under [Apache-2.0](LICENSE). **C01–C40 are verified.** [Download v1.0.0 for Linux x86_64](https://github.com/Parsa-Emami/Policyhelix/releases/tag/v1.0.0).
 
 No paid accounts, compulsory cloud services, external databases, or proprietary dependencies are required.
 
@@ -24,7 +24,7 @@ npm start
 Open http://127.0.0.1:4173 and select **Reference Workflow**.
 
 - `npm run setup` validates the toolchain, installs locked dependencies with lifecycle scripts disabled, compiles the Go engine binary (`dist/engine/policyhelix`), and builds the web client.
-- `npm start` supervises the Go engine on loopback (`127.0.0.1:4174`), mounts durable local SQLite storage in `.local-data/`, and runs the owned synthetic upstream.
+- `npm start` supervises the Go engine on loopback (`127.0.0.1:4174`), opens the durable local manifest and object store in `.local-data/`, and runs the owned synthetic upstream.
 - For complete step-by-step instructions, see the **[User Guide](docs/release/USER_GUIDE.md)** and **[Clone Guide](docs/engineering/CLONE_TO_RUN.md)**.
 
 ## Independent Source Builds

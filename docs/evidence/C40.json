@@ -3,7 +3,7 @@
   "commit_id": "C40",
   "date": "2026-11-10",
   "planning_template": false,
-  "passed": false,
+  "passed": true,
   "source_identity": "sha256:2c24c725c608dc86954ad7483c43d2a99962093822466bc3917c38fb25795ed4",
   "source_identity_method": "Sorted tracked paths and SHA-256 file bytes, excluding historical checksum manifest and evidence records",
   "toolchain": {
@@ -15,7 +15,9 @@
   "fixture": {
     "path": "tests/fixtures/policyhelix/C40/scenarios.json",
     "license": "Apache-2.0",
-    "sha256": "7262418192914af621e680a6c469b05fe95fba6d638f3e54d38a51c889d69061"
+    "sha256": "7262418192914af621e680a6c469b05fe95fba6d638f3e54d38a51c889d69061",
+    "reference": "tests/scenarios/clone-to-value.json",
+    "reference_sha256": "bb5fd04b23430bd894f5c7bff19d394a15d0e354c45db8db64de67b7b309a06b"
   },
   "commands": [
     {
@@ -63,14 +65,113 @@
       "command": "POLICYHELIX_INSTALLED_RELEASE=<outside-checkout> node scripts/clone-smoke.mjs",
       "exit_code": 0,
       "result": "Six workflow stages, seven negative fixtures, 13 checks and durable restart/restore passed."
+    },
+    {
+      "command": "go test -count=1 -v ./internal/storage -run TestC40 (release preparation)",
+      "exit_code": 0,
+      "result": "SIGKILL, recovery, replay and quota cases ran on the published source."
+    },
+    {
+      "command": "npm test (current-source GitHub CI)",
+      "exit_code": 0,
+      "result": "Go/web integration and C35 upgrade, rollback gap and tamper checks passed on the published source."
+    },
+    {
+      "command": "bash scripts/release-assets.sh verify (GitHub installed job)",
+      "exit_code": 0,
+      "result": "GitHub repository, workflow and source attestation matched. The changed release metadata was rejected."
+    },
+    {
+      "command": "POLICYHELIX_INSTALLED_RELEASE=<verified-public-runtime> node scripts/clone-smoke.mjs",
+      "exit_code": 0,
+      "result": "Six reference stages, seven negative fixtures and durable restart/restore ran against the downloaded engine."
+    },
+    {
+      "command": "POLICYHELIX_INSTALLED_RELEASE=<verified-public-runtime> playwright test tests/browser/clone-to-value.spec.ts",
+      "exit_code": 0,
+      "result": "Five browser checks ran against the downloaded web and engine bytes."
+    },
+    {
+      "command": "sha256sum --strict -c SHA256SUMS.txt (independent public download)",
+      "exit_code": 0,
+      "result": "All five public files matched their GitHub asset digests and the published checksum manifest."
     }
   ],
   "results": {
-    "publication_verified": false,
-    "installed_public_workflow_verified": false
+    "publication_verified": true,
+    "installed_public_workflow_verified": true,
+    "downloaded_asset_count": 5,
+    "installed_checks": {
+      "workflowStages": 6,
+      "negativeFixtures": 7,
+      "scenarioChecks": 13,
+      "activeBundleRevision": 1,
+      "highestRevision": 1,
+      "revokedSessions": 1,
+      "browser_verified": true
+    },
+    "runtime_providers": {
+      "embedded_policy_evaluator": "connected",
+      "synthetic_demo_identity": "connected",
+      "owned_loopback_upstream": "connected"
+    },
+    "provider_scope": "The reference runs the local-demo provider profile. OPA and Keycloak are documented external integration references."
   },
   "prepublication_retry": {
     "run": "https://github.com/Parsa-Emami/Policyhelix/actions/runs/42762528005/job/129652162924",
     "result": "The clean installed job rejected the first candidate because the simulator fixture was missing. No release was created. The package now includes the licensed C01 simulator fixtures and checks their digest."
+  },
+  "published_source_commit": "11ff08ad67cf3b1c9987ce00e7fc32ea00022989",
+  "published_git_tree": "55b308c7b98b473a3b3af55df43a506f8d71dfbd",
+  "release_build": {
+    "go": "1.26.2",
+    "node": "v24.19.0",
+    "npm": "11.17.0",
+    "platform": "linux/x64"
+  },
+  "provider_profile": "local-demo",
+  "ci": {
+    "run_id": 42763039509,
+    "url": "https://github.com/Parsa-Emami/Policyhelix/actions/runs/42763039509",
+    "runner_profile": "GitHub-hosted Ubuntu 24.04 x86_64",
+    "jobs": [
+      {
+        "id": 129652984811,
+        "name": "prepare",
+        "conclusion": "success",
+        "html_url": "https://github.com/Parsa-Emami/Policyhelix/actions/runs/42763039509/job/129652984811"
+      },
+      {
+        "id": 129653746661,
+        "name": "candidate-install / verify",
+        "conclusion": "success",
+        "html_url": "https://github.com/Parsa-Emami/Policyhelix/actions/runs/42763039509/job/129653746661"
+      },
+      {
+        "id": 129654140135,
+        "name": "publish",
+        "conclusion": "success",
+        "html_url": "https://github.com/Parsa-Emami/Policyhelix/actions/runs/42763039509/job/129654140135"
+      },
+      {
+        "id": 129654236311,
+        "name": "installed / verify",
+        "conclusion": "success",
+        "html_url": "https://github.com/Parsa-Emami/Policyhelix/actions/runs/42763039509/job/129654236311"
+      }
+    ],
+    "current_source_workflows": {
+      "contracts": 42763039499,
+      "runtime": 42763039486,
+      "web-foundation": 42763039796,
+      "release-gate": 42763039631,
+      "plan-consistency": 42763039800
+    },
+    "public_install_report": {
+      "id": 13739335219,
+      "name": "policyhelix-installed-public",
+      "digest": "sha256:08139cea9093aca6cda8a79d4aea1a16db563a63005f19329bbc098ba4d51040",
+      "expires_at": "2026-12-10T05:39:55Z"
+    }
   }
 }

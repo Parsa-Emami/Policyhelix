@@ -62,9 +62,12 @@
   "continuation": "Task C39 verified. Evidence-backed open-source v1 readiness gate enforced across all C01-C38 prerequisites, clone-to-value, packaging authenticity, dependency/fixture licenses, and fail-closed security/recovery in docs/evidence/v1-gate.json, .github/workflows/release-gate.yml, scripts/roadmap.mjs, and tests/c39_release_gate_test.go; core_ready certified in plans/release-gates.json; Requirement N39 verified. Ready for C40.",
   "c40_handoff": {
     "base_commit": "579d1d601bb374e4250f4510c347935606bd1059",
-    "status": "in_progress",
+    "status": "verified",
     "release_workflow": ".github/workflows/release.yml",
     "local_evidence": "docs/evidence/C40.json",
-    "next_task": "Verify the GitHub release and clean installation from its public downloads."
+    "next_task": null,
+    "published_source": "11ff08ad67cf3b1c9987ce00e7fc32ea00022989",
+    "release_url": "https://github.com/Parsa-Emami/Policyhelix/releases/tag/v1.0.0",
+    "installed_job_url": "https://github.com/Parsa-Emami/Policyhelix/actions/runs/42763039509/job/129654236311"
   }
 }
