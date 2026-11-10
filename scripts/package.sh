@@ -87,6 +87,9 @@ cp THIRD_PARTY_NOTICES.md "${STAGE_DIR}/THIRD_PARTY_NOTICES.md"
 echo "--> Creating reproducible source archive..."
 node scripts/package-source.mjs --output-dir "${STAGE_DIR}"
 
+mkdir -p "${STAGE_DIR}/tests/fixtures/policyhelix/C01"
+cp tests/fixtures/policyhelix/C01/*.json "${STAGE_DIR}/tests/fixtures/policyhelix/C01/"
+
 mkdir -p "${STAGE_DIR}/licenses"
 cp "$(go env GOROOT)/LICENSE" "${STAGE_DIR}/licenses/go-LICENSE"
 for dependency in react react-dom scheduler; do
@@ -157,7 +160,7 @@ const release = {
     publicKeyHex: '79b5562e8fe654f94078b112e8a98ba7901f853ae695bed7e0e3910bad049664',
     signatureFile: 'SHA256SUMS.txt.sig'
   },
-  artifacts: ['engine/policyhelix', 'web/', 'rules/', 'policyhelix-source.tar.gz', 'sbom.json', 'ops/web/', 'scripts/', 'docs/', 'licenses/']
+  artifacts: ['engine/policyhelix', 'web/', 'rules/', 'policyhelix-source.tar.gz', 'sbom.json', 'ops/web/', 'scripts/', 'docs/', 'licenses/', 'tests/fixtures/policyhelix/C01/']
 };
 await writeFile(join(stage, 'sbom.json'), JSON.stringify(sbom, null, 2) + '\n');
 await writeFile(join(stage, 'release.json'), JSON.stringify(release, null, 2) + '\n');

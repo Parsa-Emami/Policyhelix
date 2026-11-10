@@ -63,6 +63,7 @@ jobs:
           npm run release:check
           go test -count=1 -v ./internal/storage -run TestC40
           POLICYHELIX_PUBLIC_PACKAGE=1 npm run package
+          test -s dist/release/tests/fixtures/policyhelix/C01/positive-decision.json
           bash scripts/release-assets.sh pack "$RUNNER_TEMP/assets" "$GITHUB_SHA" "$PWD/dist/release"
       - name: Attest the asset checksum manifest
         uses: actions/attest@1e69f48acb82d1966a394da916b4c1698aa569d6

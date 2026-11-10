@@ -35,6 +35,7 @@ dist/release/
 ├── docs/
 │   ├── ARTIFACTS.md                    # This artifact specification
 │   └── WEB_RUNBOOK.md                  # Deployment and operations runbook
+├── tests/fixtures/policyhelix/C01/     # Licensed synthetic simulator scenarios
 ├── LICENSE                             # Apache-2.0 license
 ├── NOTICE                              # Project attribution notice
 ├── THIRD_PARTY_NOTICES.md              # Complete third-party dependency licenses and SBOM inventory

@@ -4,7 +4,7 @@
   "date": "2026-11-10",
   "planning_template": false,
   "passed": false,
-  "source_identity": "sha256:3526badc01726cdb555c924815fe87e14b819e43613136d2cea6ec047ec7bd94",
+  "source_identity": "sha256:2c24c725c608dc86954ad7483c43d2a99962093822466bc3917c38fb25795ed4",
   "source_identity_method": "Sorted tracked paths and SHA-256 file bytes, excluding historical checksum manifest and evidence records",
   "toolchain": {
     "go": "1.26.2",
@@ -21,36 +21,56 @@
     {
       "command": "npm run check",
       "exit_code": 0,
-      "result": "TypeScript, web and engine builds, 29 Node checks including C35 recovery, and the Go suite passed."
+      "result": "TypeScript, web and engine builds, 29 Node checks including C35 recovery, and the Go suite passed.",
+      "prior_source_commit": "da30310ce194376b0020df39a0049bbb6773f7cb"
     },
     {
       "command": "go test -race -count=1 ./...",
       "exit_code": 0,
-      "result": "All collected Go packages passed."
+      "result": "All collected Go packages passed.",
+      "prior_source_commit": "da30310ce194376b0020df39a0049bbb6773f7cb"
     },
     {
       "command": "go vet ./...",
       "exit_code": 0,
-      "result": "No findings."
+      "result": "No findings.",
+      "prior_source_commit": "da30310ce194376b0020df39a0049bbb6773f7cb"
     },
     {
       "command": "go test -count=1 -v ./internal/storage -run TestC40",
       "exit_code": 0,
-      "result": "Real SIGKILL before and after manifest publication, authoritative restart, acknowledgment replay and quota rejection passed."
+      "result": "Real SIGKILL before and after manifest publication, authoritative restart, acknowledgment replay and quota rejection passed.",
+      "prior_source_commit": "da30310ce194376b0020df39a0049bbb6773f7cb"
     },
     {
       "command": "npm run release:check",
       "exit_code": 0,
-      "result": "The C01-C38 readiness gate passed."
+      "result": "The C01-C38 readiness gate passed.",
+      "prior_source_commit": "da30310ce194376b0020df39a0049bbb6773f7cb"
     },
     {
       "command": "actionlint .github/workflows/release.yml .github/workflows/installed-release.yml",
       "exit_code": 0,
-      "result": "No findings."
+      "result": "No findings.",
+      "prior_source_commit": "da30310ce194376b0020df39a0049bbb6773f7cb"
+    },
+    {
+      "command": "npm test",
+      "exit_code": 0,
+      "result": "29 checks passed including the packaged simulator fixture digest."
+    },
+    {
+      "command": "POLICYHELIX_INSTALLED_RELEASE=<outside-checkout> node scripts/clone-smoke.mjs",
+      "exit_code": 0,
+      "result": "Six workflow stages, seven negative fixtures, 13 checks and durable restart/restore passed."
     }
   ],
   "results": {
     "publication_verified": false,
     "installed_public_workflow_verified": false
+  },
+  "prepublication_retry": {
+    "run": "https://github.com/Parsa-Emami/Policyhelix/actions/runs/42762528005/job/129652162924",
+    "result": "The clean installed job rejected the first candidate because the simulator fixture was missing. No release was created. The package now includes the licensed C01 simulator fixtures and checks their digest."
   }
 }

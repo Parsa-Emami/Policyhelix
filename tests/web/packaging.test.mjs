@@ -83,6 +83,10 @@ test('C31 packaging: dist/release contains all complete product artifacts and va
   assert.equal(sbom.components.find(c => c.name === 'go-runtime')?.version, releaseJson.toolchain.go);
   assert.equal(sbom.components.find(c => c.name === 'open-policy-agent')?.scope, 'excluded');
   assert.equal(sbom.components.find(c => c.name === 'keycloak')?.scope, 'excluded');
+  const fixture = 'tests/fixtures/policyhelix/C01/positive-decision.json';
+  const fixtureManifest = JSON.parse(await readFile(join(root, 'tests/fixtures/policyhelix/C01/manifest.json'), 'utf8'));
+  const fixtureDigest = createHash('sha256').update(await readFile(join(releaseDir, fixture))).digest('hex');
+  assert.equal(fixtureDigest, fixtureManifest.fixtures.find(entry => entry.path === fixture)?.sha256);
 
   // 4. Verify SHA256SUMS.txt integrity
   const checksumContent = await readFile(join(releaseDir, 'SHA256SUMS.txt'), 'utf8');
